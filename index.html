@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="TeacherDashboard">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BHOSWebService</title>
+    <link rel="stylesheet" href="css/angular-material.min.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body ng-cloak>
+
+<div ng-controller="MainMenuController" layout="column" layout-fill>
+    <md-toolbar class="md-whiteframe-4dp">
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" aria-label="Menu">
+                <md-icon md-svg-icon="svg/ic_menu_white_36px.svg" ng-click="toggleNavBar()"></md-icon>
+            </md-button>
+            <h2>
+                <span>Student Portal</span>
+            </h2>
+            <span flex></span>
+            <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" md-menu-origin style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
+        </div>
+    </md-toolbar>
+    <md-content flex>
+        <section layout="row"  ng-controller="SectionList">
+            <md-sidenav class="md-sidenav-left " md-component-id="left" style="opacity: 0.8">
+                <md-content style="background-color: #2e4c5c; color: #ffffff"  layout-fill>
+                    <md-list  ng-cloak >
+                        <md-list-item class="secondary-button-padding" ng-repeat="section in sections" ng-click="selectSection(section.name)" >
+                            <p> {{ section.name }} </p>
+                        </md-list-item>
+                        <md-divider></md-divider>
+                        <md-list-item class="secondary-button-padding" ng-click="selectSettings($event)" >
+                            <p> Settings </p>
+                        </md-list-item>
+                        <md-list-item class="secondary-button-padding" ng-click="signOut()" >
+                            <p> Sign Out </p>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+            </md-sidenav>
+            <div layout="column" flex class="layout-column flex">
+                <md-content flex>
+                    <div ng-view ></div>
+                </md-content>
+            </div>
+        </section>
+    </md-content>
+
+</div>
+
+
+<script src="js/angular.js"></script>
+<script src="js/angular-route.min.js"></script>
+<script src="js/angular-resource.min.js"></script>
+<script src="js/angular-animate.min.js"></script>
+<script src="js/angular-aria.min.js"></script>
+<script src="js/angular-sanitize.min.js"></script>
+<script src="js/angular-material.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/services.js"></script>
+<script src="js/controllers.js"></script>
+<script src="js/routes.js"></script>
+</body>
+</html>

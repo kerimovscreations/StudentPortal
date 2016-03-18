@@ -1,0 +1,42 @@
+
+<md-content class="md-padding">
+    <div>
+        <form>
+            <md-input-container class="md-block">
+                <label>Enter new announcement</label>
+                <textarea ng-model="announcement_post" md-maxlength="300" rows="5" md-select-on-focus></textarea>
+            </md-input-container>
+            <div layout="row" layout-align="end center">
+                <md-checkbox ng-model="notify_checkbox" aria-label="Checkbox 1" style="margin: 5px">
+                    Notify students
+                </md-checkbox>
+                <input type="submit" class="md-button md-raised md-primary"  value="POST" style="color: white" ng-click="post()"/>
+            </div>
+
+        </form>
+    </div>
+
+    <md-card ng-repeat="announcement in announcements">
+        <md-card-header>
+            <md-card-avatar>
+                <md-icon md-svg-icon="svg/avatar-1.svg"></md-icon>
+            </md-card-avatar>
+            <md-card-header-text layout="row" layout-align="space-between center">
+                <span class="md-headline">{{user_name+" "+user_surname}}</span>
+                <span class="md-subhead">{{date | date:'MM/dd/yyyy HH:mm'}}</span>
+            </md-card-header-text>
+        </md-card-header>
+        <md-card-content>
+            <p>
+                {{announcement}}
+            </p>
+            <div layout="row" layout-align="end center">
+                <md-button class="md-icon-button" aria-label="Delete" ng-click="deletePost($index)">
+                    <md-icon md-svg-icon="svg/ic_delete_black_24px.svg"></md-icon>
+                </md-button>
+            </div>
+
+        </md-card-content>
+    </md-card>
+
+</md-content>

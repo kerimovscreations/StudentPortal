@@ -1,0 +1,30 @@
+<md-dialog aria-label="Add Syllabus" ng-cloak>
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Add Material</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content" layout="column" layout-align="center center" >
+                <div style="width: 600px; height: 200px; border: 2px dashed #909090; text-align: center; padding: inherit" dropzone-material ng-click="fileUpload()">
+                    <md-icon md-svg-src="svg/ic_file_upload_black_48px.svg" aria-label="Upload File" style="width: 100px;height: 100px;"></md-icon>
+                    <p class="md-headline">Drop or select file to upload</p>
+                </div>
+            </div>
+
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button ng-click="cancel()" >
+                Cancel
+            </md-button>
+            <md-button class="md-primary" ng-click="upload()" style="margin-right:20px;">
+                Upload
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

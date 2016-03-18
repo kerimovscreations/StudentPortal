@@ -1,0 +1,14 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.md-toolbar md-icon.md-default-theme {
+    color: white; }
+.md-toolbar-tools{
+    color: white;
+}
+.md-input-container.md-default-theme label,
+.md-input-container.md-default-theme .md-placeholder{
+    color:white !important;
+}
