@@ -12,3 +12,4 @@
 .md-input-container.md-default-theme .md-placeholder{
     color:white !important;
 }
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

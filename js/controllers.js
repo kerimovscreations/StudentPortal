@@ -15,8 +15,18 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.user_name=ProfileService.user_name;
         $scope.user_surname=ProfileService.user_surname;
         $scope.user_type=ProfileService.user_type;
-        $scope.user_courses=ProfileService.user_courses;
-        $scope.current_course=$scope.user_courses[0].name || '';
+
+        var dropDownMenu=document.getElementById('dropDownProfile');
+
+        $scope.toggleDropDownProfile=function(){
+            if(dropDownMenu.style.display=='none'){
+                dropDownMenu.style.display='block';
+            }else{
+                dropDownMenu.style.display='none';
+            }
+        };
+
+
 
         function debounce(func, wait, context) {
             var timer;
@@ -45,12 +55,6 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             }, 100);
         }
 
-        $scope.setCurrentCourse=function(index){
-            $scope.current_course=$scope.user_courses[index].name;
-            ProfileService.current_course=$scope.current_course;
-            console.log($scope.current_course);
-
-        }
     })
     .controller('SectionList', function($scope,$location, $mdDialog) {
         $scope.sections = [
@@ -68,27 +72,12 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             $scope.current_section=text;
             $location.path('/'+text.toLowerCase());
             console.log($scope.current_section);
-
         };
-        $scope.selectSettings=function(event){
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title('Settings')
-                    .textContent('You have clicked settings button')
-                    .ok('Close')
-                    .targetEvent(event)
-            );
-        };
-
-        $scope.signOut=function(){
-            console.log('Signing Out...')
-        }
 
     })
     .controller('announcementController',function($scope, $mdDialog, ProfileService){
         $scope.user_name=ProfileService.user_name;
         $scope.user_surname=ProfileService.user_surname;
-        $scope.current_course=ProfileService.current_course;
         $scope.announcement_post='';
         $scope.notify_checkbox=false;
         $scope.announcements=[];
