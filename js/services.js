@@ -21,4 +21,8 @@ teacherDashboardApp.service('ProfileService',function(){
     this.syllabuses=[];
     this.materials=[];
 
+})
+.service('AnnouncementService',function(){
+    this.announcements=[];
+    this.groups=['HTP16102','HTP16101','BBF16201','BBF16202'];
 });

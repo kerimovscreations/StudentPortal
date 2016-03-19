@@ -75,18 +75,26 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('announcementController',function($scope, $mdDialog, ProfileService){
+    .controller('announcementController',function($scope, $mdDialog, $mdMedia, ProfileService, AnnouncementService){
         $scope.user_name=ProfileService.user_name;
         $scope.user_surname=ProfileService.user_surname;
         $scope.announcement_post='';
         $scope.notify_checkbox=false;
-        $scope.announcements=[];
-        $scope.date;
+        $scope.announcements=AnnouncementService.announcements;
+        $scope.groups = AnnouncementService.groups;
+        $scope.selected = [];
         $scope.post=function (){
             if($scope.announcement_post){
                 $scope.date = new Date();
-                $scope.announcements.push($scope.announcement_post);
+                $scope.announcements.splice(0, 0,
+                    {
+                        user: $scope.user_name+" "+$scope.user_surname,
+                        date: $scope.date,
+                        text: $scope.announcement_post,
+                        groups: $scope.selected
+                    });
                 $scope.announcement_post='';
+                $scope.selected = [];
             }
         };
         $scope.deletePost=function(index){
@@ -97,7 +105,60 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             $mdDialog.show(confirm).then(function() {
                 $scope.announcements.splice(index,1);
             });
-        }
+        };
+
+        $scope.editPost=function(index){
+            var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+            $mdDialog.show({
+                    controller: function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToast){
+                        $scope.tempAnnouncement=AnnouncementService.announcements[index];
+                        $scope.selected=$scope.tempAnnouncement.groups.slice();
+                        $scope.edited_post=$scope.tempAnnouncement.text;
+                        $scope.groups=AnnouncementService.groups;
+                        $scope.hide = function() {
+                            $mdDialog.hide();
+                        };
+                        $scope.cancel = function() {
+                            $mdDialog.cancel();
+                        };
+                        $scope.update=function(){
+                            var date = new Date();
+                            AnnouncementService.announcements[index].date=date;
+                            AnnouncementService.announcements[index].text=$scope.edited_post;
+                            AnnouncementService.announcements[index].groups=$scope.selected;
+                            $mdToast.show($mdToast.simple().textContent('Post edited'));
+                            console.log(AnnouncementService.announcements[index]);
+                            $mdDialog.hide();
+                        };
+                        $scope.toggle = function (item, list) {
+                            var idx = list.indexOf(item);
+                            if (idx > -1) list.splice(idx, 1);
+                            else list.push(item);
+                        };
+                        $scope.exists = function (item, list) {
+                            return list.indexOf(item) > -1;
+                        };
+                    },
+                    templateUrl: 'dialogs/editPost.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose:true,
+                    fullscreen: useFullScreen
+                });
+            $scope.$watch(function() {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function(wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
+            });
+        };
+
+        $scope.toggle = function (item, list) {
+            var idx = list.indexOf(item);
+            if (idx > -1) list.splice(idx, 1);
+            else list.push(item);
+        };
+        $scope.exists = function (item, list) {
+            return list.indexOf(item) > -1;
+        };
     })
     .controller('syllabusController',function($scope, $mdDialog, $mdMedia,ProfileService){
         $scope.source=[];

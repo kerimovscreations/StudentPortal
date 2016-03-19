@@ -1,7 +1,7 @@
 <md-content class="md-padding">
     <h1 class="md-headline">AM-01</h1>
     <md-list-item ng-repeat="contact in student_contacts" ng-click="showContact($index)" class="noright">
-        <md-icon md-svg-icon="svg/avatar-1.svg"></md-icon>
+        <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
         <p class="md-title">{{ contact.name }}</p>
         <p class="md-subhead">{{ contact.email }}</p>
         <md-icon md-svg-icon="svg/ic_email_black_24px.svg"  ng-click="sendEmail($index)" aria-label="Send Email" class="md-secondary md-hue-3" ></md-icon>
