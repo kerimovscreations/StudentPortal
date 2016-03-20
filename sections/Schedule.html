@@ -1,0 +1,76 @@
+<md-content ng-controller="ScheduleController" layout="column" layout-align="space-between none">
+    <div layout="row">
+        <div layout="column" class="md-padding">
+            <md-calendar ng-model="dt" class="fixed-calendar"></md-calendar>
+            <md-button class="md-raised md-accent" ng-click="today()" style="margin-top: 20px">Today</md-button>
+        </div>
+        <div flex layout="row" class="md-padding" >
+            <div flex layout="column">
+                <label class="schedule-day-label">{{dt | date:'EEE dd, MMMM'}}</label>
+                <div flex>
+                    <div class="schedule-item" ng-repeat="event in events" ng-if="event.date.getDate() == dt.getDate() && event.date.getMonth() == dt.getMonth() && event.date.getFullYear() == dt.getFullYear()" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div flex layout="column">
+                <label class="schedule-day-label">{{temp1 | date:'EEE dd, MMMM'}}</label>
+                <div flex>
+                    <div class="schedule-item" ng-repeat="event in events" ng-if="event.date.getDate() == temp1.getDate() && event.date.getMonth() == temp1.getMonth() && event.date.getFullYear() == temp1.getFullYear()" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div flex layout="column">
+                <label class="schedule-day-label">{{temp2 | date:'EEE dd, MMMM'}}</label>
+                <div flex>
+                    <div class="schedule-item" ng-repeat="event in events" ng-if="event.date.getDate() == temp2.getDate() && event.date.getMonth() == temp2.getMonth() && event.date.getFullYear() == temp2.getFullYear()" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div flex layout="column">
+                <label class="schedule-day-label">{{temp3 | date:'EEE dd, MMMM'}}</label>
+                <div flex>
+                    <div class="schedule-item" ng-repeat="event in events" ng-if="event.date.getDate() == temp3.getDate() && event.date.getMonth() == temp3.getMonth() && event.date.getFullYear() == temp3.getFullYear()" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div flex layout="column">
+                <label class="schedule-day-label">{{temp4 | date:'EEE dd, MMMM'}}</label>
+                <div flex>
+                    <div class="schedule-item" ng-repeat="event in events" ng-if="event.date.getDate() == temp4.getDate() && event.date.getMonth() == temp4.getMonth() && event.date.getFullYear() == temp4.getFullYear()"  ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div flex layout="column">
+                <label class="schedule-day-label">{{temp5 | date:'EEE dd, MMMM'}}</label>
+                <div flex>
+                    <div class="schedule-item" ng-repeat="event in events" ng-if="event.date.getDate() == temp5.getDate() && event.date.getMonth() == temp5.getMonth() && event.date.getFullYear() == temp5.getFullYear()" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div flex layout="column">
+                <label class="schedule-day-label">{{temp6 | date:'EEE dd, MMMM'}}</label>
+                <div flex>
+                    <div class="schedule-item" ng-repeat="event in events" ng-if="event.date.getDate() == temp6.getDate() && event.date.getMonth() == temp6.getMonth() && event.date.getFullYear() == temp6.getFullYear()" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="height: 100px"></div>
+    <md-fab-toolbar md-open="isOpen" count="demo.count" md-direction="left" style=" width: 100%; position: absolute; bottom: 0; right: 0">
+        <md-fab-trigger class="align-with-text" style="margin-right: 20px">
+            <md-button aria-label="add" class="md-fab md-primary">
+                <md-icon md-svg-src="svg/ic_add_white_36px.svg"></md-icon>
+            </md-button>
+        </md-fab-trigger>
+        <md-toolbar>
+            <md-fab-actions class="md-toolbar-tools">
+                <md-button aria-label="lesson" class="md-icon-button">
+                    <md-icon md-svg-src="svg/ic_assignment_white_36px.svg"></md-icon>
+                </md-button>
+                <md-button aria-label="meeting" class="md-icon-button">
+                    <md-icon md-svg-src="svg/ic_people_white_36px.svg"></md-icon>
+                </md-button>
+            </md-fab-actions>
+        </md-toolbar>
+    </md-fab-toolbar>
+</md-content>

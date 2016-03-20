@@ -26,4 +26,18 @@ teacherDashboardApp.service('ProfileService',function(){
     .service('AnnouncementService',function(){
         this.announcements=[];
         this.groups=['HTP16102','HTP16101','BBF16201','BBF16202'];
-    });
+    })
+    .service('ScheduleService',function(){
+        this.events=[
+            {title: 'PHP Lesson 4', type: 'lesson', description: "1.Classes, 2.methods", date:'03-20-2016', startTime: '18:30', endTime: '21:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Karim Karimov'},
+            {title: 'Extra', type: 'extra', description: "Extra", date:'03-20-2016', startTime: '09:00', endTime: '10:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Ulvi Aslanov'},
+            {title: 'PHP Lesson 5', type: 'lesson', description: "1.Classes, 2.methods", date:'03-22-2016', startTime: '12:00', endTime: '14:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Rahim Rahimli'},
+            {title: 'PHP Meeting', type: 'meeting', description: "Meeting", date:'03-20-2016', startTime: '18:30', endTime: '21:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Samir Karimov'},
+            {title: 'Extra Meeting', type: 'extra', description: "Extra", date:'03-23-2016', startTime: '09:00', endTime: '10:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Ulvi Aslanov'},
+            {title: 'PHP Lesson 5', type: 'lesson', description: "1.Classes, 2.methods", date:'03-24-2016', startTime: '12:00', endTime: '14:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Rahim Rahimli'},
+            {title: 'PHP OOP', type: 'meeting', description: "Meeting", date:'03-25-2016', startTime: '18:30', endTime: '21:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Samir Karimov'},
+            {title: 'Extra Meeting', type: 'extra', description: "Extra", date:'03-26-2016', startTime: '09:00', endTime: '10:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Ulvi Aslanov'},
+            {title: 'PHP Lesson 5', type: 'lesson', description: "1.Classes, 2.methods", date:'03-22-2016', startTime: '12:00', endTime: '14:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Rahim Rahimli'},
+            {title: 'PHP OOP', type: 'meeting', description: "Meeting", date:'03-25-2016', startTime: '18:30', endTime: '21:30', group: ['HTP16102'], place:'HTP', status: false, owner: 'Samir Karimov'}
+        ];
+    })

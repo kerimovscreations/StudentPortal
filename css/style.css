@@ -13,3 +13,42 @@
     color:white !important;
 }
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.fixed-calendar {
+    width: 340px;
+    height: 340px;
+    display: block;
+}
+
+.fixed-calendar .md-calendar-scroll-mask {
+    width: 340px !important;
+}
+.md-calendar-day-header{
+    width: 340px;
+}
+.fixed-calendar .md-virtual-repeat-scroller {
+    width: 340px !important;
+    height: 308px;
+}
+.schedule-day-label{
+    width:100%;
+    padding: 5px;
+    background-color: #2E4454;
+    color: #fff;
+    text-align: center
+}
+.schedule-item{
+    width: 90%;
+    background: #de5a8c;
+    color:white;
+    padding: 2px;
+    text-align: center;
+    border-radius: 4px;
+    margin: 2px auto;
+}
+.meeting{
+    background: #9ad5f8;
+}
+.extra{
+    background: #3d5972;
+}

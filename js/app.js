@@ -1,4 +1,4 @@
-var loginApp=angular.module('Login',['ngMaterial','ngRoute','ngResource']);
+var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource']);
 loginApp.config(function($mdThemingProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
@@ -6,7 +6,7 @@ loginApp.config(function($mdThemingProvider){
 });
 
 
-var teacherDashboardApp=angular.module('TeacherDashboard',['ngMaterial','ngRoute','ngResource']);
+var teacherDashboardApp=angular.module('appTeacherDashboard',['ui.bootstrap','ngMaterial','ngRoute','ngResource']);
 teacherDashboardApp.config(function($mdThemingProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')

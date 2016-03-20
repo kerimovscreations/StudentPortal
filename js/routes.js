@@ -2,35 +2,35 @@ teacherDashboardApp.config(['$routeProvider', function($routeProvider){
     $routeProvider
         .when('/',{
             templateUrl: "sections/Announcement.html",
-            controller: 'announcementController'
+            controller: 'AnnouncementController'
         })
         .when('/announcement',{
             templateUrl: "sections/Announcement.html",
-            controller: 'announcementController'
+            controller: 'AnnouncementController'
         })
         .when('/conversation',{
             templateUrl: "sections/Conversation.html",
-            controller: 'conversationController'
+            controller: 'ConversationController'
         })
         .when('/notification',{
             templateUrl: "sections/Notification.html",
-            controller: 'notificationController'
+            controller: 'NotificationController'
         })
         .when('/people',{
             templateUrl: "sections/People.html",
-            controller: 'peopleController'
+            controller: 'PeopleController'
         })
         .when('/schedule',{
             templateUrl: "sections/Schedule.html",
-            controller: 'scheduleController'
+            controller: 'ScheduleController'
         })
         .when('/assignments',{
             templateUrl: "sections/Assignments.html",
-            controller: 'assignmentsController'
+            controller: 'AssignmentsController'
         })
         .when('/grading',{
             templateUrl: "sections/Grading.html",
-            controller: 'gradingController'
+            controller: 'GradingController'
         })
         .otherwise({
             redirectTo: '/'

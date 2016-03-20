@@ -56,7 +56,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('SectionList', function($scope,$location, $mdDialog) {
+    .controller('SectionListController', function($scope, $location) {
         $scope.sections = [
             { name: 'Announcement' },
             { name: 'Conversation'},
@@ -76,7 +76,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('announcementController',function($scope, $mdDialog, $mdMedia, ProfileService, AnnouncementService){
+    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia, ProfileService, AnnouncementService){
         $scope.user_name=ProfileService.user_name;
         $scope.user_surname=ProfileService.user_surname;
         $scope.announcement_post='';
@@ -161,7 +161,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             return list.indexOf(item) > -1;
         };
     })
-    .controller('syllabusController',function($scope, $mdDialog, $mdMedia,ProfileService){
+    .controller('SyllabusController',function($scope, $mdDialog, $mdMedia, ProfileService){
         $scope.source=[];
         $scope.$watch('source',function(){
             $scope.source=ProfileService.syllabuses;
@@ -198,7 +198,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         }
     })
-    .controller('peopleController',function($scope, ProfileService, $mdDialog){
+    .controller('PeopleController',function($scope, ProfileService, $mdDialog){
         $scope.people=ProfileService.people;
         $scope.students=[];
         $scope.teachers=[];
@@ -240,7 +240,46 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                     .ok('Got it'));
         }
     })
-    .controller('scheduleController',function($scope, $mdDialog, $mdMedia,ProfileService){
+    .controller('ScheduleController',function($scope, $mdDialog, $mdMedia, ProfileService,ScheduleService){
+        $scope.events=ScheduleService.events;
+        for(key in $scope.events){
+            $scope.events[key].date=new Date($scope.events[key].date);
+        }
+        $scope.dt=new Date();
+        $scope.today = function() {
+            $scope.dt = new Date();
+        };
+        $scope.today();
+
+        $scope.clear = function() {
+            $scope.dt = null;
+        };
+        $scope.dateOptions = {
+            maxDate: new Date(2020, 5, 22),
+            minDate: new Date(2016, 1, 1)
+        };
+
+        $scope.$watch('dt',function(){
+            $scope.temp1=new Date($scope.dt);
+            $scope.temp1.setDate($scope.dt.getDate() + 1);
+            $scope.temp2=new Date($scope.dt);
+            $scope.temp2.setDate($scope.dt.getDate() + 2);
+            $scope.temp3=new Date($scope.dt);
+            $scope.temp3.setDate($scope.dt.getDate() + 3);
+            $scope.temp4=new Date($scope.dt);
+            $scope.temp4.setDate($scope.dt.getDate() + 4);
+            $scope.temp5=new Date($scope.dt);
+            $scope.temp5.setDate($scope.dt.getDate() + 5);
+            $scope.temp6=new Date($scope.dt);
+            $scope.temp6.setDate($scope.dt.getDate() + 6);
+        });
+
+        $scope.isOpen = false;
+        $scope.demo = {
+            isOpen: false,
+            count: 0
+        };
+
         $scope.source=[];
         $scope.$watch('source',function(){
             $scope.source=ProfileService.materials;
@@ -277,10 +316,10 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         }
     })
-    .controller('assignmentsController',function(){})
-    .controller('gradingController',function(){})
-    .controller('conversationController',function(){})
-    .controller('notificationController',function(){})
+    .controller('AssignmentsController',function(){})
+    .controller('GradingController',function(){})
+    .controller('ConversationController',function(){})
+    .controller('NotificationController',function(){})
 
 function DialogController($scope, $mdDialog) {
 
