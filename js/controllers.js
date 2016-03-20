@@ -59,9 +59,10 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     .controller('SectionList', function($scope,$location, $mdDialog) {
         $scope.sections = [
             { name: 'Announcement' },
-            { name: 'Syllabus'},
-            { name: 'Contacts'},
-            { name: 'Materials'},
+            { name: 'Conversation'},
+            { name: 'Notification'},
+            { name: 'People'},
+            { name: 'Schedule'},
             { name: 'Assignments'},
             { name: 'Grading'}
         ];
@@ -110,40 +111,40 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.editPost=function(index){
             var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
             $mdDialog.show({
-                    controller: function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToast){
-                        $scope.tempAnnouncement=AnnouncementService.announcements[index];
-                        $scope.selected=$scope.tempAnnouncement.groups.slice();
-                        $scope.edited_post=$scope.tempAnnouncement.text;
-                        $scope.groups=AnnouncementService.groups;
-                        $scope.hide = function() {
-                            $mdDialog.hide();
-                        };
-                        $scope.cancel = function() {
-                            $mdDialog.cancel();
-                        };
-                        $scope.update=function(){
-                            var date = new Date();
-                            AnnouncementService.announcements[index].date=date;
-                            AnnouncementService.announcements[index].text=$scope.edited_post;
-                            AnnouncementService.announcements[index].groups=$scope.selected;
-                            $mdToast.show($mdToast.simple().textContent('Post edited'));
-                            console.log(AnnouncementService.announcements[index]);
-                            $mdDialog.hide();
-                        };
-                        $scope.toggle = function (item, list) {
-                            var idx = list.indexOf(item);
-                            if (idx > -1) list.splice(idx, 1);
-                            else list.push(item);
-                        };
-                        $scope.exists = function (item, list) {
-                            return list.indexOf(item) > -1;
-                        };
-                    },
-                    templateUrl: 'dialogs/editPost.html',
-                    parent: angular.element(document.body),
-                    clickOutsideToClose:true,
-                    fullscreen: useFullScreen
-                });
+                controller: function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToast){
+                    $scope.tempAnnouncement=AnnouncementService.announcements[index];
+                    $scope.selected=$scope.tempAnnouncement.groups.slice();
+                    $scope.edited_post=$scope.tempAnnouncement.text;
+                    $scope.groups=AnnouncementService.groups;
+                    $scope.hide = function() {
+                        $mdDialog.hide();
+                    };
+                    $scope.cancel = function() {
+                        $mdDialog.cancel();
+                    };
+                    $scope.update=function(){
+                        var date = new Date();
+                        AnnouncementService.announcements[index].date=date;
+                        AnnouncementService.announcements[index].text=$scope.edited_post;
+                        AnnouncementService.announcements[index].groups=$scope.selected;
+                        $mdToast.show($mdToast.simple().textContent('Post edited'));
+                        console.log(AnnouncementService.announcements[index]);
+                        $mdDialog.hide();
+                    };
+                    $scope.toggle = function (item, list) {
+                        var idx = list.indexOf(item);
+                        if (idx > -1) list.splice(idx, 1);
+                        else list.push(item);
+                    };
+                    $scope.exists = function (item, list) {
+                        return list.indexOf(item) > -1;
+                    };
+                },
+                templateUrl: 'dialogs/editPost.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose:true,
+                fullscreen: useFullScreen
+            });
             $scope.$watch(function() {
                 return $mdMedia('xs') || $mdMedia('sm');
             }, function(wantsFullScreen) {
@@ -197,24 +198,49 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         }
     })
-    .controller('contactsController',function($scope, ProfileService, $mdDialog){
-        $scope.student_contacts=ProfileService.student_contacts;
-        $scope.showContact=function(index){
+    .controller('peopleController',function($scope, ProfileService, $mdDialog){
+        $scope.people=ProfileService.people;
+        $scope.students=[];
+        $scope.teachers=[];
+        $scope.mentors=[];
+        for(elem in $scope.people){
+            if($scope.people[elem].type=='student'){
+                $scope.students.push($scope.people[elem]);
+            }else if($scope.people[elem].type=='teacher'){
+                $scope.teachers.push($scope.people[elem]);
+            }else if($scope.people[elem].type=='mentor'){
+                $scope.mentors.push($scope.people[elem]);
+            }
+        };
+        console.log($scope.students);
+        $scope.selectedIndex=0;
+
+        $scope.showContact=function(id){
+            for(elem in $scope.people){
+                if($scope.people[elem].id==id){
+                    var index=id;
+                }}
+            index--;
             $mdDialog.show(
                 $mdDialog.alert()
-                    .title($scope.student_contacts[index].name)
-                    .textContent('Email: '+$scope.student_contacts[index].email)
+                    .title($scope.people[index].name)
+                    .textContent('Email: '+$scope.people[index].email)
                     .ok('Got it')
             )};
-        $scope.sendEmail=function(index){
+        $scope.sendEmail=function(id){
+            for(elem in $scope.people){
+                if($scope.people[elem].id==id){
+                    var index=id;
+                }}
+            index--;
             $mdDialog.show(
                 $mdDialog.alert()
                     .title('Send an email')
-                    .textContent('Email: '+$scope.student_contacts[index].email)
+                    .textContent('Email: '+$scope.people[index].email)
                     .ok('Got it'));
         }
     })
-    .controller('materialsController',function($scope, $mdDialog, $mdMedia,ProfileService){
+    .controller('scheduleController',function($scope, $mdDialog, $mdMedia,ProfileService){
         $scope.source=[];
         $scope.$watch('source',function(){
             $scope.source=ProfileService.materials;
@@ -252,7 +278,9 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
     })
     .controller('assignmentsController',function(){})
-    .controller('gradingController',function(){});
+    .controller('gradingController',function(){})
+    .controller('conversationController',function(){})
+    .controller('notificationController',function(){})
 
 function DialogController($scope, $mdDialog) {
 

@@ -3,9 +3,8 @@
         <form>
             <md-input-container class="md-block" style="margin-bottom: 0">
                 <label>Enter new announcement</label>
-                <textarea ng-model="announcement_post" md-maxlength="300" md-select-on-focus></textarea>
+                <textarea ng-model="announcement_post" md-maxlength="300" md-select-on-focus ng-model-options="{ debounce: 100 }"></textarea>
             </md-input-container>
-
             <div layout="row" layout-align="end center">
                 <div>
                     <p style="font-size: 16px; color: #585858;">Select groups to notify</p>
