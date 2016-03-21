@@ -242,36 +242,21 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     })
     .controller('ScheduleController',function($scope, $mdDialog, $mdMedia, ProfileService,ScheduleService){
         $scope.events=ScheduleService.events;
-        for(key in $scope.events){
-            $scope.events[key].date=new Date($scope.events[key].date);
-        }
+
         $scope.dt=new Date();
+
+        console.log($scope.dt);
         $scope.today = function() {
             $scope.dt = new Date();
         };
-        $scope.today();
-
-        $scope.clear = function() {
-            $scope.dt = null;
-        };
-        $scope.dateOptions = {
-            maxDate: new Date(2020, 5, 22),
-            minDate: new Date(2016, 1, 1)
-        };
 
         $scope.$watch('dt',function(){
-            $scope.temp1=new Date($scope.dt);
-            $scope.temp1.setDate($scope.dt.getDate() + 1);
-            $scope.temp2=new Date($scope.dt);
-            $scope.temp2.setDate($scope.dt.getDate() + 2);
-            $scope.temp3=new Date($scope.dt);
-            $scope.temp3.setDate($scope.dt.getDate() + 3);
-            $scope.temp4=new Date($scope.dt);
-            $scope.temp4.setDate($scope.dt.getDate() + 4);
-            $scope.temp5=new Date($scope.dt);
-            $scope.temp5.setDate($scope.dt.getDate() + 5);
-            $scope.temp6=new Date($scope.dt);
-            $scope.temp6.setDate($scope.dt.getDate() + 6);
+            $scope.temp1=moment($scope.dt).add(1, 'd');
+            $scope.temp2=moment($scope.dt).add(2, 'd');
+            $scope.temp3=moment($scope.dt).add(3, 'd');
+            $scope.temp4=moment($scope.dt).add(4, 'd');
+            $scope.temp5=moment($scope.dt).add(5, 'd');
+            $scope.temp6=moment($scope.dt).add(6, 'd');
         });
 
         $scope.isOpen = false;
@@ -279,6 +264,21 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             isOpen: false,
             count: 0
         };
+
+        $scope.display=function(elem){
+            return moment(elem).format("dddd, MMMM DD YYYY");
+        };
+
+        $scope.parseDateEvent=function(date,type){
+            return moment(date,type).format('MM-DD-YYYY');
+        };
+        $scope.parseDate=function(date){
+            return moment(date).format('MM-DD-YYYY');
+        };
+
+
+
+
 
         $scope.source=[];
         $scope.$watch('source',function(){
