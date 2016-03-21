@@ -6,51 +6,72 @@
         </div>
         <div flex layout="row" class="md-padding" >
             <div flex layout="column">
-                <label class="schedule-day-label">{{display(dt)}}</label>
+                <label class="schedule-day-label">{{displayDate(dt)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == parseDate(dt)" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == parseDate(dt)" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">
+                        <h5>{{event.title}}</h5>
+                        <span>{{event.startTime}}-{{event.endTime}}</span>
+                    </div>
                 </div>
             </div>
             <md-divider></md-divider>
             <div flex layout="column">
-                <label class="schedule-day-label">{{temp1.format("dddd, MMMM DD YYYY")}}</label>
+                <label class="schedule-day-label">{{display(temp1)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp1.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp1.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                        <h5>{{event.title}}</h5>
+                        <span>{{event.startTime}}-{{event.endTime}}</span>
+                    </div>
                 </div>
             </div>
             <md-divider></md-divider>
             <div flex layout="column">
-                <label class="schedule-day-label">{{temp2.format("dddd, MMMM DD YYYY")}}</label>
+                <label class="schedule-day-label">{{display(temp2)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp2.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp2.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">
+                        <h5>{{event.title}}</h5>
+                        <span>{{event.startTime}}-{{event.endTime}}</span>
+                    </div>
                 </div>
             </div>
             <md-divider></md-divider>
             <div flex layout="column">
-                <label class="schedule-day-label">{{temp3.format("dddd, MMMM DD YYYY")}}</label>
+                <label class="schedule-day-label">{{display(temp3)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp3.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp3.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">
+                        <h5>{{event.title}}</h5>
+                        <span>{{event.startTime}}-{{event.endTime}}</span>
+                    </div>
                 </div>
             </div>
             <md-divider></md-divider>
             <div flex layout="column">
-                <label class="schedule-day-label">{{temp4.format("dddd, MMMM DD YYYY")}}</label>
+                <label class="schedule-day-label">{{display(temp4)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp4.format('MM-DD-YYYY')"  ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp4.format('MM-DD-YYYY')"  ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">
+                        <h5>{{event.title}}</h5>
+                        <span>{{event.startTime}}-{{event.endTime}}</span>
+                    </div>
                 </div>
             </div>
             <md-divider></md-divider>
             <div flex layout="column">
-                <label class="schedule-day-label">{{temp5.format("dddd, MMMM DD YYYY")}}</label>
+                <label class="schedule-day-label">{{display(temp5)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp5.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp5.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">
+                        <h5>{{event.title}}</h5>
+                        <span>{{event.startTime}}-{{event.endTime}}</span>
+                    </div>
                 </div>
             </div>
             <md-divider></md-divider>
             <div flex layout="column">
-                <label class="schedule-day-label">{{temp6.format("dddd, MMMM DD YYYY")}}</label>
+                <label class="schedule-day-label">{{display(temp6)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp6.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">{{event.title}}</div>
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateEvent(event.date, 'MM-DD-YYYY') == temp6.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}">
+                        <h5>{{event.title}}</h5>
+                        <span>{{event.startTime}}-{{event.endTime}}</span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -46,6 +46,12 @@
     border-radius: 4px;
     margin: 2px auto;
 }
+.schedule-item span{
+    display: block;
+}
+.schedule-item h5{
+    margin: 5px auto;
+}
 .meeting{
     background: #9ad5f8;
 }
