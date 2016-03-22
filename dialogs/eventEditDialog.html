@@ -9,31 +9,43 @@
                 </md-button>
             </div>
         </md-toolbar>
-        <md-dialog-content>
+        <md-dialog-content style="margin-bottom: 0">
             <form>
                 <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 600px">
                     <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%">
                         <label>Title of event</label>
-                        <textarea class="md-headline" style="color: #6a72a2" ng-model="::event.title" md-select-on-focus></textarea>
+                        <textarea class="md-headline" style="color: #6a72a2" ng-model="eventTitle" md-select-on-focus></textarea>
                     </md-input-container>
                     <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%;color: #3d3d45">
                         <label>Content</label>
-                        <textarea class="md-subhead" ng-model="::event.description" md-select-on-focus></textarea>
+                        <textarea class="md-subhead" ng-model="eventContent" md-select-on-focus></textarea>
                     </md-input-container>
                     <div layout="row" style="margin-top: 0; color:#f16156">
+
+
                         <md-input-container style="margin-top: 0">
                             <label>Place</label>
-                            <md-select ng-model="place" class="md-title">
+                            <md-select ng-model="eventPlace" class="md-subhead">
                                 <md-option ng-repeat="place in places" value="{{place.selectedPlace}}">
                                     {{place.selectedPlace}}
                                 </md-option>
                             </md-select>
                         </md-input-container>
+                        <div style="width: 10px"></div>
                         <md-input-container style="margin-top: 0">
                             <label>Group</label>
-                            <md-select ng-model="group" class="md-title">
+                            <md-select ng-model="eventGroup" class="md-subhead">
                                 <md-option ng-repeat="group in groups" value="{{group.selectedGroup}}">
                                     {{group.selectedGroup}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <div style="width: 10px"></div>
+                        <md-input-container style="margin-top: 0">
+                            <label>Type</label>
+                            <md-select ng-model="eventType" class="md-subhead">
+                                <md-option ng-repeat="type in types" value="{{type.selectedType}}">
+                                    {{type.selectedType}}
                                 </md-option>
                             </md-select>
                         </md-input-container>
@@ -57,12 +69,13 @@
                         </md-autocomplete>
                     </div>
                     <div layout="row" style="margin-top: 15px">
-                        <div style="color: #88c8d0">
+                        <div layout="row" layout-align="center center" style="color: #88c8d0">
                             <h4 class="md-title" >Start time: </h4>
+                            <div style="width: 10px"></div>
                             <div layout="row" layout-align="center">
                                 <md-input-container>
                                     <label>hour</label>
-                                    <md-select ng-model="startHour" class="md-title">
+                                    <md-select ng-model="startHour" class="md-subhead">
                                         <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
                                             {{hour.selectedHour}}
                                         </md-option>
@@ -70,7 +83,7 @@
                                 </md-input-container>
                                 <md-input-container>
                                     <label>minute</label>
-                                    <md-select ng-model="startMinute" class="md-title">
+                                    <md-select ng-model="startMinute" class="md-subhead">
                                         <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
                                             {{minute.selectedMinute}}
                                         </md-option>
@@ -79,12 +92,13 @@
                             </div>
                         </div>
                         <div style="width: 20px"></div>
-                        <div style="color: #d98084">
+                        <div layout="row" layout-align="center center" style="color: #d98084">
                             <h4 class="md-title">End time: </h4>
+                            <div style="width: 10px"></div>
                             <div layout="row" layout-align="center">
                                 <md-input-container>
                                     <label>hour</label>
-                                    <md-select ng-model="endHour" class="md-title">
+                                    <md-select ng-model="endHour" class="md-subhead">
                                         <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
                                             {{hour.selectedHour}}
                                         </md-option>
@@ -92,7 +106,7 @@
                                 </md-input-container>
                                 <md-input-container>
                                     <label>minute</label>
-                                    <md-select ng-model="endMinute" class="md-title">
+                                    <md-select ng-model="endMinute" class="md-subhead">
                                         <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
                                             {{minute.selectedMinute}}
                                         </md-option>
@@ -101,22 +115,10 @@
                             </div>
                         </div>
                     </div>
-
-
-
-
-                   <!-- <span class="md-headline" style="margin-top: 10px">Content</span>
-                    <span class="md-title">{{event.description}}</span>
-                    <div layout="row" style="margin-top: 20px; color: #a47f90;">
-                        <span class="md-subhead">Place: {{event.place}}</span>
-                        <span style="width: 80px"></span>
-                        <span class="md-subhead">Group: {{event.group}}</span>
-                    </div>
-                    <md-checkbox ng-model="event.status">Status</md-checkbox>-->
                 </div>
             </form>
         </md-dialog-content>
-        <md-dialog-actions layout="row" layout-align="none center ">
+        <md-dialog-actions layout="row" layout-align="none center" style="margin-top:0">
             <md-button class="md-primary" ng-click="cancel()" style="margin-right:20px;">
                 Cancel
             </md-button>

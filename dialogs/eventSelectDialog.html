@@ -7,6 +7,9 @@
                 <md-button class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
                 </md-button>
+                <md-button class="md-icon-button" ng-click="delete()">
+                    <md-icon md-svg-src="svg/ic_delete_white_24px.svg" aria-label="Edit Event"></md-icon>
+                </md-button>
                 <md-button class="md-icon-button" ng-click="hide()">
                     <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
                 </md-button>
@@ -15,7 +18,7 @@
         <md-dialog-content>
             <div class="md-dialog-content" layout="column" layout-align="center center" >
                 <span class="md-display-1" style="color: #6a72a2">{{event.title}}</span>
-                <span class="md-display-1" style="color: #d98084">({{event.startTime}}-{{event.endTime}})</span>
+                <span class="md-headline" style="color: #d98084">({{event.startTime}}-{{event.endTime}})</span>
                 <span class="md-body-2" style="color: #94cac2;margin-top: 10px">Created by {{event.owner}}</span>
                 <span class="md-body-2" style="color: #94cac2">Responsible person: {{event.responsible}}</span>
                 <span class="md-headline" style="margin-top: 10px">Content</span>
@@ -25,10 +28,11 @@
                     <span style="width: 80px"></span>
                     <span class="md-subhead">Group: {{event.group}}</span>
                 </div>
-                <md-checkbox ng-model="event.status">Status</md-checkbox>
+                <md-switch ng-model="event.status" aria-label="Event status" style="color: #ce226d; font-size: 20px" ng-click="eventStatusChange(!event.status)">
+                    {{showStatus(event.status)}}
+                </md-switch>
             </div>
         </md-dialog-content>
-        <md-divider></md-divider>
         <md-dialog-actions layout="row" layout-align="none center ">
             <md-button class="md-primary" ng-click="hide()" style="margin-right:20px;">
                 Ok

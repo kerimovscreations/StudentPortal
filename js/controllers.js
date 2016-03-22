@@ -218,7 +218,6 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         $scope.dt=new Date();
 
-        console.log($scope.dt);
         $scope.today = function() {
             $scope.dt = new Date();
         };
@@ -315,11 +314,14 @@ function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToas
     };
 }
 
-function eventSelectDialogController($scope, $mdDialog,$mdMedia, Data, ScheduleService){
+function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data, ScheduleService){
     var id=Data.EventId;
+    var tempKey='';
     for(key in ScheduleService.events)
-        if(id==ScheduleService.events[key].id)
+        if(id==ScheduleService.events[key].id){
             $scope.event=ScheduleService.events[key];
+            tempKey=key;
+        }
 
     $scope.dateExtended=moment(new Date($scope.event.date)).format("dddd, MMMM DD YYYY");
     $scope.edit=function(){
@@ -342,6 +344,22 @@ function eventSelectDialogController($scope, $mdDialog,$mdMedia, Data, ScheduleS
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
+    $scope.showStatus=function(check){
+        return check ? 'Done' : 'Not Done';
+    };
+    $scope.eventStatusChange=function(check){
+        $mdToast.show($mdToast.simple().textContent('Status changed to '+$scope.showStatus(check)));
+    };
+    $scope.delete=function(){
+        var confirm = $mdDialog.confirm()
+            .title('Are you sure to delete event?')
+            .ok('Delete')
+            .cancel('Cancel');
+        $mdDialog.show(confirm).then(function() {
+            ScheduleService.events.splice(tempKey,1);
+            $mdToast.show($mdToast.simple().textContent('Event deleted'));
+        });
+    };
     $scope.hide = function() {
         $mdDialog.hide();
     };
@@ -349,12 +367,21 @@ function eventSelectDialogController($scope, $mdDialog,$mdMedia, Data, ScheduleS
         $mdDialog.cancel();
     };
 }
-function eventEditDialogController($scope, $mdDialog,$timeout, $q, Data, ScheduleService,ProfileService){
+function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ScheduleService, ProfileService){
     var id=Data.EventId;
+    var tempKey='';
     for(key in ScheduleService.events)
-        if(id==ScheduleService.events[key].id)
+        if(id==ScheduleService.events[key].id){
             $scope.event=ScheduleService.events[key];
-
+            tempKey=key;
+        }
+    $scope.editedEvent=clone($scope.event);
+    $scope.eventTitle=$scope.editedEvent.title;
+    $scope.eventContent=$scope.editedEvent.description;
+    $scope.eventPlace=$scope.editedEvent.place;
+    $scope.eventGroup=$scope.editedEvent.group;
+    $scope.eventResponsible=$scope.editedEvent.responsible;
+    $scope.eventType=$scope.editedEvent.type;
     var startTime=$scope.event.startTime.split(':');
     var endTime=$scope.event.endTime.split(':');
 
@@ -365,23 +392,19 @@ function eventEditDialogController($scope, $mdDialog,$timeout, $q, Data, Schedul
 
     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) { return { selectedHour: hour }; });
     $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) { return { selectedMinute: minute }; });
+    $scope.types=['lesson','meeting','extra'].map(function (type) { return { selectedType: type }; });
     $scope.places=['HTP','BBF'].map(function (place) { return { selectedPlace: place }; });
     $scope.groups=['16101','16102','16103'].map(function (group) { return { selectedGroup: group }; });
 
     $scope.people = loadAll();
     $scope.querySearch = querySearch;
-    $scope.selectedItem='Orxan Farmanli';
+    $scope.selectedItem=$scope.eventResponsible;
 
     function querySearch (query) {
-        var results = query ? $scope.people.filter( createFilterFor(query) ) : $scope.people,
-            deferred;
-        if (true) {
-            deferred = $q.defer();
-            $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
-            return deferred.promise;
-        } else {
-            return results;
-        }
+        var results = query ? $scope.people.filter( createFilterFor(query) ) : $scope.people, deferred;
+        deferred = $q.defer();
+        $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+        return deferred.promise;
     }
     function createFilterFor(query) {
         var lowercaseQuery = angular.lowercase(query);
@@ -407,7 +430,35 @@ function eventEditDialogController($scope, $mdDialog,$timeout, $q, Data, Schedul
             };
         });
     }
+    $scope.submit=function(){
+        var startTime=moment($scope.startHour+':'+$scope.startMinute,'HH:mm');
+        var endTime=moment($scope.endHour+':'+$scope.endMinute,'HH:mm');
 
+        if(startTime.isBefore(endTime)){
+            $scope.editedEvent.startTime=startTime.format('HH:mm');
+            $scope.editedEvent.endTime=endTime.format('HH:mm');
+            $scope.editedEvent.title=$scope.eventTitle;
+            $scope.editedEvent.description=$scope.eventContent;
+            $scope.editedEvent.place=$scope.eventPlace;
+            $scope.editedEvent.group=$scope.eventGroup;
+            if($scope.selectedItem != undefined ){
+                $scope.editedEvent.responsible=$scope.selectedItem.display;
+            }
+            else{
+                $scope.editedEvent.responsible='No one';
+            }
+
+            $scope.editedEvent.type=$scope.eventType;
+
+            ScheduleService.events[tempKey]=$scope.editedEvent;
+
+            $mdDialog.hide();
+            $mdToast.show($mdToast.simple().textContent('Event updated'));
+        }else {
+            $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+        }
+
+    };
     $scope.hide = function() {
         $mdDialog.hide();
     };
@@ -417,7 +468,6 @@ function eventEditDialogController($scope, $mdDialog,$timeout, $q, Data, Schedul
 }
 
 function DialogController($scope, $mdDialog) {
-
     $scope.hide = function() {
         $mdDialog.hide();
     };
@@ -430,4 +480,12 @@ function DialogController($scope, $mdDialog) {
     $scope.fileUpload=function(){
 
     }
+}
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+    }
+    return copy;
 }
