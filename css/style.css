@@ -14,6 +14,27 @@
 }
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
+#dropDownProfile{
+    display: none;
+    padding: 0;
+    background-color: white;
+    color: black;
+    border-radius: 4px;
+    position: absolute;
+    top: 54px;
+    right: 5px
+}
+.change-profile-image-text{
+    width: 100%;
+    height:25px;
+    position: absolute;
+    bottom: 0;
+    background-color: #000000;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.7
+}
 .fixed-calendar {
     width: 340px;
     height: 340px;
@@ -26,10 +47,12 @@
 .md-calendar-day-header{
     width: 340px;
 }
+
 .fixed-calendar .md-virtual-repeat-scroller {
     width: 340px !important;
     height: 308px;
 }
+
 .schedule-day-label{
     width:100%;
     padding: 5px;
@@ -37,6 +60,7 @@
     color: #fff;
     text-align: center
 }
+
 .schedule-item{
     width: 90%;
     background: #de5a8c;
@@ -46,15 +70,19 @@
     border-radius: 4px;
     margin: 2px auto;
 }
+
 .schedule-item span{
     display: block;
 }
+
 .schedule-item h5{
     margin: 5px auto;
 }
+
 .meeting{
     background: #9ad5f8;
 }
+
 .extra{
     background: #3d5972;
 }

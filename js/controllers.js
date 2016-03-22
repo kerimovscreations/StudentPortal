@@ -13,7 +13,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name=ProfileService.user_name;
-        $scope.user_surname=ProfileService.user_surname;
+        $scope.user_email=ProfileService.user_email;
         $scope.user_type=ProfileService.user_type;
 
         var dropDownMenu=document.getElementById('dropDownProfile');
@@ -26,7 +26,13 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             }
         };
 
+        $scope.changeProfileImage= function () {
 
+        };
+
+        $scope.editProfile=function(){
+
+        };
 
         function debounce(func, wait, context) {
             var timer;
@@ -56,40 +62,31 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('SectionListController', function($scope, $location) {
-        $scope.sections = [
-            { name: 'Announcement' },
-            { name: 'Conversation'},
-            { name: 'Notification'},
-            { name: 'People'},
-            { name: 'Schedule'},
-            { name: 'Assignments'},
-            { name: 'Grading'}
-        ];
+    .controller('SectionListController', function($scope, $location,SectionsService) {
+        $scope.sections = SectionsService.sections;
 
-        $scope.current_section=$scope.sections[0].name;
+        $scope.current_section='';
 
         $scope.selectSection=function(text){
             $scope.current_section=text;
             $location.path('/'+text.toLowerCase());
-            console.log($scope.current_section);
         };
 
     })
     .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia, ProfileService, AnnouncementService, Data){
         $scope.user_name=ProfileService.user_name;
-        $scope.user_surname=ProfileService.user_surname;
         $scope.announcement_post='';
         $scope.notify_checkbox=false;
         $scope.announcements=AnnouncementService.announcements;
         $scope.groups = AnnouncementService.groups;
         $scope.selected = [];
+
         $scope.post=function (){
             if($scope.announcement_post){
                 $scope.date = new Date();
                 $scope.announcements.splice(0, 0,
                     {
-                        user: $scope.user_name+" "+$scope.user_surname,
+                        user: $scope.user_name,
                         date: $scope.date,
                         text: $scope.announcement_post,
                         groups: $scope.selected
@@ -98,6 +95,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                 $scope.selected = [];
             }
         };
+
         $scope.deletePost=function(index){
             var confirm = $mdDialog.confirm()
                 .title('Are you sure to delete announcement?')
@@ -130,46 +128,10 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             if (idx > -1) list.splice(idx, 1);
             else list.push(item);
         };
+
         $scope.exists = function (item, list) {
             return list.indexOf(item) > -1;
         };
-    })
-    .controller('SyllabusController',function($scope, $mdDialog, $mdMedia, ProfileService){
-        $scope.source=[];
-        $scope.$watch('source',function(){
-            $scope.source=ProfileService.syllabuses;
-        });
-        $scope.status = '  ';
-        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
-        $scope.addSyllabus=function(){
-            var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-            $mdDialog.show({
-                    controller: DialogController,
-                    templateUrl: 'dialogs/addSyllabusDialog.html',
-                    parent: angular.element(document.body),
-                    clickOutsideToClose:true,
-                    fullscreen: useFullScreen
-                })
-                .then(function(answer) {
-                    $scope.status = 'You said the information was "' + answer + '".';
-                }, function() {
-                    $scope.status = 'You cancelled the dialog.';
-                });
-            $scope.$watch(function() {
-                return $mdMedia('xs') || $mdMedia('sm');
-            }, function(wantsFullScreen) {
-                $scope.customFullscreen = (wantsFullScreen === true);
-            });
-        };
-        $scope.deleteSyllabus=function(index){
-            var warn = $mdDialog.confirm()
-                .title('Are you sure to delete'+$scope.source[index].name+' file?')
-                .ok('Delete')
-                .cancel('Cancel');
-            $mdDialog.show(warn).then(function() {
-                $scope.source.splice(index,1);
-            });
-        }
     })
     .controller('PeopleController',function($scope, ProfileService, $mdDialog){
         $scope.people=ProfileService.people;
@@ -241,11 +203,11 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             return moment(elem).format("dddd, MMMM DD YYYY");
         };
 
-        $scope.display=function(elem){
+        $scope.displayMoment=function(elem){
             return elem.format("dddd, MMMM DD YYYY");
         };
 
-        $scope.parseDateEvent=function(date,type){
+        $scope.parseDateFormatted=function(date, type){
             return moment(date,type).format('MM-DD-YYYY');
         };
 
@@ -467,20 +429,6 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
     };
 }
 
-function DialogController($scope, $mdDialog) {
-    $scope.hide = function() {
-        $mdDialog.hide();
-    };
-    $scope.cancel = function() {
-        $mdDialog.cancel();
-    };
-    $scope.upload = function(answer) {
-        $mdDialog.hide(answer);
-    };
-    $scope.fileUpload=function(){
-
-    }
-}
 function clone(obj) {
     if (null == obj || "object" != typeof obj) return obj;
     var copy = obj.constructor();

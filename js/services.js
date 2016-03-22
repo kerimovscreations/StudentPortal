@@ -1,8 +1,4 @@
 teacherDashboardApp.service('ProfileService',function(){
-        this.user_name='Karim';
-        this.user_surname='Karimov';
-        this.user_type='Teacher';
-
         this.people=[
             {name: 'Karim Karimov', email:'kerimovscreations@gmail.com', type: 'student', id: 1},
             {name: 'Farida Samedzadeh', email:'farida.s@code.edu.az', type: 'student', id: 2},
@@ -19,9 +15,21 @@ teacherDashboardApp.service('ProfileService',function(){
             {name: 'Farid Osmanli', email:'farid.o@code.edu.az', type: 'mentor', id: 13}
         ];
 
-        this.syllabuses=[];
-        this.materials=[];
+        this.user_name=this.people[0].name;
+        this.user_email=this.people[0].email;
+        this.user_type=this.people[0].type;
 
+    })
+    .service('SectionsService',function(){
+        this.sections=[
+            { name: 'Announcement' },
+            { name: 'Conversation'},
+            { name: 'Notification'},
+            { name: 'People'},
+            { name: 'Schedule'},
+            { name: 'Assignments'},
+            { name: 'Grading'}
+        ];
     })
     .service('AnnouncementService',function(){
         this.announcements=[];
