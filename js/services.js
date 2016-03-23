@@ -1,4 +1,11 @@
 teacherDashboardApp.service('ProfileService',function(){
+        this.user_name='Karim Karimov';
+        this.user_email='kerimovscreations@gmail.com';
+        this.user_type='teacher';
+        this.user_id=1;
+
+    })
+    .service('PeopleService',function(){
         this.people=[
             {name: 'Karim Karimov', email:'kerimovscreations@gmail.com', type: 'student', id: 1},
             {name: 'Farida Samedzadeh', email:'farida.s@code.edu.az', type: 'student', id: 2},
@@ -14,10 +21,8 @@ teacherDashboardApp.service('ProfileService',function(){
             {name: 'Aysel Akhundova', email:'aysel.a@code.edu.az', type: 'student', id: 12},
             {name: 'Farid Osmanli', email:'farid.o@code.edu.az', type: 'mentor', id: 13}
         ];
-
-        this.user_name=this.people[0].name;
-        this.user_email=this.people[0].email;
-        this.user_type=this.people[0].type;
+        this.groups=['16101','16102','16103'];
+        this.places=['HTP','BBF'];
 
     })
     .service('SectionsService',function(){
@@ -37,15 +42,16 @@ teacherDashboardApp.service('ProfileService',function(){
     })
     .service('ScheduleService',function(){
         this.events=[
-            {title: 'PHP Lesson 4', type: 'lesson', description: "1.Classes, 2.methods", date:'03-21-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Karim Karimov', responsible: "Samir Karimov",id: 1},
-            {title: 'Extra', type: 'extra', description: "Extra", date:'03-21-2016', startTime: '09:00', endTime: '10:30', group: 'HTP16102', place:'HTP', status: false, owner: 'Ulvi Aslanov', responsible: "Orxan Farmanli",id: 2},
-            {title: 'PHP Lesson 5', type: 'lesson', description: "1.Classes, 2.methods", date:'03-22-2016', startTime: '12:00', endTime: '14:30', group: '16102', place:'HTP', status: false, owner: 'Rahim Rahimli', responsible: "Farid Osmanli",id: 3},
-            {title: 'PHP Meeting', type: 'meeting', description: "Meeting", date:'03-21-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Samir Karimov', responsible: "Karim Karimov",id: 4},
-            {title: 'Extra Meeting', type: 'extra', description: "Extra", date:'03-23-2016', startTime: '09:00', endTime: '10:30', group: '16102', place:'HTP', status: false, owner: 'Ulvi Aslanov', responsible: "Eldar Alaskarov",id: 5},
-            {title: 'PHP Lesson 5', type: 'lesson', description: "1.Classes, 2.methods", date:'03-24-2016', startTime: '12:00', endTime: '14:30', group: '16102', place:'HTP', status: false, owner: 'Rahim Rahimli', responsible: "Orxan Farmanli",id: 6},
-            {title: 'PHP OOP', type: 'meeting', description: "Meeting", date:'03-25-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Samir Karimov', responsible: "Rahim Rahimli",id: 7},
-            {title: 'Extra Meeting', type: 'extra', description: "Extra", date:'03-26-2016', startTime: '09:00', endTime: '10:30', group: '16102', place:'HTP', status: false, owner: 'Ulvi Aslanov', responsible: "Samir Karimov",id: 8},
-            {title: 'PHP Lesson 6', type: 'lesson', description: "1.Classes, 2.methods", date:'03-22-2016', startTime: '12:00', endTime: '14:30', group: '16102', place:'HTP', status: false, owner: 'Rahim Rahimli', responsible: "Eldar Alaskarov",id: 9},
-            {title: 'PHP OOP', type: 'meeting', description: "Meeting", date:'03-25-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Samir Karimov', responsible: "Karim Karimov",id: 10}
+            {title: 'PHP Lesson 4', type: 'lesson', description: "1.Classes, 2.methods", date:'03-28-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Karim Karimov', responsible: "Samir Karimov", accept: true, id: 1},
+            {title: 'Extra', type: 'extra', description: "Extra", date:'03-28-2016', startTime: '09:00', endTime: '10:30', group: '', place:'HTP', status: false, owner: 'Ulvi Aslanov', responsible: "Orxan Farmanli", accept: false, id: 2},
+            {title: 'PHP Lesson 5', type: 'lesson', description: "1.Classes, 2.methods", date:'03-26-2016', startTime: '12:00', endTime: '14:30', group: '16102', place:'HTP', status: false, owner: 'Karim Karimov', responsible: "Farid Osmanli", accept: true, id: 3},
+            {title: 'PHP Meeting', type: 'meeting', description: "Meeting", date:'03-29-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Samir Karimov', responsible: "Karim Karimov", accept: true, id: 4},
+            {title: 'Extra Meeting', type: 'extra', description: "Extra", date:'03-23-2016', startTime: '09:00', endTime: '10:30', group: '', place:'HTP', status: false, owner: 'Ulvi Aslanov', responsible: "Eldar Alaskarov", accept: false, id: 5},
+            {title: 'PHP Lesson 5', type: 'lesson', description: "1.Classes, 2.methods", date:'03-24-2016', startTime: '12:00', endTime: '14:30', group: '16102', place:'HTP', status: false, owner: 'Rahim Rahimli', responsible: "Orxan Farmanli", accept: true, id: 6},
+            {title: 'PHP OOP', type: 'meeting', description: "Meeting", date:'03-25-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Samir Karimov', responsible: "Rahim Rahimli", accept: true, id: 7},
+            {title: 'Extra Meeting', type: 'extra', description: "Extra", date:'03-26-2016', startTime: '09:00', endTime: '10:30', group: '', place:'HTP', status: false, owner: 'Ulvi Aslanov', responsible: "Samir Karimov", accept: true, id: 8},
+            {title: 'PHP Lesson 6', type: 'lesson', description: "1.Classes, 2.methods", date:'03-27-2016', startTime: '12:00', endTime: '14:30', group: '16102', place:'HTP', status: false, owner: 'Rahim Rahimli', responsible: "Eldar Alaskarov", accept: true, id: 9},
+            {title: 'PHP OOP', type: 'meeting', description: "Meeting", date:'03-25-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Samir Karimov', responsible: "Karim Karimov", accept: true, id: 10}
         ];
+        this.eventTypes=['lesson','extra','meeting'];
     })

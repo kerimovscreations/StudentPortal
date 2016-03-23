@@ -133,8 +133,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             return list.indexOf(item) > -1;
         };
     })
-    .controller('PeopleController',function($scope, ProfileService, $mdDialog){
-        $scope.people=ProfileService.people;
+    .controller('PeopleController',function($scope, PeopleService, $mdDialog){
+        $scope.people=PeopleService.people;
         $scope.students=[];
         $scope.teachers=[];
         $scope.mentors=[];
@@ -175,7 +175,9 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                     .ok('Got it'));
         }
     })
-    .controller('ScheduleController',function($scope, $mdDialog, $mdMedia, ScheduleService, Data){
+    .controller('ScheduleController',function($scope, $mdDialog, $mdMedia,ProfileService, ScheduleService, Data){
+        $scope.Data=Data;
+        $scope.user_type=ProfileService.user_type;
         $scope.events=ScheduleService.events;
 
         $scope.dt=new Date();
@@ -184,6 +186,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             $scope.dt = new Date();
         };
 
+        //To add next 6 days to week schedule
         $scope.$watch('dt',function(){
             $scope.temp1=moment($scope.dt).add(1, 'd');
             $scope.temp2=moment($scope.dt).add(2, 'd');
@@ -193,6 +196,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             $scope.temp6=moment($scope.dt).add(6, 'd');
         });
 
+        //FAB button to add new event
         $scope.isOpen = false;
         $scope.demo = {
             isOpen: false,
@@ -217,21 +221,19 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 
-        $scope.Data=Data;
+
+
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+
         $scope.eventSelect=function(id){
             $scope.Data.EventId=id;
-            var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+
             $mdDialog.show({
                     controller: eventSelectDialogController,
                     templateUrl: 'dialogs/eventSelectDialog.html',
                     parent: angular.element(document.body),
                     clickOutsideToClose:true,
                     fullscreen: useFullScreen
-                })
-                .then(function(answer) {
-                    $scope.status = 'You said the information was "' + answer + '".';
-                }, function() {
-                    $scope.status = 'You cancelled the dialog.';
                 });
             $scope.$watch(function() {
                 return $mdMedia('xs') || $mdMedia('sm');
@@ -240,12 +242,30 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         };
 
+        $scope.eventAdd=function(type){
+            $scope.Data.AddEventType=type;
+
+            $mdDialog.show({
+                    controller: eventAddDialogController,
+                    templateUrl: 'dialogs/eventAddDialog.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose:true,
+                    fullscreen: useFullScreen
+                });
+            $scope.$watch(function() {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function(wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
+            });
+        }
+
     })
     .controller('AssignmentsController',function(){})
     .controller('GradingController',function(){})
     .controller('ConversationController',function(){})
     .controller('NotificationController',function(){})
 
+//announcement eidr dialog controller
 function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToast,Data){
     var index=Data.PostId;
     $scope.tempAnnouncement=AnnouncementService.announcements[index];
@@ -276,8 +296,11 @@ function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToas
     };
 }
 
-function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data, ScheduleService){
+// Schedule dialog controllers
+
+function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data,ProfileService, ScheduleService){
     var id=Data.EventId;
+    $scope.user_name=ProfileService.user_name;
     var tempKey='';
     for(key in ScheduleService.events)
         if(id==ScheduleService.events[key].id){
@@ -294,11 +317,6 @@ function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data, 
                 parent: angular.element(document.body),
                 clickOutsideToClose:true,
                 fullscreen: useFullScreen
-            })
-            .then(function(answer) {
-                $scope.status = 'You said the information was "' + answer + '".';
-            }, function() {
-                $scope.status = 'You cancelled the dialog.';
             });
         $scope.$watch(function() {
             return $mdMedia('xs') || $mdMedia('sm');
@@ -329,9 +347,12 @@ function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data, 
         $mdDialog.cancel();
     };
 }
-function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ScheduleService, ProfileService){
+
+function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ScheduleService, PeopleService){
     var id=Data.EventId;
-    var tempKey='';
+    var tempKey=null;
+    $scope.event=null;
+
     for(key in ScheduleService.events)
         if(id==ScheduleService.events[key].id){
             $scope.event=ScheduleService.events[key];
@@ -376,7 +397,7 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
     }
 
     function loadAll() {
-        $scope.tempPeople=ProfileService.people;
+        $scope.tempPeople=PeopleService.people;
         var stuffName=[];
         var stuffId=[];
         for(key in $scope.tempPeople){
@@ -402,7 +423,8 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
             $scope.editedEvent.title=$scope.eventTitle;
             $scope.editedEvent.description=$scope.eventContent;
             $scope.editedEvent.place=$scope.eventPlace;
-            $scope.editedEvent.group=$scope.eventGroup;
+            $scope.editedEvent.type=$scope.eventType;
+            $scope.editedEvent.group=$scope.eventType=='extra' ? '' : $scope.eventGroup ;
             if($scope.selectedItem != undefined ){
                 $scope.editedEvent.responsible=$scope.selectedItem.display;
             }
@@ -410,12 +432,125 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
                 $scope.editedEvent.responsible='No one';
             }
 
-            $scope.editedEvent.type=$scope.eventType;
+
 
             ScheduleService.events[tempKey]=$scope.editedEvent;
 
             $mdDialog.hide();
             $mdToast.show($mdToast.simple().textContent('Event updated'));
+        }else {
+            $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+        }
+
+    };
+    $scope.hide = function() {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+        $mdDialog.cancel();
+    };
+}
+
+function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ProfileService, ScheduleService, PeopleService){
+    var type=Data.AddEventType;
+
+    $scope.minDate=new Date();
+    $scope.minDate.setDate((new Date()).getDate()-1);
+
+    $scope.eventTitle='';
+    $scope.eventContent='';
+    $scope.eventPlace='';
+    $scope.eventGroup='';
+    $scope.eventResponsible='';
+    $scope.eventType=type;
+    $scope.eventDate=new Date();
+
+    $scope.startHour='';
+    $scope.startMinute='';
+    $scope.endHour='';
+    $scope.endMinute='';
+
+    //options to selectors
+    $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) { return { selectedHour: hour }; });
+    $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) { return { selectedMinute: minute }; });
+    $scope.types=['lesson','meeting'].map(function (type) { return { selectedType: type }; });
+    $scope.places=PeopleService.places.map(function (place) { return { selectedPlace: place }; });
+    $scope.groups=PeopleService.groups.map(function (group) { return { selectedGroup: group }; });
+
+    $scope.people = loadAll();
+    $scope.querySearch = querySearch;
+    $scope.selectedItem=$scope.eventResponsible;
+
+    function querySearch (query) {
+        var results = query ? $scope.people.filter( createFilterFor(query) ) : $scope.people, deferred;
+        deferred = $q.defer();
+        $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+        return deferred.promise;
+    }
+    function createFilterFor(query) {
+        var lowercaseQuery = angular.lowercase(query);
+        return function filterFn(person) {
+            return (person.value.indexOf(lowercaseQuery) === 0);
+        };
+    }
+
+    function loadAll() {
+        $scope.tempPeople=PeopleService.people;
+        var stuffName=[];
+        var stuffId=[];
+        for(key in $scope.tempPeople){
+            if($scope.eventType=='extra'){
+                if($scope.tempPeople[key].type=='mentor'){
+                    stuffName.push($scope.tempPeople[key].name);
+                    stuffId.push($scope.tempPeople[key].id);
+                }
+            }else{
+                if($scope.tempPeople[key].type=='mentor' || $scope.tempPeople[key].type=='teacher'){
+                    stuffName.push($scope.tempPeople[key].name);
+                    stuffId.push($scope.tempPeople[key].id);
+                }
+            }
+
+        }
+        return stuffName.map( function (name) {
+            return {
+                value: name.toLowerCase(),
+                display: name
+            };
+        });
+    }
+    $scope.submit=function(){
+        $scope.editedEvent={};
+
+        var startTime=moment($scope.startHour+':'+$scope.startMinute,'HH:mm');
+        var endTime=moment($scope.endHour+':'+$scope.endMinute,'HH:mm');
+
+        if(startTime.isBefore(endTime)){
+            $scope.editedEvent.startTime=startTime.format('HH:mm');
+            $scope.editedEvent.endTime=endTime.format('HH:mm');
+            $scope.editedEvent.title=$scope.eventTitle;
+            $scope.editedEvent.description=$scope.eventContent;
+            $scope.editedEvent.place=$scope.eventPlace;
+            $scope.editedEvent.group=$scope.eventGroup;
+            $scope.editedEvent.type=$scope.eventType;
+            $scope.editedEvent.date=moment($scope.eventDate).format("MM-DD-YYYY");
+            $scope.editedEvent.status=false;
+            $scope.editedEvent.owner=ProfileService.user_name;
+            $scope.editedEvent.accept= type != 'extra';
+            $scope.editedEvent.id=15;
+            if($scope.selectedItem != undefined ){
+                $scope.editedEvent.responsible=$scope.selectedItem.display;
+            }
+            else{
+                $scope.editedEvent.responsible='No one';
+            }
+
+            ScheduleService.events.push($scope.editedEvent);
+
+            console.log(ScheduleService.events);
+
+            $mdDialog.hide();
+            $mdToast.show($mdToast.simple().textContent('Event Added'));
         }else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));
         }

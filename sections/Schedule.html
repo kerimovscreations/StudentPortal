@@ -1,14 +1,23 @@
 <md-content ng-controller="ScheduleController" layout="column" layout-align="space-between none">
     <div layout="row">
+
+        <!--Left side calendar-->
+
         <div layout="column" class="md-padding">
             <md-calendar ng-model="dt" class="fixed-calendar"></md-calendar>
             <md-button class="md-raised md-accent" ng-click="today()" style="margin-top: 20px">Today</md-button>
         </div>
+
+        <!--Schedule of week -->
+
         <div flex layout="row" class="md-padding" >
+
+            <!--Every column stands for one day -->
+
             <div flex layout="column">
                 <label class="schedule-day-label">{{displayDate(dt)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == parseDate(dt)" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == parseDate(dt)" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra', 'wait': !event.accept}" ng-click="eventSelect(event.id)">
                         <h5>{{event.title}}</h5>
                         <span>{{event.startTime}}-{{event.endTime}}</span>
                     </div>
@@ -18,7 +27,7 @@
             <div flex layout="column">
                 <label class="schedule-day-label">{{displayMoment(temp1)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp1.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp1.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra', 'wait': !event.accept}" ng-click="eventSelect(event.id)">
                         <h5>{{event.title}}</h5>
                         <span>{{event.startTime}}-{{event.endTime}}</span>
                     </div>
@@ -28,7 +37,7 @@
             <div flex layout="column">
                 <label class="schedule-day-label">{{displayMoment(temp2)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp2.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp2.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra', 'wait': !event.accept}" ng-click="eventSelect(event.id)">
                         <h5>{{event.title}}</h5>
                         <span>{{event.startTime}}-{{event.endTime}}</span>
                     </div>
@@ -38,7 +47,7 @@
             <div flex layout="column">
                 <label class="schedule-day-label">{{displayMoment(temp3)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp3.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp3.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra', 'wait': !event.accept}" ng-click="eventSelect(event.id)">
                         <h5>{{event.title}}</h5>
                         <span>{{event.startTime}}-{{event.endTime}}</span>
                     </div>
@@ -48,7 +57,7 @@
             <div flex layout="column">
                 <label class="schedule-day-label">{{displayMoment(temp4)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp4.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp4.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra', 'wait': !event.accept}" ng-click="eventSelect(event.id)">
                         <h5>{{event.title}}</h5>
                         <span>{{event.startTime}}-{{event.endTime}}</span>
                     </div>
@@ -58,7 +67,7 @@
             <div flex layout="column">
                 <label class="schedule-day-label">{{displayMoment(temp5)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp5.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp5.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra', 'wait': !event.accept}" ng-click="eventSelect(event.id)">
                         <h5>{{event.title}}</h5>
                         <span>{{event.startTime}}-{{event.endTime}}</span>
                     </div>
@@ -68,7 +77,7 @@
             <div flex layout="column">
                 <label class="schedule-day-label">{{displayMoment(temp6)}}</label>
                 <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp6.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra'}" ng-click="eventSelect(event.id)">
+                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'startTime'" ng-if="parseDateFormatted(event.date, 'MM-DD-YYYY') == temp6.format('MM-DD-YYYY')" ng-class="{'meeting': event.type=='meeting', 'extra': event.type=='extra', 'wait': !event.accept}" ng-click="eventSelect(event.id)">
                         <h5>{{event.title}}</h5>
                         <span>{{event.startTime}}-{{event.endTime}}</span>
                     </div>
@@ -76,8 +85,18 @@
             </div>
         </div>
     </div>
-    <div style="height: 100px"></div>
+    <div layout="row" layout-align="end center">
+        <div class="schedule-agenda extra">Extra</div>
+        <div class="schedule-agenda">Lesson</div>
+        <div class="schedule-agenda meeting">Meeting</div>
+        <div style="width: 20px"></div>
+    </div>
+    <div style="height: 100px"></div> <!--Empty space for dividing event add button and schedule-->
+
+    <!--Event add float button -->
+
     <md-fab-toolbar md-open="isOpen" count="demo.count" md-direction="left" style=" width: 100%; position: absolute; bottom: 0; right: 0">
+        <!--Main button-->
         <md-fab-trigger class="align-with-text" style="margin-right: 20px">
             <md-button aria-label="add" class="md-fab md-primary">
                 <md-icon md-svg-src="svg/ic_add_white_36px.svg"></md-icon>
@@ -85,10 +104,12 @@
         </md-fab-trigger>
         <md-toolbar>
             <md-fab-actions class="md-toolbar-tools">
-                <md-button aria-label="lesson" class="md-icon-button">
+                <!--Event add button-->
+                <md-button ng-if="user_type!='student'" aria-label="lesson" class="md-icon-button" ng-click="eventAdd('event')">
                     <md-icon md-svg-src="svg/ic_assignment_white_36px.svg"></md-icon>
                 </md-button>
-                <md-button aria-label="meeting" class="md-icon-button">
+                <!--Meeting add button-->
+                <md-button ng-if="user_type!='mentor'" aria-label="meeting" class="md-icon-button" ng-click="eventAdd('extra')">
                     <md-icon md-svg-src="svg/ic_people_white_36px.svg"></md-icon>
                 </md-button>
             </md-fab-actions>
