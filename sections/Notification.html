@@ -1,10 +1,13 @@
 <md-content ng-controller="NotificationController">
     <p class="md-subhead md-margin" style="color: #909090">Recent Notifications</p>
-    <md-list>
+    <md-list >
         <md-divider></md-divider>
         <md-list-item ng-repeat="notification in notifications" class="secondary-button-padding" ng-click="selectNotification($index,notification.source)">
+            <md-icon ng-if="notification.type=='announcement'" md-svg-icon="svg/ic_announcement_black_24px.svg"></md-icon>
+            <md-icon ng-if="notification.type=='extra'" md-svg-icon="svg/ic_people_black_24px.svg"></md-icon>
             <p class="md-title">{{notification.text}}</p>
-            <md-button ng-if="notification.type=='extra'" class="md-secondary" ng-click="selectNotificationButton(notification.source)">More Info</md-button>
+            <span class="flex"></span>
+            <span class="md-body-1">{{showDateFromNow(notification.date)}}</span>
             <md-divider></md-divider>
         </md-list-item>
     </md-list>

@@ -28,9 +28,9 @@
                     <span ng-if="event.group!=''" style="width: 80px"></span>
                     <span ng-if="event.group!=''" class="md-subhead">Group: {{event.group}}</span>
                 </div>
-                <md-switch ng-disabled="user_name!=event.owner" ng-model="event.status" aria-label="Event status" style="color: #ce226d; font-size: 20px" ng-click="eventStatusChange(!event.status)">
-                    {{showStatus(event.status)}}
-                </md-switch>
+                <span ng-disabled="user_name!=event.owner" aria-label="Event status" style="color: #ce226d; font-size: 20px" >
+                    {{event.status | capitalize}}
+                </span>
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row" layout-align="none center ">

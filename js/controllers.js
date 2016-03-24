@@ -97,7 +97,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                     {
                         text: 'New announcement from '+$scope.user_name,
                         source: id,
-                        type: 'announcement'
+                        type: 'announcement',
+                        date: $scope.date
                     });
                 $scope.announcement_post='';
                 $scope.selected = [];
@@ -230,8 +231,6 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 
-
-
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
         $scope.eventSelect=function(id){
@@ -272,38 +271,35 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     .controller('AssignmentsController',function(){})
     .controller('GradingController',function(){})
     .controller('ConversationController',function(){})
-    .controller('NotificationController',function($scope, $mdDialog, $mdMedia, NotificationService, AnnouncementService, ScheduleService, Data){
+    .controller('NotificationController',function($scope, $mdDialog, $mdMedia, NotificationService, Data){
         $scope.notifications=NotificationService.notifications;
 
-        $scope.selectNotification=function(index,id){
-            var tempDialog;
-            if($scope.notifications[index].type=='announcement'){
-                for(key in AnnouncementService.announcements){
-                    if(AnnouncementService.announcements[key].id==id){
-                        tempDialog=AnnouncementService.announcements[key];
-                    }
-                }
-                $mdDialog.show(
-                    $mdDialog.alert()
-                        .title('Announcement'+'('+tempDialog.date+')')
-                        .textContent(tempDialog.user+': '+tempDialog.text)
-                        .ok('OK'));
-            }else{
-                for(key in ScheduleService.events){
-                    if(ScheduleService.events[key].id==id){
-                        tempDialog=ScheduleService.events[key].id;
-                    }
-                }
-                $mdDialog.confirm()
-                    .title('Would you like to accept extra lesson for '+tempDialog.owner+'?')
-                    .textContent('Time: '+tempDialog.date+' ('+tempDialog.startTime+'-'+tempDialog.endTime+")\nContent: "+tempDialog.description).targetEvent(ev)
-                    .ok('Accept')
-                    .cancel('Discard');
-            }
-        }
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+
+        $scope.selectNotification=function(index,source){
+            Data.NotificationSource=source;
+            Data.NotificationType=$scope.notifications[index].type;
+            $mdDialog.show({
+                controller: notificationSelectDialogController,
+                templateUrl: 'dialogs/notificationSelectDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose:true,
+                fullscreen: useFullScreen
+            });
+            $scope.$watch(function() {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function(wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
+            });
+        };
+
+        $scope.showDateFromNow= function (date) {
+            return moment(date,"MM-DD-YYYY, HH:mm").fromNow()
+        };
     })
 
-//announcement edit dialog controller
+// Announcement edit dialog controller
+
 function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToast,Data){
     var index=Data.PostId;
     $scope.tempAnnouncement=AnnouncementService.announcements[index];
@@ -363,12 +359,6 @@ function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data,P
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    $scope.showStatus=function(check){
-        return check ? 'Done' : 'Not Done';
-    };
-    $scope.eventStatusChange=function(check){
-        $mdToast.show($mdToast.simple().textContent('Status changed to '+$scope.showStatus(check)));
-    };
     $scope.delete=function(){
         var confirm = $mdDialog.confirm()
             .title('Are you sure to delete event?')
@@ -404,6 +394,7 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
     $scope.eventGroup=$scope.editedEvent.group;
     $scope.eventResponsible=$scope.editedEvent.responsible;
     $scope.eventType=$scope.editedEvent.type;
+
     var startTime=$scope.event.startTime.split(':');
     var endTime=$scope.event.endTime.split(':');
 
@@ -471,8 +462,6 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
                 $scope.editedEvent.responsible='No one';
             }
 
-
-
             ScheduleService.events[tempKey]=$scope.editedEvent;
 
             $mdDialog.hide();
@@ -490,7 +479,7 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
     };
 }
 
-function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ProfileService, ScheduleService, PeopleService){
+function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ProfileService, ScheduleService, NotificationService, PeopleService){
     var type=Data.AddEventType;
 
     $scope.minDate=new Date();
@@ -573,9 +562,8 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
             $scope.editedEvent.group=$scope.eventGroup;
             $scope.editedEvent.type=$scope.eventType;
             $scope.editedEvent.date=moment($scope.eventDate).format("MM-DD-YYYY");
-            $scope.editedEvent.status=false;
             $scope.editedEvent.owner=ProfileService.user_name;
-            $scope.editedEvent.accept= type != 'extra';
+            $scope.editedEvent.status= type == 'extra' ? 'requested':'not done';
             $scope.editedEvent.id=15;
             if($scope.selectedItem != undefined ){
                 $scope.editedEvent.responsible=$scope.selectedItem.display;
@@ -585,6 +573,13 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
             }
 
             ScheduleService.events.push($scope.editedEvent);
+
+            NotificationService.notifications.splice(0, 0, {
+                text: 'New request from '+ProfileService.user_name,
+                source: 15,
+                type: 'extra',
+                date: moment().format('MM-DD-YYYY, HH:mm')
+            });
 
             console.log(ScheduleService.events);
 
@@ -603,6 +598,114 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
     };
 }
 
+// Notification dialog controllers
+
+function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data, AnnouncementService, ScheduleService){
+    var source=Data.NotificationSource;
+    $scope.notificationType=Data.NotificationType;
+
+
+    $scope.editMode=false;
+
+    var tempKey='';
+
+    if($scope.notificationType == 'announcement') {
+        for (key in AnnouncementService.announcements) {
+            if (source == AnnouncementService.announcements[key].id) {
+                $scope.notification = AnnouncementService.announcements[key];
+            }
+        }
+        $scope.notificationDate = $scope.notification.date;
+        $scope.notificationTitle = 'Announcement';
+        $scope.notificationText = $scope.notification.text;
+        $scope.notificationOwner = $scope.notification.user;
+    }
+    else {
+        for (key in ScheduleService.events) {
+            if (source == ScheduleService.events[key].id) {
+                $scope.notification = ScheduleService.events[key];
+                tempKey = key;
+            }
+        }
+        $scope.notificationDate = $scope.notification.date;
+        $scope.notificationTitle = 'Extra lesson';
+        $scope.notificationContent = $scope.notification.description;
+        $scope.notificationOwner = $scope.notification.owner;
+        $scope.notificationStatus = $scope.notification.status;
+
+
+
+    }
+
+
+    $scope.showStatus=function(check){
+        if(check=='requested')
+            return 'Not answered yet';
+        else if(check=='accepted')
+            return 'Accepted';
+        else
+            return 'Rejected';
+    };
+
+    $scope.eventAccept=function(bool){
+        if(bool){
+            ScheduleService.events[tempKey].status='accepted';
+            $mdDialog.hide();
+            $mdToast.show($mdToast.simple().textContent('Extra lesson request accepted'));
+        }else{
+            ScheduleService.events[tempKey].status='rejected';
+            $mdDialog.hide();
+            var toast = $mdToast.simple()
+                .textContent('Extra lesson request rejected')
+                .action('UNDO')
+                .highlightAction(true);
+            $mdToast.show(toast).then(function(response) {
+                if ( response == 'ok' ) {
+                    ScheduleService.events[tempKey].status='requested';
+                }
+            });
+        }
+    };
+
+    $scope.edit=function(){
+        $scope.editMode=true;
+    };
+    //var startTime = $scope.notification.startTime.split(':');
+    //var endTime = $scope.notification.endTime.split(':');
+
+    $scope.startHour = '10';
+    $scope.startMinute = '00';
+    $scope.endHour = '12';
+    $scope.endMinute = '15';
+
+
+    $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {return {selectedHour: hour};});
+    $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) {return {selectedMinute: minute};});
+
+
+    $scope.update=function(){
+        var startTime=moment($scope.startHour+':'+$scope.startMinute,'HH:mm');
+        var endTime=moment($scope.endHour+':'+$scope.endMinute,'HH:mm');
+
+        if(startTime.isBefore(endTime)){
+            $scope.notification.startTime=startTime.format('HH:mm');
+            $scope.notification.endTime=endTime.format('HH:mm');
+
+            ScheduleService.events[tempKey]=$scope.notification;
+
+            $mdDialog.hide();
+            $mdToast.show($mdToast.simple().textContent('Request updated'));
+        }else {
+            $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+        }
+    };
+    $scope.hide = function() {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+        $mdDialog.cancel();
+    };
+}
 //useful functions
 function clone(obj) {
     if (null == obj || "object" != typeof obj) return obj;
