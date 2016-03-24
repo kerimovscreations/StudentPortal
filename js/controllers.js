@@ -73,26 +73,35 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia, ProfileService, AnnouncementService, Data){
+    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia, ProfileService, AnnouncementService, NotificationService, Data){
         $scope.user_name=ProfileService.user_name;
         $scope.announcement_post='';
         $scope.notify_checkbox=false;
         $scope.announcements=AnnouncementService.announcements;
         $scope.groups = AnnouncementService.groups;
         $scope.selected = [];
-
+        $scope.notifications=NotificationService.notifications;
+        var id=0;
         $scope.post=function (){
             if($scope.announcement_post){
-                $scope.date = new Date();
+                $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
                 $scope.announcements.splice(0, 0,
                     {
                         user: $scope.user_name,
                         date: $scope.date,
                         text: $scope.announcement_post,
-                        groups: $scope.selected
+                        groups: $scope.selected,
+                        id: id
+                    });
+                $scope.notifications.splice(0, 0,
+                    {
+                        text: 'New announcement from '+$scope.user_name,
+                        source: id,
+                        type: 'announcement'
                     });
                 $scope.announcement_post='';
                 $scope.selected = [];
+                id++;
             }
         };
 
@@ -229,12 +238,12 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             $scope.Data.EventId=id;
 
             $mdDialog.show({
-                    controller: eventSelectDialogController,
-                    templateUrl: 'dialogs/eventSelectDialog.html',
-                    parent: angular.element(document.body),
-                    clickOutsideToClose:true,
-                    fullscreen: useFullScreen
-                });
+                controller: eventSelectDialogController,
+                templateUrl: 'dialogs/eventSelectDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose:true,
+                fullscreen: useFullScreen
+            });
             $scope.$watch(function() {
                 return $mdMedia('xs') || $mdMedia('sm');
             }, function(wantsFullScreen) {
@@ -246,12 +255,12 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             $scope.Data.AddEventType=type;
 
             $mdDialog.show({
-                    controller: eventAddDialogController,
-                    templateUrl: 'dialogs/eventAddDialog.html',
-                    parent: angular.element(document.body),
-                    clickOutsideToClose:true,
-                    fullscreen: useFullScreen
-                });
+                controller: eventAddDialogController,
+                templateUrl: 'dialogs/eventAddDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose:true,
+                fullscreen: useFullScreen
+            });
             $scope.$watch(function() {
                 return $mdMedia('xs') || $mdMedia('sm');
             }, function(wantsFullScreen) {
@@ -263,9 +272,38 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     .controller('AssignmentsController',function(){})
     .controller('GradingController',function(){})
     .controller('ConversationController',function(){})
-    .controller('NotificationController',function(){})
+    .controller('NotificationController',function($scope, $mdDialog, $mdMedia, NotificationService, AnnouncementService, ScheduleService, Data){
+        $scope.notifications=NotificationService.notifications;
 
-//announcement eidr dialog controller
+        $scope.selectNotification=function(index,id){
+            var tempDialog;
+            if($scope.notifications[index].type=='announcement'){
+                for(key in AnnouncementService.announcements){
+                    if(AnnouncementService.announcements[key].id==id){
+                        tempDialog=AnnouncementService.announcements[key];
+                    }
+                }
+                $mdDialog.show(
+                    $mdDialog.alert()
+                        .title('Announcement'+'('+tempDialog.date+')')
+                        .textContent(tempDialog.user+': '+tempDialog.text)
+                        .ok('OK'));
+            }else{
+                for(key in ScheduleService.events){
+                    if(ScheduleService.events[key].id==id){
+                        tempDialog=ScheduleService.events[key].id;
+                    }
+                }
+                $mdDialog.confirm()
+                    .title('Would you like to accept extra lesson for '+tempDialog.owner+'?')
+                    .textContent('Time: '+tempDialog.date+' ('+tempDialog.startTime+'-'+tempDialog.endTime+")\nContent: "+tempDialog.description).targetEvent(ev)
+                    .ok('Accept')
+                    .cancel('Discard');
+            }
+        }
+    })
+
+//announcement edit dialog controller
 function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToast,Data){
     var index=Data.PostId;
     $scope.tempAnnouncement=AnnouncementService.announcements[index];
@@ -301,6 +339,7 @@ function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToas
 function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data,ProfileService, ScheduleService){
     var id=Data.EventId;
     $scope.user_name=ProfileService.user_name;
+    $scope.user_type=ProfileService.user_type;
     var tempKey='';
     for(key in ScheduleService.events)
         if(id==ScheduleService.events[key].id){
@@ -312,12 +351,12 @@ function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data,P
     $scope.edit=function(){
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
         $mdDialog.show({
-                controller: eventEditDialogController,
-                templateUrl: 'dialogs/eventEditDialog.html',
-                parent: angular.element(document.body),
-                clickOutsideToClose:true,
-                fullscreen: useFullScreen
-            });
+            controller: eventEditDialogController,
+            templateUrl: 'dialogs/eventEditDialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:true,
+            fullscreen: useFullScreen
+        });
         $scope.$watch(function() {
             return $mdMedia('xs') || $mdMedia('sm');
         }, function(wantsFullScreen) {
@@ -564,6 +603,7 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
     };
 }
 
+//useful functions
 function clone(obj) {
     if (null == obj || "object" != typeof obj) return obj;
     var copy = obj.constructor();

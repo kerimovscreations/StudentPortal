@@ -1,0 +1,11 @@
+<md-content ng-controller="NotificationController">
+    <p class="md-subhead md-margin" style="color: #909090">Recent Notifications</p>
+    <md-list>
+        <md-divider></md-divider>
+        <md-list-item ng-repeat="notification in notifications" class="secondary-button-padding" ng-click="selectNotification($index,notification.source)">
+            <p class="md-title">{{notification.text}}</p>
+            <md-button ng-if="notification.type=='extra'" class="md-secondary" ng-click="selectNotificationButton(notification.source)">More Info</md-button>
+            <md-divider></md-divider>
+        </md-list-item>
+    </md-list>
+</md-content>

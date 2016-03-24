@@ -38,7 +38,7 @@ teacherDashboardApp.service('ProfileService',function(){
     })
     .service('AnnouncementService',function(){
         this.announcements=[];
-        this.groups=['HTP16102','HTP16101','BBF16201','BBF16202'];
+        this.groups=['16102','16101','16201','16202'];
     })
     .service('ScheduleService',function(){
         this.events=[
@@ -54,4 +54,7 @@ teacherDashboardApp.service('ProfileService',function(){
             {title: 'PHP OOP', type: 'meeting', description: "Meeting", date:'03-25-2016', startTime: '18:30', endTime: '21:30', group: '16102', place:'HTP', status: false, owner: 'Samir Karimov', responsible: "Karim Karimov", accept: true, id: 10}
         ];
         this.eventTypes=['lesson','extra','meeting'];
+    })
+    .service('NotificationService',function(){
+        this.notifications=[]
     })
