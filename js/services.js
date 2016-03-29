@@ -64,3 +64,8 @@ teacherDashboardApp.service('ProfileService',function(){
             {text: 'New request from Rahim Rahimli', source: 8, type: 'extra', date: '03-24-2016, 10:00'}
         ]
     })
+    .service('AssignmentService',function(){
+        this.assignments=[
+            {text: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', deadline: '04-12-2016, 23:59'}
+        ]
+    })

@@ -268,7 +268,9 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('AssignmentsController',function(){})
+    .controller('AssignmentsController',function($scope, $mdDialog, $mdMedia, Data){
+
+    })
     .controller('GradingController',function(){})
     .controller('ConversationController',function(){})
     .controller('NotificationController',function($scope, $mdDialog, $mdMedia, NotificationService, Data){

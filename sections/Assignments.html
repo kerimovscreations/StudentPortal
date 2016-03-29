@@ -1,1 +1,14 @@
-<md-content class="md-padding"></md-content>
+<md-content class="md-padding" style="text-align: center; background: red" layout-fill>
+
+
+    <div ng-hide>
+        <md-list-item ng-repeat="syllabus in source" ng-click="openSyllabus($index)" class="noright" layout="row">
+            <md-icon md-svg-icon="svg/ic_insert_drive_file_black_24px.svg"></md-icon>
+            <p class="md-title">{{ syllabus.name }}</p>
+            <p class="md-title">{{ syllabus.size }} kb</p>
+            <md-icon md-svg-icon="svg/ic_delete_black_24px.svg" ng-click="deleteSyllabus($index)"></md-icon>
+            <md-divider></md-divider>
+        </md-list-item>
+    </div>
+
+</md-content>
