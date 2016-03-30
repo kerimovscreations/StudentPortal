@@ -143,8 +143,12 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             return list.indexOf(item) > -1;
         };
     })
-    .controller('PeopleController',function($scope, PeopleService, $mdDialog){
-        $scope.people=PeopleService.people;
+    .controller('PeopleController',function(PeopleService, $scope, $mdDialog){
+        var myDataPromise = PeopleService.getPeople();
+        myDataPromise.then(function(result) {
+            $scope.people = result;
+            console.log($scope.people);
+        });
         console.log($scope.people);
         $scope.students=[];
         $scope.teachers=[];
