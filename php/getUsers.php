@@ -10,8 +10,12 @@
 $connection = new mysqli("localhost","root","qwerty123","codeacademy");
 $query  = "SELECT * FROM users";
 $data = $connection->query($query);
+$users = array();
+
 while($row = $data->fetch_assoc())
-{
-    $arr = json_encode($row);
-    echo $arr;
-}
+    array_push($users,$row);
+
+
+header('Content-Type: application/json');
+$result = json_encode($users);
+print $result;

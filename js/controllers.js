@@ -145,6 +145,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     })
     .controller('PeopleController',function($scope, PeopleService, $mdDialog){
         $scope.people=PeopleService.people;
+        console.log($scope.people);
         $scope.students=[];
         $scope.teachers=[];
         $scope.mentors=[];
@@ -157,7 +158,6 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                 $scope.mentors.push($scope.people[elem]);
             }
         };
-        console.log($scope.students);
         $scope.selectedIndex=0;
 
         $scope.showContact=function(id){

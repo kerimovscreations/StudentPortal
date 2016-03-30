@@ -3,7 +3,7 @@
         <md-tab id="student_tab" >
             <md-tab-label>Students</md-tab-label>
             <md-tab-body>
-                <md-list-item ng-repeat="contact in students" ng-click="showContact(contact.id)" class="noright">
+                <md-list-item ng-repeat="contact in students track by $index" ng-click="showContact(contact.id)" class="noright">
                     <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                     <p class="md-title">{{ contact.name }}</p>
                     <p flex></p>
@@ -16,7 +16,7 @@
         <md-tab id="mentor_tab">
             <md-tab-label class="custom-tab">Mentors</md-tab-label>
             <md-tab-body>
-                <md-list-item ng-repeat="contact in mentors" ng-click="showContact(contact.id)" class="noright">
+                <md-list-item ng-repeat="contact in mentors track by $index" ng-click="showContact(contact.id)" class="noright">
                     <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                     <p class="md-title">{{ contact.name }}</p>
                     <p flex></p>
@@ -29,7 +29,7 @@
         <md-tab id="teacher_tab">
             <md-tab-label class="custom-tab">Teachers</md-tab-label>
             <md-tab-body>
-                <md-list-item ng-repeat="contact in teachers" ng-click="showContact(contact.id)" class="noright">
+                <md-list-item ng-repeat="contact in teachers track by $index" ng-click="showContact(contact.id)" class="noright">
                     <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                     <p class="md-title">{{ contact.name }}</p>
                     <p flex></p>

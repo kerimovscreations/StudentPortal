@@ -6,12 +6,16 @@ teacherDashboardApp.service('ProfileService',function(){
 
     })
     .service('PeopleService',function($http){
-        this.people = [];
+        this.people=null;
 
-        $http.get('php/getUsers.php')
-            .then(function(res){
-                this.people = res.data;
-            });
+        this.getPeople= function () {
+            $http.get('php/getUsers.php')
+                .success(function(data) {
+                    console.log(data);
+                    this.people = data;
+                });
+        }
+
 
 
         this.groups=['16101','16102','16103'];
@@ -48,6 +52,7 @@ teacherDashboardApp.service('ProfileService',function(){
             {title: 'Extra Meeting', type: 'extra', description: "Extra", date:'03-26-2016', startTime: '09:00', endTime: '10:30', group: '', place:'HTP', status: 'requested', owner: 'Ulvi Aslanov', responsible: "Orxan Farmanli", id: 11}
 
         ];
+        console.log(this.events);
         this.eventTypes=['lesson','extra','meeting'];
     })
     .service('NotificationService',function(){
