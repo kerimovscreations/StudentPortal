@@ -5,25 +5,17 @@ teacherDashboardApp.service('ProfileService',function(){
         this.user_id=1;
 
     })
-    .service('PeopleService',function(){
-        this.people=[
-            {name: 'Karim Karimov', email:'kerimovscreations@gmail.com', type: 'student', group:'16101', id: 1},
-            {name: 'Farida Samedzadeh', email:'farida.s@code.edu.az', type: 'student', group:'16101', id: 2},
-            {name: 'Rahim Rahimli', email:'rahim.r@code.edu.az', type: 'student', group:'16101', id: 3},
-            {name: 'Vahab Valiyev', email:'vahab.v@code.edu.az', type: 'student', group:'16101', id: 4},
-            {name: 'Orxan Farmanli', email:'orxan.f@code.edu.az', type: 'mentor', group:'', id: 5},
-            {name: 'Jeyhun Aliyev', email:'jeyhun.a@code.edu.az', type: 'student', group:'16101', id: 6},
-            {name: 'Samir Karimov', email:'samir@code.edu.az', type: 'teacher', group:'', id: 7},
-            {name: 'Eldar Alaskarov', email:'eldar@code.edu.az', type: 'teacher', group:'', id: 8},
-            {name: 'Samra Osmanova', email:'samra.o@code.edu.az', type: 'student', group:'16101', id: 9},
-            {name: 'Ideal Nasirzade', email:'ideal.n@code.edu.az', type: 'student', group:'16101', id: 10},
-            {name: 'Ulvi Aslanov', email:'ulvi@code.edu.az', type: 'teacher', group:'', id: 11},
-            {name: 'Aysel Akhundova', email:'aysel.a@code.edu.az', type: 'student', group:'16101', id: 12},
-            {name: 'Farid Osmanli', email:'farid.o@code.edu.az', type: 'mentor', group:'', id: 13}
-        ];
+    .service('PeopleService',function($http){
+        this.people = [];
+
+        $http.get('php/getUsers.php')
+            .then(function(res){
+                this.people = res.data;
+            });
+
+
         this.groups=['16101','16102','16103'];
         this.places=['HTP','BBF'];
-
     })
     .service('SectionsService',function(){
         this.sections=[
@@ -67,5 +59,5 @@ teacherDashboardApp.service('ProfileService',function(){
     .service('AssignmentService',function(){
         this.assignments=[
             {text: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', deadline: '04-12-2016, 23:59'}
-        ]
+        ];
     })
