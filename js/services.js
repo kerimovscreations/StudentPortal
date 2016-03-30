@@ -16,6 +16,7 @@ teacherDashboardApp.service('ProfileService', function () {
         };
 
         return { getPeople: getPeople };
+
     })
     .service('SectionsService', function () {
         this.sections = [

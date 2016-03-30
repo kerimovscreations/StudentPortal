@@ -147,6 +147,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         var myDataPromise = PeopleService.getPeople();
         myDataPromise.then(function(result) {
             $scope.people = result;
+
             console.log($scope.people);
         });
         console.log($scope.people);

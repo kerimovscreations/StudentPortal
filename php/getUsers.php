@@ -6,6 +6,7 @@
  * test file to get
  * Time: 18:29
  */
+
 $json = file_get_contents('php://input');
 $input_array = json_decode($json);
 $type = $input_array['type'];
