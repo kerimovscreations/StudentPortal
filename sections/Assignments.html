@@ -1,14 +1,59 @@
-<md-content class="md-padding" style="text-align: center; background: red" layout-fill>
+<md-content class="md-padding" layout-fill>
+
+    <div layout="column">
+        <md-button class="md-fab md-primary md-hue-1" aria-label="Add Assignment" ng-click="addAssignment()">
+            <md-tooltip md-direction="right">
+                Add Assignment
+            </md-tooltip>
+            <md-icon md-svg-src="svg/ic_add_white_36px.svg"></md-icon>
+        </md-button>
+        <p ng-if="assignments.length==0" style="text-align: center; color: #606060" class="md-subhead">It seems, there is not any assignment.</p>
+    </div>
+
+    <div ng-if="assignments.length!=0">
+        <md-card ng-repeat="assignment in assignments track by $index" class="md-whiteframe-2dp">
+            <md-card-header>
+                <md-card-avatar>
+                    <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" md-menu-origin style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
+                </md-card-avatar>
+                <md-card-header-text layout="row" layout-align="none center">
+                    <div layout="column">
+                        <span class="md-title" style="font-size: 18px">{{assignment.owner}}</span>
+                        <span class="md-subhead" style="font-size: 14px">{{assignment.date}}</span>
+                    </div>
+
+                    <div flex></div>
+
+                    <div layout="column">
+                        <span class="md-title">Deadline: {{showDeadlineFromNow(assignment.deadline)}}</span>
+                        <span class="md-subhead">{{showDeadline(assignment.deadline)}}</span>
+                    </div>
+
+                    <md-checkbox ng-model="status" aria-label="Checkbox 1" class="md-title" style="font-size: 18px;padding: 0;margin: 0 0 0 15px;">
+                        {{ showStatus(status) }}
+                    </md-checkbox>
+                </md-card-header-text>
+            </md-card-header>
+            <md-card-content>
+                <p class="md-title">
+                    {{assignment.text}}
+                </p>
+
+                <div layout="row" layout-align="end center">
+                    <span style="padding: 10px; cursor:pointer">
+                        <md-tooltip md-direction="top">
+                            Reply
+                        </md-tooltip>
+                        <md-icon float-right md-svg-icon="svg/ic_reply_black_36px.svg" aria-label="Reply" ></md-icon>
+                    </span>
+                </div>
 
 
-    <div ng-hide>
-        <md-list-item ng-repeat="syllabus in source" ng-click="openSyllabus($index)" class="noright" layout="row">
-            <md-icon md-svg-icon="svg/ic_insert_drive_file_black_24px.svg"></md-icon>
-            <p class="md-title">{{ syllabus.name }}</p>
-            <p class="md-title">{{ syllabus.size }} kb</p>
-            <md-icon md-svg-icon="svg/ic_delete_black_24px.svg" ng-click="deleteSyllabus($index)"></md-icon>
-            <md-divider></md-divider>
-        </md-list-item>
+
+
+            </md-card-content>
+        </md-card>
+
     </div>
 
 </md-content>

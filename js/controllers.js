@@ -273,8 +273,41 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('AssignmentsController',function($scope, $mdDialog, $mdMedia, Data){
+    .controller('AssignmentsController',function($scope, $mdDialog, $mdMedia, AssignmentService, Data){
+        $scope.assignments=AssignmentService.assignments;
+        $scope.status=false;
 
+        $scope.showDeadlineFromNow= function (date) {
+            return moment(date,"MM-DD-YYYY, HH:mm").fromNow()
+        };
+        $scope.showDeadline=function(date){
+            return moment(date,"MM-DD-YYYY, HH:mm").format("dddd, MMMM Do YYYY, HH:MM");
+        };
+        $scope.showStatus=function(bool){
+            if(bool)
+                return "Done";
+            else
+                return "Now Done";
+        };
+
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+
+        $scope.addAssignment=function(){
+            $mdDialog.show({
+                controller: assignmentAddDialogController,
+                templateUrl: 'dialogs/assignmentAddDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose:true,
+                fullscreen: useFullScreen
+            });
+            $scope.$watch(function() {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function(wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
+            });
+        }
     })
     .controller('GradingController',function(){})
     .controller('ConversationController',function(){})
@@ -712,6 +745,12 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data, A
     $scope.cancel = function() {
         $mdDialog.cancel();
     };
+}
+
+// Assignment add dialog controller
+
+function assignmentAddDialogController($scope, $mdDialog, $mdToast, Data, AnnouncementService, ScheduleService){
+
 }
 //useful functions
 function clone(obj) {
