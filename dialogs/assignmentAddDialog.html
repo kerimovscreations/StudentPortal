@@ -1,8 +1,8 @@
-<md-dialog aria-label="Edit Event" ng-cloak>
+<md-dialog aria-label="Add Assignment" ng-cloak>
     <md-content>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3>Add event</h3>
+                <h3>Add assignment</h3>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="hide()">
                     <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
@@ -13,43 +13,16 @@
             <form>
                 <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 650px">
                     <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%">
-                        <label>Title of event</label>
-                        <textarea class="md-headline" style="color: #6a72a2" ng-model="eventTitle" md-select-on-focus></textarea>
+                        <label>Title of assignment</label>
+                        <textarea class="md-headline" style="color: #6a72a2" ng-model="assignmentTitle" md-select-on-focus></textarea>
                     </md-input-container>
                     <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%;color: #3d3d45">
-                        <label>Content</label>
-                        <textarea class="md-subhead" ng-model="eventContent" md-select-on-focus></textarea>
+                        <label>Rules</label>
+                        <textarea class="md-subhead" ng-model="assignmentRule" md-select-on-focus></textarea>
                     </md-input-container>
                     <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
-                        <span class="md-body-1">Event date: </span>
-                        <md-datepicker class="md-body-1" ng-model="eventDate" md-placeholder="Enter date" md-min-date="minDate"></md-datepicker>
-                        <div style="width: 20px"></div>
-                        <md-input-container>
-                            <label>Place</label>
-                            <md-select ng-model="eventPlace" class="md-subhead" >
-                                <md-option ng-repeat="place in places" value="{{place.selectedPlace}}">
-                                    {{place.selectedPlace}}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                        <div style="width: 10px"></div>
-                        <md-input-container ng-if="eventType!='extra'">
-                            <label>Group</label>
-                            <md-select ng-model="eventGroup" class="md-subhead">
-                                <md-option ng-repeat="group in groups" value="{{group.selectedGroup}}">
-                                    {{group.selectedGroup}}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                        <div style="width: 10px"></div>
-                        <md-input-container ng-if="eventType!='extra'">
-                            <label>Type</label>
-                            <md-select ng-model="eventType" class="md-subhead">
-                                <md-option ng-repeat="type in types" value="{{type.selectedType}}">
-                                    {{type.selectedType}}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
+                        <span class="md-body-1">Assignment start time: </span>
+                        <md-datepicker class="md-body-1" ng-model="assignmentStartDate" md-placeholder="Enter date" md-min-date="minDate"></md-datepicker>
                     </div>
 
                     <div layout="column" layout-align="none center" style="color: #b0cf79">

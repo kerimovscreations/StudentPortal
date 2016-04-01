@@ -749,8 +749,82 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data, A
 
 // Assignment add dialog controller
 
-function assignmentAddDialogController($scope, $mdDialog, $mdToast, Data, AnnouncementService, ScheduleService){
+function assignmentAddDialogController($scope, $mdDialog, $mdToast, Data, PeopleService, AnnouncementService, ScheduleService){
 
+
+
+    $scope.minDate=new Date();
+    $scope.minDate.setDate((new Date()).getDate()-1);
+
+    $scope.eventTitle='';
+    $scope.eventContent='';
+    $scope.eventPlace='';
+    $scope.eventGroup='';
+    $scope.eventResponsible='';
+    $scope.eventType=type;
+    $scope.eventDate=new Date();
+
+    $scope.startHour='';
+    $scope.startMinute='';
+    $scope.endHour='';
+    $scope.endMinute='';
+
+    //options to selectors
+    $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) { return { selectedHour: hour }; });
+    $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) { return { selectedMinute: minute }; });
+    $scope.types=['lesson','meeting'].map(function (type) { return { selectedType: type }; });
+    $scope.groups=PeopleService.groups.map(function (group) { return { selectedGroup: group }; });
+
+
+    $scope.submit=function(){
+        $scope.editedEvent={};
+
+        var startTime=moment($scope.startHour+':'+$scope.startMinute,'HH:mm');
+        var endTime=moment($scope.endHour+':'+$scope.endMinute,'HH:mm');
+
+        if(startTime.isBefore(endTime)){
+            $scope.editedEvent.startTime=startTime.format('HH:mm');
+            $scope.editedEvent.endTime=endTime.format('HH:mm');
+            $scope.editedEvent.title=$scope.eventTitle;
+            $scope.editedEvent.description=$scope.eventContent;
+            $scope.editedEvent.place=$scope.eventPlace;
+            $scope.editedEvent.group=$scope.eventGroup;
+            $scope.editedEvent.type=$scope.eventType;
+            $scope.editedEvent.date=moment($scope.eventDate).format("MM-DD-YYYY");
+            $scope.editedEvent.owner=ProfileService.user_name;
+            $scope.editedEvent.status= type == 'extra' ? 'requested':'not done';
+            $scope.editedEvent.id=15;
+            if($scope.selectedItem != undefined ){
+                $scope.editedEvent.responsible=$scope.selectedItem.display;
+            }
+            else{
+                $scope.editedEvent.responsible='No one';
+            }
+
+            ScheduleService.events.push($scope.editedEvent);
+
+            NotificationService.notifications.splice(0, 0, {
+                text: 'New request from '+ProfileService.user_name,
+                source: 15,
+                type: 'extra',
+                date: moment().format('MM-DD-YYYY, HH:mm')
+            });
+
+            console.log(ScheduleService.events);
+
+            $mdDialog.hide();
+            $mdToast.show($mdToast.simple().textContent('Event Added'));
+        }else {
+            $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+        }
+
+    };
+    $scope.hide = function() {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+        $mdDialog.cancel();
+    };
 }
 //useful functions
 function clone(obj) {
