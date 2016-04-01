@@ -196,6 +196,7 @@ teacherDashboardApp.service('ProfileService', function () {
                 responsible: "Orxan Farmanli",
                 id: 11
             }
+
         ];
         console.log(this.events);
         this.eventTypes = ['lesson', 'extra', 'meeting'];
