@@ -1,3 +1,18 @@
+registerApp.controller('RegisterController',function($scope){
+    $scope.user = {
+        email: '',
+        firstName: '',
+        lastName: '',
+        password: '',
+        passwordConfirm: '',
+        number: '',
+        birthDate: ''
+    };
+    $scope.submit=function(){
+
+    }
+});
+
 loginApp.controller('LoginController', function($scope){
 
     $scope.user_type='Student';

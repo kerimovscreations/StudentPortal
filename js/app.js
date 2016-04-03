@@ -1,3 +1,10 @@
+var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages']);
+registerApp.config(function($mdThemingProvider){
+    $mdThemingProvider.definePalette('customTheme', customTheme);
+    $mdThemingProvider.theme('default')
+        .primaryPalette('customTheme')
+});
+
 var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource']);
 loginApp.config(function($mdThemingProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);

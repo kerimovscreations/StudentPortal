@@ -11,10 +11,10 @@
 </head>
 <body>
 
-<md-content class="md-padding" ng-controller="LoginController">
-    <form ng-submit="submit()" ng-cloak>
-        <md-card style="width: 360px; margin: 0 auto">
-            <img ng-src="{{ 'images/login_background.jpg' }}" class="md-card-image" alt="Washed Out" style="width: 360px;height: 200px;">
+<md-content class="md-padding" ng-controller="LoginController" layout-fill>
+    <form ng-submit="submit()" layout-fill layout="row" layout-align="center center">
+        <md-card style="max-width: 400px">
+            <img ng-src="{{ 'images/login_background.jpg' }}" class="md-card-image" alt="Washed Out" style="width: 100%">
             <md-card-title>
                 <md-card-title-text>
                     <span class="md-headline">Login</span>
@@ -32,7 +32,7 @@
                 <md-radio-group ng-model="user_type" layout="row" layout-align="center none">
                     <md-radio-button value="Student">Student</md-radio-button>
                     <md-radio-button value="Teacher"> Teacher </md-radio-button>
-                    <md-radio-button value="Administration">Administration</md-radio-button>
+                    <md-radio-button value="Administration">Mentor</md-radio-button>
                 </md-radio-group>
             </md-card-content>
             <md-card-actions layout="row" layout-align="center none">
@@ -50,6 +50,8 @@
 <script src="js/angular-aria.min.js"></script>
 <script src="js/angular-material.min.js"></script>
 <script src="js/app.js"></script>
+<script src="js/factories.js"></script>
+<script src="js/filters.js"></script>
 <script src="js/directives.js"></script>
 <script src="js/services.js"></script>
 <script src="js/controllers.js"></script>
