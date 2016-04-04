@@ -8,8 +8,9 @@ registerApp.controller('RegisterController',function($scope){
         number: '',
         birthDate: ''
     };
-    $scope.submit=function(){
 
+    $scope.submit=function(){
+        console.log($scope.user.birthDate)
     }
 });
 
