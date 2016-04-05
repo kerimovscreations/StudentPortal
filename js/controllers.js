@@ -15,9 +15,7 @@ registerApp.controller('RegisterController',function($scope){
 });
 
 loginApp.controller('LoginController', function($scope){
-
     $scope.user_type='Student';
-
     $scope.submit=function(){
         console.log($scope.user_email);
         console.log($scope.user_password);
