@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appLogin">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/angular-material.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<md-content class="md-padding" ng-controller="LoginController" layout-fill>
+    <form ng-submit="submit()" layout-fill layout="row" layout-align="center center">
+        <md-card style="max-width: 400px">
+            <img ng-src="{{ 'images/login_background.jpg' }}" class="md-card-image" alt="Washed Out" style="width: 100%">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Login</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="column">
+                <md-input-container>
+                    <label>Email</label>
+                    <input ng-model="user_email" type="email">
+                </md-input-container>
+                <md-input-container>
+                    <label>Password</label>
+                    <input ng-model="user_password" type="password">
+                </md-input-container>
+                <md-radio-group ng-model="user_type" layout="row" layout-align="center none">
+                    <md-radio-button value="Student">Student</md-radio-button>
+                    <md-radio-button value="Teacher"> Teacher </md-radio-button>
+                    <md-radio-button value="Administration">Mentor</md-radio-button>
+                </md-radio-group>
+            </md-card-content>
+            <md-card-actions layout="row" layout-align="center none">
+                <input type="submit" class="md-button md-raised md-primary" value="Login">
+            </md-card-actions>
+        </md-card>
+    </form>
+</md-content>
+
+<script src="../js/angular.js"></script>
+<script src="../js/angular-route.min.js"></script>
+<script src="../js/angular-resource.min.js"></script>
+<script src="../js/angular-animate.min.js"></script>
+<script src="../js/ui-bootstrap-tpls-1.2.4.min.js"></script>
+<script src="../js/angular-aria.min.js"></script>
+<script src="../js/angular-material.min.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/factories.js"></script>
+<script src="../js/filters.js"></script>
+<script src="../js/directives.js"></script>
+<script src="../js/services.js"></script>
+<script src="../js/controllers.js"></script>
+<script src="../js/routes.js"></script>
+</body>
+</html>
