@@ -8,10 +8,6 @@ registerApp.controller('RegisterController',function($scope){
         number: '',
         birthDate: ''
     };
-
-    $scope.submit=function(){
-        console.log($scope.user.birthDate)
-    }
 });
 
 loginApp.controller('LoginController', function($scope){

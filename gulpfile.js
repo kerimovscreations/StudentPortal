@@ -12,5 +12,28 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    mix.sass('app.scss');
+    mix.sass('app.scss', 'resources/assets/css');
+
+    mix.styles([
+        '/app.css',
+        '../../css/angular-material.min.css',
+        '../../css/style.css'
+    ]);
+
+    mix.scripts([
+        "../../js/angular.js",
+        "../../js/angular-route.min.js",
+        "../../js/angular-resource.min.js",
+        "../../js/angular-messages.min.js",
+        "../../js/angular-animate.min.js",
+        "../../js/angular-aria.min.js",
+        "../../js/angular-material.min.js",
+        "../../js/app.js",
+        "../../js/factories.js",
+        "../../js/filters.js",
+        "../../js/directives.js",
+        "../../js/services.js",
+        "../../js/controllers.js",
+        "../../js/routes.js"
+    ]);
 });
