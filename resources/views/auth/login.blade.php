@@ -1,66 +1,49 @@
 @extends('layouts.app')
 
+@section('appName', 'appLogin')
+
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
-                        {!! csrf_field() !!}
-
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label class="col-md-4 control-label">E-Mail Address</label>
-
-                            <div class="col-md-6">
-                                <input type="email" class="form-control" name="email" value="{{ old('email') }}">
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
+    <md-content class="md-padding" ng-controller="LoginController" layout-fill>
+        <form layout-fill layout="row" layout-align="center center" role="form" method="POST" action="{{ url('/login') }}">
+            {!! csrf_field() !!}
+            <md-card style="max-width: 400px">
+                <img ng-src="{{ 'https://www.gse.harvard.edu/sites/default/files//content-images/400x200--UK-rise-of-data.png' }}" class="md-card-image" alt="Washed Out" style="width: 100%">
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline">Login</span>
+                    </md-card-title-text>
+                </md-card-title>
+                <md-card-content layout="column">
+                    <md-input-container>
+                        <label>Email</label>
+                        <input ng-model="user_email" type="email" name="email">
+                        @if ($errors->has('email'))
+                            <span class="help-block">
                                         <strong>{{ $errors->first('email') }}</strong>
                                     </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input type="password" class="form-control" name="password">
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
+                        @endif
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Password</label>
+                        <input ng-model="user_password" type="password" name="password">
+                        @if ($errors->has('password'))
+                            <span class="help-block">
                                         <strong>{{ $errors->first('password') }}</strong>
                                     </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="remember"> Remember Me
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-sign-in"></i>Login
-                                </button>
-
-                                <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                        @endif
+                    </md-input-container>
+                    <md-radio-group ng-model="user_type" layout="row" layout-align="center none">
+                        <md-radio-button value="Student">Student</md-radio-button>
+                        <md-radio-button value="Teacher"> Teacher </md-radio-button>
+                        <md-radio-button value="Administration">Mentor</md-radio-button>
+                    </md-radio-group>
+                </md-card-content>
+                <md-card-actions layout="row" layout-align="center none" style="padding: 5px;">
+                    <a class="md-button" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
+                    <div flex></div>
+                    <input type="submit" class="md-button md-raised md-primary" value="Login">
+                </md-card-actions>
+            </md-card>
+        </form>
+    </md-content>
 @endsection

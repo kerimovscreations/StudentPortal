@@ -21,6 +21,8 @@ loginApp.controller('LoginController', function($scope){
 
 teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $mdSidenav, ProfileService){
 
+
+
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name=ProfileService.user_name;
         $scope.user_email=ProfileService.user_email;

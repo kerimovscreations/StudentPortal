@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
-@section('appName')
-    appRegister
-@stop
+@section('appName','appRegister')
 
 
 @section('content')

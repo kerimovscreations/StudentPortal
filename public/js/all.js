@@ -30640,11 +30640,13 @@ loginApp.config(function($mdThemingProvider){
 });
 
 
-var teacherDashboardApp=angular.module('appTeacherDashboard',['ui.bootstrap','ngMaterial','ngRoute','ngResource']);
-teacherDashboardApp.config(function($mdThemingProvider){
+var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource']);
+teacherDashboardApp.config(function($mdThemingProvider,$interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
-        .primaryPalette('customTheme')
+        .primaryPalette('customTheme');
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
 });
 
 var customTheme={
@@ -31029,6 +31031,8 @@ loginApp.controller('LoginController', function($scope){
 });
 
 teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $mdSidenav, ProfileService){
+
+
 
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name=ProfileService.user_name;
