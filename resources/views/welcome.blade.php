@@ -1,17 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
-                <div class="panel-heading">Welcome</div>
-
-                <div class="panel-body">
-                    Your Application's Landing Page.
-                </div>
-            </div>
-        </div>
+    <div style="width: 100%; height: 100%; font-family: Lato; font-size: 40px; font-weight: 100; text-align: center;">
+        <a href="{{ url('/login') }}" style="text-decoration: none">Login</a>
+        <br/>
+        <a href="{{ url('/register') }}"  style="text-decoration: none">Register</a>
     </div>
-</div>
 @endsection

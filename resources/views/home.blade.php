@@ -26,7 +26,7 @@
                         <md-content>
                             <div layout="row" style="padding: 10px">
                                 <div ng-click="changeProfileImage()" style="width:100px; height: 100px; border-radius: 100%;position: relative; overflow: hidden; margin: 5px">
-                                    <img  class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:100%; height: 100%"/>
+                                    <img  class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:100px; height: 100px;"/>
                                     <div class="change-profile-image-text">Change</div>
                                 </div>
 
@@ -39,7 +39,7 @@
                             </div>
                             <md-divider></md-divider>
                             <div layout="row" style=" padding: 5px; background-color: #F0F0F0" layout-align="end">
-                                <md-button style="color: #A6A6A6">Sign Out</md-button>
+                                <md-button style="color: #A6A6A6"><a href="{{ url('/logout') }}">Sign Out</a></md-button>
                             </div>
                         </md-content>
                     </div>

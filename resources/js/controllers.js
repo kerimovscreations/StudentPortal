@@ -38,10 +38,16 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             }
         };
 
+        /**
+         * Show the image change pop-up menu
+         */
         $scope.changeProfileImage= function () {
 
         };
 
+        /**
+         * Redirect to the edit profile page
+         */
         $scope.editProfile=function(){
 
         };

@@ -14,16 +14,16 @@
 
 Route::group(['middleware' => 'web'], function () {
     Route::get('/', function () {
-        return view('welcome');
+        if(Auth::guest())
+            return view('welcome');
+        else
+            return redirect('/home');
     });
 
     Route::auth();
 
     Route::get('/home', 'HomeController@index');
 
-    Route::post('/show', function($data){
-        return $data;
-    });
 });
 
 
