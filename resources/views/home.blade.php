@@ -31,15 +31,15 @@
                                 </div>
 
                                 <div layout="column" style="margin: 10px 15px;" layout-align="start start" >
-                                    <h4 style="margin: 0">{{ Auth::user()->name }}</h4>
-                                    <span style="margin-top: 0px; font-size: 12px; color:#909090">{{ Auth::user()->email }}</span>
-                                    <span style="margin-top: 0px; font-size: 16px; color: #299af5; font-weight: bold">STUDENT</span>
+                                    <h4 style="margin: 0">{{ Auth::guard(session('userType'))->user()->name }}</h4>
+                                    <span style="margin-top: 0px; font-size: 12px; color:#909090">{{ Auth::guard(session('userType'))->user()->email }}</span>
+                                    <span style="margin-top: 0px; font-size: 16px; color: #299af5; font-weight: bold">{{ session('userType') }}</span>
                                     <md-button class="md-raised md-primary" ng-click="editProfile()" style="margin: 0; margin-top: 10px">Edit Profile</md-button>
                                 </div>
                             </div>
                             <md-divider></md-divider>
                             <div layout="row" style=" padding: 5px; background-color: #F0F0F0" layout-align="end">
-                                <md-button style="color: #A6A6A6"><a href="{{ url('/logout') }}">Sign Out</a></md-button>
+                                <md-button style="color: #A6A6A6"><a href="{{ url('/'.session('userType').'/logout') }}">Sign Out</a></md-button>
                             </div>
                         </md-content>
                     </div>
