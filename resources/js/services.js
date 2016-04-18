@@ -18,7 +18,8 @@ teacherDashboardApp.service('ProfileService', function () {
         return { getPeople: getPeople };
 
     })
-    .service('SectionsService', function () {
+    .service('SectionsService', function ($http) {
+        /*
         this.sections = [
             {name: 'Announcement'},
             {name: 'Conversation'},
@@ -28,6 +29,7 @@ teacherDashboardApp.service('ProfileService', function () {
             {name: 'Assignments'},
             {name: 'Grading'}
         ];
+        */
     })
     .service('AnnouncementService', function () {
         this.announcements = [{
@@ -83,118 +85,6 @@ teacherDashboardApp.service('ProfileService', function () {
                 owner: 'Karim Karimov',
                 responsible: "Farid Osmanli",
                 id: 3
-            },
-            {
-                title: 'PHP Meeting',
-                type: 'meeting',
-                description: "Meeting",
-                date: '03-29-2016',
-                startTime: '18:30',
-                endTime: '21:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'done',
-                owner: 'Samir Karimov',
-                responsible: "Karim Karimov",
-                id: 4
-            },
-            {
-                title: 'Extra Meeting',
-                type: 'extra',
-                description: "Extra",
-                date: '03-23-2016',
-                startTime: '09:00',
-                endTime: '10:30',
-                group: '',
-                place: 'HTP',
-                status: 'rejected',
-                owner: 'Ulvi Aslanov',
-                responsible: "Eldar Alaskarov",
-                id: 5
-            },
-            {
-                title: 'PHP Lesson 5',
-                type: 'lesson',
-                description: "1.Classes, 2.methods",
-                date: '03-24-2016',
-                startTime: '12:00',
-                endTime: '14:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'not done',
-                owner: 'Rahim Rahimli',
-                responsible: "Orxan Farmanli",
-                id: 6
-            },
-            {
-                title: 'PHP OOP',
-                type: 'meeting',
-                description: "Meeting",
-                date: '03-25-2016',
-                startTime: '18:30',
-                endTime: '21:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'done',
-                owner: 'Samir Karimov',
-                responsible: "Rahim Rahimli",
-                id: 7
-            },
-            {
-                title: 'Extra Meeting',
-                type: 'extra',
-                description: "Extra",
-                date: '03-26-2016',
-                startTime: '09:00',
-                endTime: '10:30',
-                group: '',
-                place: 'HTP',
-                status: 'requested',
-                owner: 'Ulvi Aslanov',
-                responsible: "Farid Osmanli",
-                id: 8
-            },
-            {
-                title: 'PHP Lesson 6',
-                type: 'lesson',
-                description: "1.Classes, 2.methods",
-                date: '03-27-2016',
-                startTime: '12:00',
-                endTime: '14:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'notdone',
-                owner: 'Rahim Rahimli',
-                responsible: "Eldar Alaskarov",
-                id: 9
-            },
-            {
-                title: 'PHP OOP',
-                type: 'meeting',
-                description: "Meeting",
-                date: '03-25-2016',
-                startTime: '18:30',
-                endTime: '21:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'done',
-                owner: 'Samir Karimov',
-                responsible: "Karim Karimov",
-                id: 10
-            },
-            {
-                title: 'Extra Meeting',
-                type: 'extra',
-                description: "Extra",
-                date: '03-26-2016',
-                startTime: '09:00',
-                endTime: '10:30',
-                group: '',
-                place: 'HTP',
-                status: 'requested',
-                owner: 'Ulvi Aslanov',
-                responsible: "Orxan Farmanli",
-                id: 11
             }
         ];
         console.log(this.events);

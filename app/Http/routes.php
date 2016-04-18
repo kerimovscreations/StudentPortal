@@ -63,6 +63,11 @@ Route::group(['middleware' => 'web', 'api'], function () {
 
     Route::get('/home', 'HomeController@index');
 
+    Route::get('/getSections',function(){
+        $sections=\App\Section::all()->pluck('name');
+        return json_encode($sections);
+    });
+
 });
 
 

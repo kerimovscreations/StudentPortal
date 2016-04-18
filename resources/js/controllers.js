@@ -80,8 +80,10 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('SectionListController', function($scope, $location,SectionsService) {
-        $scope.sections = SectionsService.sections;
+    .controller('SectionListController', function($scope, $location, $http) {
+        $http.get('/getSections').success(function(data) {
+            $scope.sections = data;
+        });
 
         $scope.current_section='';
 

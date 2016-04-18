@@ -18,4 +18,9 @@ class Group extends Model
     public function place(){
         return $this->belongsTo('App\Place');
     }
+
+    public function announcement(){
+        return $this->belongsToMany('App\Announcement');
+    }
+
 }

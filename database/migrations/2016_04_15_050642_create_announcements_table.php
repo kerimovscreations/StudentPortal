@@ -14,6 +14,20 @@ class CreateAnnouncementsTable extends Migration
     {
         Schema::create('announcements', function (Blueprint $table) {
             $table->increments('id');
+            $table->text('body');
+            $table->string('date');
+            $table->integer('teacher_id')->unsigned();
+            $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        Schema::create('announcement_group', function (Blueprint $table) {
+            $table->integer('announcement_id')->unsigned()->index();
+            $table->foreign('announcement_id')->references('id')->on('announcements')->onDelete('cascade');
+
+            $table->integer('group_id')->unsigned()->index();
+            $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
@@ -26,5 +40,6 @@ class CreateAnnouncementsTable extends Migration
     public function down()
     {
         Schema::drop('announcements');
+        Schema::drop('announcement_group');
     }
 }
