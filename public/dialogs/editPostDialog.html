@@ -22,7 +22,7 @@
                                 <p style="font-size: 16px; color: #585858;">Edit groups to notify</p>
                                 <div layout="row" layout-wrap>
                                     <md-checkbox ng-repeat="group in groups" ng-checked="exists(group, selected)" ng-click="toggle(group, selected)">
-                                        {{group}}
+                                        <% group %>
                                     </md-checkbox>
                                 </div>
                             </div>

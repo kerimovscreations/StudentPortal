@@ -28,16 +28,16 @@
                             <md-input-container>
                                 <label>hour</label>
                                 <md-select ng-model="startHour" class="md-subhead">
-                                    <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
-                                        {{hour.selectedHour}}
+                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                        <% hour.selectedHour %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container>
                                 <label>minute</label>
                                 <md-select ng-model="startMinute" class="md-subhead">
-                                    <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
-                                        {{minute.selectedMinute}}
+                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                        <% minute.selectedMinute %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>
@@ -54,16 +54,16 @@
                             <md-input-container>
                                 <label>hour</label>
                                 <md-select ng-model="endHour" class="md-subhead">
-                                    <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
-                                        {{hour.selectedHour}}
+                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                        <% hour.selectedHour %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container>
                                 <label>minute</label>
                                 <md-select ng-model="endMinute" class="md-subhead">
-                                    <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
-                                        {{minute.selectedMinute}}
+                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                        <% minute.selectedMinute %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>

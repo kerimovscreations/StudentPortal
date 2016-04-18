@@ -12,7 +12,7 @@ class Student extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'birthDate', 'group_id'
+        'name', 'email', 'password', 'phone', 'birthDate', 'group_id','api_token'
     ];
 
     /**
@@ -21,7 +21,7 @@ class Student extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','api_token'
     ];
 
     public function group(){

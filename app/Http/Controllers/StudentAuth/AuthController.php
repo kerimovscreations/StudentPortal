@@ -73,7 +73,8 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'phone' => $data['phone'],
             'group_id' => 1,
-            'birthDate' => $data['birthDate']
+            'birthDate' => $data['birthDate'],
+            'api_token' => $data['_token']
         ]);
     }
 }

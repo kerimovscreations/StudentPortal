@@ -99,7 +99,9 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.groups = AnnouncementService.groups;
         $scope.selected = [];
         $scope.notifications=NotificationService.notifications;
+
         var id=0;
+
         $scope.post=function (){
             if($scope.announcement_post){
                 $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
@@ -160,6 +162,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.exists = function (item, list) {
             return list.indexOf(item) > -1;
         };
+
     })
     .controller('PeopleController',function(PeopleService, $scope, $mdDialog){
         var myDataPromise = PeopleService.getPeople();
@@ -560,8 +563,8 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) { return { selectedHour: hour }; });
     $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) { return { selectedMinute: minute }; });
     $scope.types=['lesson','meeting'].map(function (type) { return { selectedType: type }; });
-    $scope.places=PeopleService.places.map(function (place) { return { selectedPlace: place }; });
-    $scope.groups=PeopleService.groups.map(function (group) { return { selectedGroup: group }; });
+    //$scope.places=PeopleService.places.map(function (place) { return { selectedPlace: place }; });
+    //$scope.groups=PeopleService.groups.map(function (group) { return { selectedGroup: group }; });
 
     $scope.people = loadAll();
     $scope.querySearch = querySearch;

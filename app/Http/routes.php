@@ -14,7 +14,7 @@
 
 use Illuminate\Support\Facades\Auth;
 
-Route::group(['middleware' => 'web'], function () {
+Route::group(['middleware' => 'web', 'api'], function () {
 
     /**
      * set the validation for default page
@@ -33,7 +33,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/student/login','StudentAuth\AuthController@login');
     Route::post('/student/register', 'StudentAuth\AuthController@register');
     Route::get('/student/logout','StudentAuth\AuthController@logout');
-
+    //to check student's logged in status
     Route::get('/student','StudentController@index');
 
     /**
@@ -42,8 +42,9 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/teacher/login','TeacherAuth\AuthController@login');
     Route::post('/teacher/register', 'TeacherAuth\AuthController@register');
     Route::get('/teacher/logout','TeacherAuth\AuthController@logout');
-
+    //to check teacher's logged in status
     Route::get('/teacher','TeacherController@index');
+
 
     /**
      * login, logout and registration for mentor
@@ -51,7 +52,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/mentor/login','MentorAuth\AuthController@login');
     Route::post('/mentor/register', 'MentorAuth\AuthController@register');
     Route::get('/mentor/logout','MentorAuth\AuthController@logout');
-
+    //to check mentor's logged in status
     Route::get('/mentor','MentorController@index');
 
     Route::auth();

@@ -20,6 +20,7 @@ class CreateTeachersTable extends Migration
             $table->string('email',255)->unique();
             $table->string('password',60);
             $table->rememberToken();
+            $table->string('api_token',60)->unique();
             $table->timestamps();
         });
     }

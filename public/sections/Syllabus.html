@@ -2,8 +2,8 @@
     <div ng-hide="source.length==0">
         <md-list-item ng-repeat="syllabus in source" ng-click="openSyllabus($index)" class="noright" layout="row">
             <md-icon md-svg-icon="svg/ic_insert_drive_file_black_24px.svg"></md-icon>
-            <p class="md-title">{{ syllabus.name }}</p>
-            <p class="md-title">{{ syllabus.size }} kb</p>
+            <p class="md-title"><% syllabus.name %></p>
+            <p class="md-title"><% syllabus.size %> kb</p>
             <md-icon md-svg-icon="svg/ic_delete_black_24px.svg" ng-click="deleteSyllabus($index)"></md-icon>
             <md-divider></md-divider>
         </md-list-item>

@@ -2,7 +2,7 @@
     <md-content>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3>{{event.type | capitalize}} at {{dateExtended}}</h3>
+                <h3><% event.type | capitalize %> at <% dateExtended %></h3>
                 <span flex></span>
                 <md-button ng-if="user_type=='teacher' || user_type=='mentor'" class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
@@ -17,19 +17,19 @@
         </md-toolbar>
         <md-dialog-content>
             <div class="md-dialog-content" layout="column" layout-align="center center" >
-                <span class="md-display-1" style="color: #6a72a2">{{event.title}}</span>
-                <span class="md-headline" style="color: #d98084">({{event.startTime}}-{{event.endTime}})</span>
-                <span class="md-body-2" style="color: #94cac2;margin-top: 10px">Created by {{event.owner}}</span>
-                <span class="md-body-2" style="color: #94cac2">Responsible person: {{event.responsible}}</span>
+                <span class="md-display-1" style="color: #6a72a2"><% event.title %></span>
+                <span class="md-headline" style="color: #d98084">(<% event.startTime %>-<% event.endTime %>)</span>
+                <span class="md-body-2" style="color: #94cac2;margin-top: 10px">Created by <% event.owner %></span>
+                <span class="md-body-2" style="color: #94cac2">Responsible person: <% event.responsible %></span>
                 <span class="md-headline" style="margin-top: 10px">Content</span>
-                <span class="md-title">{{event.description}}</span>
+                <span class="md-title"><% event.description %></span>
                 <div layout="row" style="margin-top: 20px; color: #a47f90;">
-                    <span class="md-subhead">Place: {{event.place}}</span>
+                    <span class="md-subhead">Place: <% event.place %></span>
                     <span ng-if="event.group!=''" style="width: 80px"></span>
-                    <span ng-if="event.group!=''" class="md-subhead">Group: {{event.group}}</span>
+                    <span ng-if="event.group!=''" class="md-subhead">Group: <% event.group %></span>
                 </div>
                 <span ng-disabled="user_name!=event.owner" aria-label="Event status" style="color: #ce226d; font-size: 20px" >
-                    {{event.status | capitalize}}
+                    <% event.status | capitalize %>
                 </span>
             </div>
         </md-dialog-content>

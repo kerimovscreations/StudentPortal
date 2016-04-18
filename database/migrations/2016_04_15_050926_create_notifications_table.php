@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMentorsTable extends Migration
+class CreateNotificationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,8 @@ class CreateMentorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mentors', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-
+        Schema::create('notifications', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name',255);
-            $table->string('email',255)->unique();
-            $table->string('password',60);
-            $table->rememberToken();
-            $table->string('api_token',60)->unique();
             $table->timestamps();
         });
     }
@@ -32,6 +25,6 @@ class CreateMentorsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('mentors');
+        Schema::drop('notifications');
     }
 }

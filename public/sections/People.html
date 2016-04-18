@@ -5,9 +5,9 @@
             <md-tab-body>
                 <md-list-item ng-repeat="contact in people track by $index" ng-click="showContact(contact.id)" class="noright">
                     <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
-                    <p class="md-title">{{ contact.name }}</p>
+                    <p class="md-title"><% contact.name %></p>
                     <p flex></p>
-                    <p class="md-subhead">{{ contact.email }}</p>
+                    <p class="md-subhead"><% contact.email %></p>
                     <md-icon md-svg-icon="svg/ic_email_black_24px.svg"  ng-click="sendEmail(contact.id)" aria-label="Send Email" class="md-secondary md-hue-3" ></md-icon>
                     <md-divider></md-divider>
                 </md-list-item>
@@ -19,9 +19,9 @@
 
                 <md-list-item ng-repeat="contact in mentors track by $index" ng-click="showContact(contact.id)" class="noright">
                     <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
-                    <p class="md-title">{{ contact.name }}</p>
+                    <p class="md-title"><% contact.name %></p>
                     <p flex></p>
-                    <p class="md-subhead">{{ contact.email }}</p>
+                    <p class="md-subhead"><% contact.email %></p>
                     <md-icon md-svg-icon="svg/ic_email_black_24px.svg"  ng-click="sendEmail(contact.id)" aria-label="Send Email" class="md-secondary md-hue-3" ></md-icon>
                     <md-divider></md-divider>
                 </md-list-item>
@@ -32,9 +32,9 @@
             <md-tab-body>
                 <md-list-item ng-repeat="contact in teachers track by $index" ng-click="showContact(contact.id)" class="noright">
                     <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
-                    <p class="md-title">{{ contact.name }}</p>
+                    <p class="md-title"><% contact.name %></p>
                     <p flex></p>
-                    <p class="md-subhead">{{ contact.email }}</p>
+                    <p class="md-subhead"><% contact.email %></p>
                     <md-icon md-svg-icon="svg/ic_email_black_24px.svg"  ng-click="sendEmail(contact.id)" aria-label="Send Email" class="md-secondary md-hue-3" ></md-icon>
                     <md-divider></md-divider>
                 </md-list-item>

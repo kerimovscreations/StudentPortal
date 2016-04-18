@@ -2,7 +2,7 @@
     <md-content>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3>Add event</h3>
+                <h3>Edit event</h3>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="hide()">
                     <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
@@ -11,7 +11,7 @@
         </md-toolbar>
         <md-dialog-content style="margin-bottom: 0">
             <form>
-                <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 650px">
+                <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 600px">
                     <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%">
                         <label>Title of event</label>
                         <textarea class="md-headline" style="color: #6a72a2" ng-model="eventTitle" md-select-on-focus></textarea>
@@ -20,33 +20,30 @@
                         <label>Content</label>
                         <textarea class="md-subhead" ng-model="eventContent" md-select-on-focus></textarea>
                     </md-input-container>
-                    <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
-                        <span class="md-body-1">Event date: </span>
-                        <md-datepicker class="md-body-1" ng-model="eventDate" md-placeholder="Enter date" md-min-date="minDate"></md-datepicker>
-                        <div style="width: 20px"></div>
-                        <md-input-container>
+                    <div layout="row" style="margin-top: 0; color:#f16156">
+                        <md-input-container style="margin-top: 0">
                             <label>Place</label>
-                            <md-select ng-model="eventPlace" class="md-subhead" >
-                                <md-option ng-repeat="place in places" value="{{place.selectedPlace}}">
-                                    {{place.selectedPlace}}
+                            <md-select ng-model="eventPlace" class="md-subhead">
+                                <md-option ng-repeat="place in places" value="<% place.selectedPlace %>">
+                                    <% place.selectedPlace %>
                                 </md-option>
                             </md-select>
                         </md-input-container>
-                        <div style="width: 10px"></div>
-                        <md-input-container ng-if="eventType!='extra'">
+                        <div ng-if="eventType!='extra'" style="width: 10px"></div>
+                        <md-input-container ng-if="eventType!='extra'" style="margin-top: 0">
                             <label>Group</label>
                             <md-select ng-model="eventGroup" class="md-subhead">
-                                <md-option ng-repeat="group in groups" value="{{group.selectedGroup}}">
-                                    {{group.selectedGroup}}
+                                <md-option ng-repeat="group in groups" value="<% group.selectedGroup %>">
+                                    <% group.selectedGroup %>
                                 </md-option>
                             </md-select>
                         </md-input-container>
                         <div style="width: 10px"></div>
-                        <md-input-container ng-if="eventType!='extra'">
+                        <md-input-container style="margin-top: 0">
                             <label>Type</label>
                             <md-select ng-model="eventType" class="md-subhead">
-                                <md-option ng-repeat="type in types" value="{{type.selectedType}}">
-                                    {{type.selectedType}}
+                                <md-option ng-repeat="type in types" value="<% type.selectedType %>">
+                                    <% type.selectedType %>
                                 </md-option>
                             </md-select>
                         </md-input-container>
@@ -62,10 +59,10 @@
                                 md-min-length="0"
                                 placeholder="Who is responsible?">
                             <md-item-template>
-                                <span md-highlight-text="searchText" md-highlight-flags="^i">{{item.display}}</span>
+                                <span md-highlight-text="searchText" md-highlight-flags="^i"><% item.display %></span>
                             </md-item-template>
                             <md-not-found>
-                                No person matching "{{searchText}}" was found.
+                                No person matching "<% searchText %>" was found.
                             </md-not-found>
                         </md-autocomplete>
                     </div>
@@ -77,16 +74,16 @@
                                 <md-input-container>
                                     <label>hour</label>
                                     <md-select ng-model="startHour" class="md-subhead">
-                                        <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
-                                            {{hour.selectedHour}}
+                                        <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                            <% hour.selectedHour %>
                                         </md-option>
                                     </md-select>
                                 </md-input-container>
                                 <md-input-container>
                                     <label>minute</label>
                                     <md-select ng-model="startMinute" class="md-subhead">
-                                        <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
-                                            {{minute.selectedMinute}}
+                                        <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                            <% minute.selectedMinute %>
                                         </md-option>
                                     </md-select>
                                 </md-input-container>
@@ -100,16 +97,16 @@
                                 <md-input-container>
                                     <label>hour</label>
                                     <md-select ng-model="endHour" class="md-subhead">
-                                        <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
-                                            {{hour.selectedHour}}
+                                        <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                            <% hour.selectedHour %>
                                         </md-option>
                                     </md-select>
                                 </md-input-container>
                                 <md-input-container>
                                     <label>minute</label>
                                     <md-select ng-model="endMinute" class="md-subhead">
-                                        <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
-                                            {{minute.selectedMinute}}
+                                        <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                            <% minute.selectedMinute %>
                                         </md-option>
                                     </md-select>
                                 </md-input-container>

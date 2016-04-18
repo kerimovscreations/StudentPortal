@@ -12,7 +12,7 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    mix.sass('app.scss', 'resources/assets/css');
+    //mix.sass('app.scss', 'resources/assets/css');
 
     mix.styles([
         '/app.css',
@@ -28,6 +28,7 @@ elixir(function(mix) {
         "../../js/angular-animate.min.js",
         "../../js/angular-aria.min.js",
         "../../js/angular-material.min.js",
+        "../../js/moment.js",
         "../../js/app.js",
         "../../js/factories.js",
         "../../js/filters.js",

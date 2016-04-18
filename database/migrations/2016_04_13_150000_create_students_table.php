@@ -23,6 +23,7 @@ class CreateStudentsTable extends Migration
             $table->string('phone',13);
             $table->string('birthDate',10);
             $table->rememberToken();
+            $table->string('api_token',60)->unique();
             $table->timestamps();
 
             $table->foreign('group_id')

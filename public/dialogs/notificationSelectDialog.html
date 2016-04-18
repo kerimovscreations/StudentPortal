@@ -2,7 +2,7 @@
     <md-content>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3>{{notificationTitle | capitalize}}</h3>
+                <h3><% notificationTitle | capitalize %></h3>
                 <span flex></span>
                 <md-button ng-if="notificationType=='extra' && !editMode && notificationStatus=='requested'" class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
@@ -14,9 +14,9 @@
         </md-toolbar>
         <md-dialog-content>
             <div  class="md-dialog-content" layout="column" layout-align="center center" >
-                <span class="md-display-1" style="color: #6a72a2">{{notificationTitle}}</span>
-                <span class="md-headline" style="color: #d98084" ng-if="notificationType=='extra' && !editMode">({{notification.startTime}} - {{notification.endTime}})</span>
-                <span class="md-title" style="color: #d98084">{{notificationDate}}</span>
+                <span class="md-display-1" style="color: #6a72a2"><% notificationTitle %></span>
+                <span class="md-headline" style="color: #d98084" ng-if="notificationType=='extra' && !editMode">(<% notification.startTime %> - <% notification.endTime %>)</span>
+                <span class="md-title" style="color: #d98084"><% notificationDate %></span>
                 <div layout="row" style="margin-top: 15px" ng-show="editMode">
                     <div layout="row" layout-align="center center" style="color: #88c8d0" >
                         <h4 class="md-title" >Start time: </h4>
@@ -25,16 +25,16 @@
                             <md-input-container>
                                 <label>hour</label>
                                 <md-select ng-model="startHour" class="md-subhead">
-                                    <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
-                                        {{hour.selectedHour}}
+                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                        <% hour.selectedHour %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container>
                                 <label>minute</label>
                                 <md-select ng-model="startMinute" class="md-subhead">
-                                    <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
-                                        {{minute.selectedMinute}}
+                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                        <% minute.selectedMinute %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>
@@ -48,27 +48,27 @@
                             <md-input-container>
                                 <label>hour</label>
                                 <md-select ng-model="endHour" class="md-subhead">
-                                    <md-option ng-repeat="hour in hours" value="{{hour.selectedHour}}">
-                                        {{hour.selectedHour}}
+                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                        <% hour.selectedHour %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container>
                                 <label>minute</label>
                                 <md-select ng-model="endMinute" class="md-subhead">
-                                    <md-option ng-repeat="minute in minutes" value="{{minute.selectedMinute}}">
-                                        {{minute.selectedMinute}}
+                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                        <% minute.selectedMinute %>
                                     </md-option>
                                 </md-select>
                             </md-input-container>
                         </div>
                     </div>
                 </div>
-                <span class="md-body-2" style="color: #94cac2; margin-top: 10px">By {{notificationOwner}}</span>
+                <span class="md-body-2" style="color: #94cac2; margin-top: 10px">By <% notificationOwner %></span>
                 <span class="md-headline" style="margin-top: 10px">Content</span>
-                <span class="md-title">{{notificationContent}}</span>
+                <span class="md-title"><% notificationContent %></span>
                 <span ng-if="notificationType=='extra'" aria-label="Event request" style="color: #505050; font-size: 18px; margin-top: 20px">
-                    {{showStatus(notificationStatus)}}
+                    <% showStatus(notificationStatus) %>
                 </span>
             </div>
         </md-dialog-content>

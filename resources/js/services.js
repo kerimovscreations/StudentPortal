@@ -208,8 +208,8 @@ teacherDashboardApp.service('ProfileService', function () {
     })
     .service('AssignmentService', function () {
         this.assignments = [
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '03-29-2016, 14:20', startDate: '04-12-2016, 23:59', endDate: '04-12-2016, 23:59', owner: 'Samir Karimov', doneCount: 20},
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '03-29-2016, 14:20', startDate: '04-12-2016, 23:59', endDate: '04-12-2016, 23:59', owner: 'Karim Karimov', doneCount: 0},
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '03-29-2016, 14:20', startDate: '04-12-2016, 23:59', endDate: '04-12-2016, 23:59', owner: 'Eldar Alaskarov', doneCount: 12}
+            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-20-2016, 23:59', endDate: '04-27-2016, 23:59', owner: 'Samir Karimov', doneCount: 20},
+            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-21-2016, 23:59', endDate: '04-28-2016, 23:59', owner: 'Karim Karimov', doneCount: 0},
+            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-22-2016, 23:59', endDate: '04-29-2016, 23:59', owner: 'Eldar Alaskarov', doneCount: 12}
         ];
     })

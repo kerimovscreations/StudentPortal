@@ -69,7 +69,8 @@ class AuthController extends Controller
         return Teacher::create([
             'name' => $data['firstName']." ".$data['lastName'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password'])
+            'password' => bcrypt($data['password']),
+            'api_token' => $data['_token']
         ]);
     }
 }
