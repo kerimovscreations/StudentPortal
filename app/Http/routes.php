@@ -64,8 +64,24 @@ Route::group(['middleware' => 'web', 'api'], function () {
     Route::get('/home', 'HomeController@index');
 
     Route::get('/getSections',function(){
-        $sections=\App\Section::all()->pluck('name');
+        $sections=\App\Section::all();
         return json_encode($sections);
+    });
+
+    Route::get('/getAnnouncements',function(){
+        $announcements=App\Announcement::all();
+        $groups=App\Announcement::all()->find(1)->groups;
+        return json_encode($announcements);
+    });
+
+    Route::get('/getAnnouncementGroups/{id}',function($id){
+        $groups=App\Announcement::all()->find($id)->groups;
+        return json_encode($groups);
+    });
+
+    Route::get('/getGroups',function(){
+       $groups=App\Group::all()->pluck('name');
+        return json_encode($groups);
     });
 
 });
