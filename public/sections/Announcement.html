@@ -61,7 +61,7 @@
             </p>
             <div layout="row" layout-align="none center" style="color: #808080" ng-hide="!announcement.groups.length">
                 <h4 class="md-subhead" >Notified:</h4><br>
-                <h4 class="md-subhead" ng-repeat="group in announcement.groups track by $index" style="margin: 0 5px"><% group %></h4>
+                <h4 class="md-subhead" ng-repeat="group in announcement.groups track by $index" style="margin: 0 5px"><% group.name %></h4>
                 <div flex></div>
 
             </div>

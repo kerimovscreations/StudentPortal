@@ -70,13 +70,13 @@ Route::group(['middleware' => 'web', 'api'], function () {
 
     Route::get('/getAnnouncements',function(){
         $announcements=App\Announcement::all();
-        $groups=App\Announcement::all()->find(1)->groups;
-        return json_encode($announcements);
-    });
-
-    Route::get('/getAnnouncementGroups/{id}',function($id){
-        $groups=App\Announcement::all()->find($id)->groups;
-        return json_encode($groups);
+        $groups=array();
+        foreach ($announcements as $announcement) {
+            array_push($groups,$announcement->groups);
+        }
+        $results=array();
+        array_push($results,$announcements,$groups);
+        return json_encode($results);
     });
 
     Route::get('/getGroups',function(){

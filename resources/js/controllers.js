@@ -95,20 +95,24 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     })
     .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia, $http, ProfileService, AnnouncementService, NotificationService, Data){
         $http.get('/getAnnouncements').success(function(data) {
-            $scope.announcements = data;
+            $scope.announcements = data[0];
+            for(var i=0;i<$scope.announcements.length;i++){
+                $scope.announcements[i].groups=data[1][i];
+            }
+            console.log($scope.announcements)
         });
         $http.get('/getGroups').success(function(data) {
             $scope.groups = data;
         });
 
-        angular.forEach($scope.announcements, function(value, key) {
-            console.log($scope.announcements[key]);
-            $http.get('/getAnnouncementGroups/'+$scope.announcements[key].id).success(function(data) {
-                $scope.announcements[key].groups = data;
+        $scope.getGroups= function (id) {
+            console.log(id);
+            $http.get('/getAnnouncementGroups/'+id).success(function(data) {
                 console.log(data);
+                return data;
             });
-        });
-        console.log($scope.announcements);
+        };
+
         $scope.user_name=ProfileService.user_name;
         $scope.announcement_post='';
         $scope.notify_checkbox=false;
