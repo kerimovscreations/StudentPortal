@@ -84,6 +84,20 @@ Route::group(['middleware' => 'web', 'api'], function () {
         return json_encode($groups);
     });
 
+    Route::get('/getStudents',function(){
+        $students=\App\Student::all();
+        return json_encode($students);
+    });
+
+    Route::get('/getTeachers',function(){
+        $teachers=\App\Teacher::all();
+        return json_encode($teachers);
+    });
+
+    Route::get('/getMentors',function(){
+        $mentors=\App\Mentor::all();
+        return json_encode($mentors);
+    });
 });
 
 

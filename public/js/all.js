@@ -34688,7 +34688,6 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             for(var i=0;i<$scope.announcements.length;i++){
                 $scope.announcements[i].groups=data[1][i];
             }
-            console.log($scope.announcements)
         });
         $http.get('/getGroups').success(function(data) {
             $scope.groups = data;
@@ -34773,26 +34772,21 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('PeopleController',function(PeopleService, $scope, $mdDialog){
-        var myDataPromise = PeopleService.getPeople();
-        myDataPromise.then(function(result) {
-            $scope.people = result;
-
-            console.log($scope.people);
-        });
-        console.log($scope.people);
+    .controller('PeopleController',function($http, $scope, $mdDialog){
         $scope.students=[];
         $scope.teachers=[];
         $scope.mentors=[];
-        for(elem in $scope.people){
-            if($scope.people[elem].type=='student'){
-                $scope.students.push($scope.people[elem]);
-            }else if($scope.people[elem].type=='teacher'){
-                $scope.teachers.push($scope.people[elem]);
-            }else if($scope.people[elem].type=='mentor'){
-                $scope.mentors.push($scope.people[elem]);
-            }
-        };
+
+        $http.get('/getStudents').success(function(data){
+           $scope.students=data;
+        });
+        $http.get('/getTeachers').success(function(data){
+            $scope.teachers=data;
+        });
+        $http.get('/getMentors').success(function(data){
+            $scope.mentors=data;
+        });
+
         $scope.selectedIndex=0;
 
         $scope.showContact=function(id){
