@@ -1,8 +1,10 @@
-teacherDashboardApp.service('ProfileService', function () {
-        this.user_name = 'Karim Karimov';
-        this.user_email = 'kerimovscreations@gmail.com';
-        this.user_type = 'teacher';
-        this.user_id = 1;
+teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
+        $http.get('/getUser').success(function(result) {
+            $cookies.put('userId', result['id']);
+            $cookies.put('userName', result['name']);
+            $cookies.put('userEmail', result['email']);
+            $cookies.put('userType', result['type']);
+        });
 
     })
     .service('PeopleService', function ($http) {
@@ -20,16 +22,16 @@ teacherDashboardApp.service('ProfileService', function () {
     })
     .service('SectionsService', function ($http) {
         /*
-        this.sections = [
-            {name: 'Announcement'},
-            {name: 'Conversation'},
-            {name: 'Notification'},
-            {name: 'People'},
-            {name: 'Schedule'},
-            {name: 'Assignments'},
-            {name: 'Grading'}
-        ];
-        */
+         this.sections = [
+         {name: 'Announcement'},
+         {name: 'Conversation'},
+         {name: 'Notification'},
+         {name: 'People'},
+         {name: 'Schedule'},
+         {name: 'Assignments'},
+         {name: 'Grading'}
+         ];
+         */
     })
     .service('AnnouncementService', function () {
         this.announcements = [{

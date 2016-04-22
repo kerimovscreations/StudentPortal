@@ -30530,6 +30530,16 @@ c.charAt(0)?c:b+c})});k.defaults.stripTrailingSlashes&&(c=c.replace(/\/+$/,"")||
  (c) 2010-2016 Google, Inc. http://angularjs.org
  License: MIT
 */
+(function(p,c,n){'use strict';function l(b,a,g){var d=g.baseHref(),k=b[0];return function(b,e,f){var g,h;f=f||{};h=f.expires;g=c.isDefined(f.path)?f.path:d;c.isUndefined(e)&&(h="Thu, 01 Jan 1970 00:00:00 GMT",e="");c.isString(h)&&(h=new Date(h));e=encodeURIComponent(b)+"="+encodeURIComponent(e);e=e+(g?";path="+g:"")+(f.domain?";domain="+f.domain:"");e+=h?";expires="+h.toUTCString():"";e+=f.secure?";secure":"";f=e.length+1;4096<f&&a.warn("Cookie '"+b+"' possibly not set or overflowed because it was too large ("+
+f+" > 4096 bytes)!");k.cookie=e}}c.module("ngCookies",["ng"]).provider("$cookies",[function(){var b=this.defaults={};this.$get=["$$cookieReader","$$cookieWriter",function(a,g){return{get:function(d){return a()[d]},getObject:function(d){return(d=this.get(d))?c.fromJson(d):d},getAll:function(){return a()},put:function(d,a,m){g(d,a,m?c.extend({},b,m):b)},putObject:function(d,b,a){this.put(d,c.toJson(b),a)},remove:function(a,k){g(a,n,k?c.extend({},b,k):b)}}}]}]);c.module("ngCookies").factory("$cookieStore",
+["$cookies",function(b){return{get:function(a){return b.getObject(a)},put:function(a,c){b.putObject(a,c)},remove:function(a){b.remove(a)}}}]);l.$inject=["$document","$log","$browser"];c.module("ngCookies").provider("$$cookieWriter",function(){this.$get=l})})(window,window.angular);
+//# sourceMappingURL=angular-cookies.min.js.map
+
+/*
+ AngularJS v1.5.0-rc.2
+ (c) 2010-2016 Google, Inc. http://angularjs.org
+ License: MIT
+*/
 (function(A,d,B){'use strict';function l(){return["$animate",function(v){return{restrict:"AE",transclude:"element",priority:1,terminal:!0,require:"^^ngMessages",link:function(n,r,a,b,m){var k=r[0],f,p=a.ngMessage||a.when;a=a.ngMessageExp||a.whenExp;var d=function(a){f=a?w(a)?a:a.split(/[\s,]+/):null;b.reRender()};a?(d(n.$eval(a)),n.$watchCollection(a,d)):d(p);var e,q;b.register(k,q={test:function(a){var g=f;a=g?w(g)?0<=g.indexOf(a):g.hasOwnProperty(a):void 0;return a},attach:function(){e||m(n,function(a){v.enter(a,
 null,r);e=a;var g=e.$$attachId=b.getAttachId();e.on("$destroy",function(){e&&e.$$attachId===g&&(b.deregister(k),q.detach())})})},detach:function(){if(e){var a=e;e=null;v.leave(a)}}})}}}]}var w=d.isArray,x=d.forEach,y=d.isString,z=d.element;d.module("ngMessages",[]).directive("ngMessages",["$animate",function(d){function n(a,b){return y(b)&&0===b.length||r(a.$eval(b))}function r(a){return y(a)?a.length:!!a}return{require:"ngMessages",restrict:"AE",controller:["$element","$scope","$attrs",function(a,
 b,m){function k(a,b){for(var c=b,f=[];c&&c!==a;){var h=c.$$ngMessageNode;if(h&&h.length)return e[h];c.childNodes.length&&-1==f.indexOf(c)?(f.push(c),c=c.childNodes[c.childNodes.length-1]):c=c.previousSibling||c.parentNode}}var f=this,p=0,l=0;this.getAttachId=function(){return l++};var e=this.messages={},q,s;this.render=function(g){g=g||{};q=!1;s=g;for(var e=n(b,m.ngMessagesMultiple)||n(b,m.multiple),c=[],k={},h=f.head,p=!1,l=0;null!=h;){l++;var t=h.message,u=!1;p||x(g,function(a,c){!u&&r(a)&&t.test(c)&&
@@ -34313,14 +34323,14 @@ n.hasAttribute("md-position-mode")||(n.setAttribute("md-position-mode","left bot
     return _moment;
 
 }));
-var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages']);
+var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies']);
 registerApp.config(function($mdThemingProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
         .primaryPalette('customTheme')
 });
 
-var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource']);
+var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngCookies']);
 loginApp.config(function($mdThemingProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
@@ -34328,7 +34338,7 @@ loginApp.config(function($mdThemingProvider){
 });
 
 
-var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource']);
+var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
 teacherDashboardApp.config(function($mdThemingProvider,$interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
@@ -34358,6 +34368,113 @@ var customTheme={
         '200', '300', '400', 'A100'],
     'contrastLightColors': undefined    // could also specify this if default was 'dark'
 };
+teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
+        $http.get('/getUser').success(function(result) {
+            $cookies.put('userId', result['id']);
+            $cookies.put('userName', result['name']);
+            $cookies.put('userEmail', result['email']);
+            $cookies.put('userType', result['type']);
+        });
+
+    })
+    .service('PeopleService', function ($http) {
+        this.groups = ['16101', '16102', '16103'];
+        this.places = ['HTP', 'BBF'];
+
+        var getPeople = function() {
+            return $http({method:"GET", url:"php/getUsers.php"}).then(function(result){
+                return result.data;
+            });
+        };
+
+        return { getPeople: getPeople };
+
+    })
+    .service('SectionsService', function ($http) {
+        /*
+         this.sections = [
+         {name: 'Announcement'},
+         {name: 'Conversation'},
+         {name: 'Notification'},
+         {name: 'People'},
+         {name: 'Schedule'},
+         {name: 'Assignments'},
+         {name: 'Grading'}
+         ];
+         */
+    })
+    .service('AnnouncementService', function () {
+        this.announcements = [{
+            user: 'Karim Karimov',
+            date: '03-23-2016, 12:15',
+            text: 'Something',
+            groups: '16101',
+            id: 15
+        }
+        ];
+        this.groups = ['16102', '16101', '16201', '16202'];
+    })
+    .service('ScheduleService', function () {
+        this.events = [
+            {
+                title: 'PHP Lesson 4',
+                type: 'lesson',
+                description: "1.Classes, 2.methods",
+                date: '03-28-2016',
+                startTime: '18:30',
+                endTime: '21:30',
+                group: '16102',
+                place: 'HTP',
+                status: 'done',
+                owner: 'Karim Karimov',
+                responsible: "Samir Karimov",
+                id: 1
+            },
+            {
+                title: 'Extra',
+                type: 'extra',
+                description: "Extra",
+                date: '03-28-2016',
+                startTime: '09:00',
+                endTime: '10:30',
+                group: '',
+                place: 'HTP',
+                status: 'accepted',
+                owner: 'Ulvi Aslanov',
+                responsible: "Orxan Farmanli",
+                id: 2
+            },
+            {
+                title: 'PHP Lesson 5',
+                type: 'lesson',
+                description: "1.Classes, 2.methods",
+                date: '03-26-2016',
+                startTime: '12:00',
+                endTime: '14:30',
+                group: '16102',
+                place: 'HTP',
+                status: 'not done',
+                owner: 'Karim Karimov',
+                responsible: "Farid Osmanli",
+                id: 3
+            }
+        ];
+        console.log(this.events);
+        this.eventTypes = ['lesson', 'extra', 'meeting'];
+    })
+    .service('NotificationService', function () {
+        this.notifications = [
+            {text: 'New announcement from Karim Karimov', source: 15, type: 'announcement', date: '03-24-2016, 11:45'},
+            {text: 'New request from Rahim Rahimli', source: 8, type: 'extra', date: '03-24-2016, 10:00'}
+        ]
+    })
+    .service('AssignmentService', function () {
+        this.assignments = [
+            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-20-2016, 23:59', endDate: '04-27-2016, 23:59', owner: 'Samir Karimov', doneCount: 20},
+            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-21-2016, 23:59', endDate: '04-28-2016, 23:59', owner: 'Karim Karimov', doneCount: 0},
+            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-22-2016, 23:59', endDate: '04-29-2016, 23:59', owner: 'Eldar Alaskarov', doneCount: 12}
+        ];
+    })
 teacherDashboardApp.factory('Data', function () {
     return {
         EventId: '',
@@ -34482,111 +34599,6 @@ teacherDashboardApp.directive("dropzoneSyllabus", function(ProfileService) {
         }
     });
 
-teacherDashboardApp.service('ProfileService', function () {
-        this.user_name = 'Karim Karimov';
-        this.user_email = 'kerimovscreations@gmail.com';
-        this.user_type = 'teacher';
-        this.user_id = 1;
-
-    })
-    .service('PeopleService', function ($http) {
-        this.groups = ['16101', '16102', '16103'];
-        this.places = ['HTP', 'BBF'];
-
-        var getPeople = function() {
-            return $http({method:"GET", url:"php/getUsers.php"}).then(function(result){
-                return result.data;
-            });
-        };
-
-        return { getPeople: getPeople };
-
-    })
-    .service('SectionsService', function ($http) {
-        /*
-        this.sections = [
-            {name: 'Announcement'},
-            {name: 'Conversation'},
-            {name: 'Notification'},
-            {name: 'People'},
-            {name: 'Schedule'},
-            {name: 'Assignments'},
-            {name: 'Grading'}
-        ];
-        */
-    })
-    .service('AnnouncementService', function () {
-        this.announcements = [{
-            user: 'Karim Karimov',
-            date: '03-23-2016, 12:15',
-            text: 'Something',
-            groups: '16101',
-            id: 15
-        }
-        ];
-        this.groups = ['16102', '16101', '16201', '16202'];
-    })
-    .service('ScheduleService', function () {
-        this.events = [
-            {
-                title: 'PHP Lesson 4',
-                type: 'lesson',
-                description: "1.Classes, 2.methods",
-                date: '03-28-2016',
-                startTime: '18:30',
-                endTime: '21:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'done',
-                owner: 'Karim Karimov',
-                responsible: "Samir Karimov",
-                id: 1
-            },
-            {
-                title: 'Extra',
-                type: 'extra',
-                description: "Extra",
-                date: '03-28-2016',
-                startTime: '09:00',
-                endTime: '10:30',
-                group: '',
-                place: 'HTP',
-                status: 'accepted',
-                owner: 'Ulvi Aslanov',
-                responsible: "Orxan Farmanli",
-                id: 2
-            },
-            {
-                title: 'PHP Lesson 5',
-                type: 'lesson',
-                description: "1.Classes, 2.methods",
-                date: '03-26-2016',
-                startTime: '12:00',
-                endTime: '14:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'not done',
-                owner: 'Karim Karimov',
-                responsible: "Farid Osmanli",
-                id: 3
-            }
-        ];
-        console.log(this.events);
-        this.eventTypes = ['lesson', 'extra', 'meeting'];
-    })
-    .service('NotificationService', function () {
-        this.notifications = [
-            {text: 'New announcement from Karim Karimov', source: 15, type: 'announcement', date: '03-24-2016, 11:45'},
-            {text: 'New request from Rahim Rahimli', source: 8, type: 'extra', date: '03-24-2016, 10:00'}
-        ]
-    })
-    .service('AssignmentService', function () {
-        this.assignments = [
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-20-2016, 23:59', endDate: '04-27-2016, 23:59', owner: 'Samir Karimov', doneCount: 20},
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-21-2016, 23:59', endDate: '04-28-2016, 23:59', owner: 'Karim Karimov', doneCount: 0},
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-22-2016, 23:59', endDate: '04-29-2016, 23:59', owner: 'Eldar Alaskarov', doneCount: 12}
-        ];
-    })
 registerApp.controller('RegisterController',function($scope){
     $scope.user = {
         email: '',
@@ -34682,7 +34694,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia, $http, ProfileService, AnnouncementService, NotificationService, Data){
+    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia,$mdToast, $http, $cookies, Data){
         $http.get('/getAnnouncements').success(function(data) {
             $scope.announcements = data[0];
             for(var i=0;i<$scope.announcements.length;i++){
@@ -34701,38 +34713,38 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         };
 
-        $scope.user_name=ProfileService.user_name;
         $scope.announcement_post='';
         $scope.notify_checkbox=false;
 
         $scope.selected = [];
-        $scope.notifications=NotificationService.notifications;
 
-        var id=0;
+        $scope.user_id=$cookies.get('userId');
 
         $scope.post=function (){
-            if($scope.announcement_post){
-                $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
-                $scope.announcements.splice(0, 0,
-                    {
-                        user: $scope.user_name,
-                        date: $scope.date,
-                        text: $scope.announcement_post,
-                        groups: $scope.selected,
-                        id: id
-                    });
-                $scope.notifications.splice(0, 0,
-                    {
-                        text: 'New announcement from '+$scope.user_name,
-                        source: id,
-                        type: 'announcement',
-                        date: $scope.date
-                    });
-                $scope.announcement_post='';
-                $scope.selected = [];
-                id++;
-            }
+
+            $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
+            $http({
+                method: 'POST',
+                url: '/postAnnouncement',
+                data: {
+                    body: $scope.announcement_post,
+                    date: $scope.date,
+                    teacher_id: $scope.user_id
+                    //group_list: $scope.selected
+                }
+            }).success(function () {
+                $mdToast.show($mdToast.simple().textContent('Posted'));
+            })
         };
+            //$scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
+            //$scope.announcements.splice(0, 0,
+            //    {
+            //        user: $scope.user_name,
+            //        date: $scope.date,
+            //        text: $scope.announcement_post,
+            //        groups: $scope.selected,
+            //        id: id
+            //    });
 
         $scope.deletePost=function(index){
             var confirm = $mdDialog.confirm()
@@ -34778,7 +34790,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.mentors=[];
 
         $http.get('/getStudents').success(function(data){
-           $scope.students=data;
+            $scope.students=data;
         });
         $http.get('/getTeachers').success(function(data){
             $scope.teachers=data;

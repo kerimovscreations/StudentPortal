@@ -24,16 +24,17 @@ elixir(function(mix) {
         "../../js/angular.js",
         "../../js/angular-route.min.js",
         "../../js/angular-resource.min.js",
+        "../../js/angular-cookies.min.js",
         "../../js/angular-messages.min.js",
         "../../js/angular-animate.min.js",
         "../../js/angular-aria.min.js",
         "../../js/angular-material.min.js",
         "../../js/moment.js",
         "../../js/app.js",
+        "../../js/services.js",
         "../../js/factories.js",
         "../../js/filters.js",
         "../../js/directives.js",
-        "../../js/services.js",
         "../../js/controllers.js",
         "../../js/routes.js"
     ]);

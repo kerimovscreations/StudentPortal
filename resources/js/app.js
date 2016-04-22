@@ -1,11 +1,11 @@
-var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages']);
+var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies']);
 registerApp.config(function($mdThemingProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
         .primaryPalette('customTheme')
 });
 
-var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource']);
+var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngCookies']);
 loginApp.config(function($mdThemingProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
@@ -13,7 +13,7 @@ loginApp.config(function($mdThemingProvider){
 });
 
 
-var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource']);
+var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
 teacherDashboardApp.config(function($mdThemingProvider,$interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')

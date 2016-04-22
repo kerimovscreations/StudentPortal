@@ -93,7 +93,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia, $http, ProfileService, AnnouncementService, NotificationService, Data){
+    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia,$mdToast, $http, $cookies, Data){
         $http.get('/getAnnouncements').success(function(data) {
             $scope.announcements = data[0];
             for(var i=0;i<$scope.announcements.length;i++){
@@ -112,38 +112,38 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         };
 
-        $scope.user_name=ProfileService.user_name;
         $scope.announcement_post='';
         $scope.notify_checkbox=false;
 
         $scope.selected = [];
-        $scope.notifications=NotificationService.notifications;
 
-        var id=0;
+        $scope.user_id=$cookies.get('userId');
 
         $scope.post=function (){
-            if($scope.announcement_post){
-                $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
-                $scope.announcements.splice(0, 0,
-                    {
-                        user: $scope.user_name,
-                        date: $scope.date,
-                        text: $scope.announcement_post,
-                        groups: $scope.selected,
-                        id: id
-                    });
-                $scope.notifications.splice(0, 0,
-                    {
-                        text: 'New announcement from '+$scope.user_name,
-                        source: id,
-                        type: 'announcement',
-                        date: $scope.date
-                    });
-                $scope.announcement_post='';
-                $scope.selected = [];
-                id++;
-            }
+
+            $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
+            $http({
+                method: 'POST',
+                url: '/postAnnouncement',
+                data: {
+                    body: $scope.announcement_post,
+                    date: $scope.date,
+                    teacher_id: $scope.user_id
+                    //group_list: $scope.selected
+                }
+            }).success(function () {
+                $mdToast.show($mdToast.simple().textContent('Posted'));
+            })
         };
+            //$scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
+            //$scope.announcements.splice(0, 0,
+            //    {
+            //        user: $scope.user_name,
+            //        date: $scope.date,
+            //        text: $scope.announcement_post,
+            //        groups: $scope.selected,
+            //        id: id
+            //    });
 
         $scope.deletePost=function(index){
             var confirm = $mdDialog.confirm()
@@ -189,7 +189,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.mentors=[];
 
         $http.get('/getStudents').success(function(data){
-           $scope.students=data;
+            $scope.students=data;
         });
         $http.get('/getTeachers').success(function(data){
             $scope.teachers=data;

@@ -68,6 +68,12 @@ Route::group(['middleware' => 'web', 'api'], function () {
         return json_encode($sections);
     });
 
+    Route::get('/getUser',function(){
+        $result=Auth::guard(session('userType'))->user()->toArray();
+        $result['type']=session('userType');
+        return json_encode($result);
+    });
+
     Route::get('/getAnnouncements',function(){
         $announcements=App\Announcement::all();
         $groups=array();
@@ -80,7 +86,7 @@ Route::group(['middleware' => 'web', 'api'], function () {
     });
 
     Route::get('/getGroups',function(){
-       $groups=App\Group::all()->pluck('name');
+       $groups=App\Group::all();
         return json_encode($groups);
     });
 
@@ -97,6 +103,10 @@ Route::group(['middleware' => 'web', 'api'], function () {
     Route::get('/getMentors',function(){
         $mentors=\App\Mentor::all();
         return json_encode($mentors);
+    });
+
+    Route::group(['middleware' => 'teacher'], function () {
+       Route::post('/postAnnouncement','AnnouncementController@store');
     });
 });
 

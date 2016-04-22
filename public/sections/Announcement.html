@@ -9,13 +9,13 @@
                 <div>
                     <p style="font-size: 16px; color: #585858;">Select groups to notify</p>
                     <div layout="row" layout-wrap>
-                        <md-checkbox ng-repeat="group in groups track by $index" ng-checked="exists(group, selected)" ng-click="toggle(group, selected)">
-                            <% group %>
+                        <md-checkbox ng-repeat="group in groups track by $index" ng-checked="exists(group.id, selected)" ng-click="toggle(group.id, selected)">
+                            <% group.name %>
                         </md-checkbox>
                     </div>
                 </div>
                 <div flex></div>
-                <input type="submit" class="md-button md-raised md-primary"  value="POST" style="color: white" ng-click="post()"/>
+                <input type="submit" class="md-button md-raised md-primary" ng-disabled="announcement_post.length==0" value="POST" style="color: white" ng-click="post()"/>
             </div>
         </form>
         <md-divider></md-divider>
