@@ -34711,15 +34711,15 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.announcement_post='';
         $scope.selected = [];
 
+        $scope.user_type=$cookies.get('userType');
+
         $scope.post=function (){
             $scope.user_id=$cookies.get('userId');
-            $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
             $http({
                 method: 'POST',
                 url: '/postAnnouncement',
                 data: {
                     body: $scope.announcement_post,
-                    date: $scope.date,
                     teacher_id: $scope.user_id,
                     group_list: $scope.selected
                 }

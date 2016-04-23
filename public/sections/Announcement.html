@@ -1,5 +1,5 @@
 <md-content class="md-padding">
-    <div>
+    <div ng-show="user_type=='teacher'">
         <form>
             <md-input-container class="md-block" style="margin-bottom: 0">
                 <label>Enter new announcement</label>
@@ -29,8 +29,8 @@
             <md-card-header-text layout="row" layout-align="none center">
                 <span class="md-headline"><% announcement.owner.name %></span>
                 <div flex></div>
-                <span class="md-subhead"><% announcement.date | date:'MM/dd/yyyy HH:mm' %></span>
-                <md-menu md-position-mode="target-right target" >
+                <span class="md-subhead"><% announcement.updated_at | date:'MM/dd/yyyy HH:mm' %></span>
+                <md-menu md-position-mode="target-right target" ng-if="user_type=='teacher'">
                     <md-button aria-label="Post Edit" class="md-icon-button" ng-click="$mdOpenMenu($event)">
                         <md-icon md-menu-origin md-svg-icon="svg/ic_more_vert_black_36px.svg"></md-icon>
                     </md-button>

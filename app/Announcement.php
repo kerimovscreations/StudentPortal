@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Announcement extends Model
 {
     protected $fillable=[
-        'body','date','teacher_id'
+        'body','teacher_id'
     ];
 
     public function teacher(){

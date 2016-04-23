@@ -12,7 +12,6 @@ class AnnouncementController extends Controller
     public function store(Request $request){
         $announcement=new Announcement();
         $announcement->body=$request['body'];
-        $announcement->date=$request['date'];
         $announcement->teacher_id=$request['teacher_id'];
         $announcement->save();
         $announcement->groups()->sync($request['group_list']);
