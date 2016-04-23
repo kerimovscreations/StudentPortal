@@ -4,6 +4,9 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
             $cookies.put('userName', result['name']);
             $cookies.put('userEmail', result['email']);
             $cookies.put('userType', result['type']);
+            if(result['type']=='student'){
+                $cookies.put('userGroupId', result['group_id']);
+            }
         });
 
     })

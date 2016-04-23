@@ -70,7 +70,8 @@ class AuthController extends Controller
         return Mentor::create([
             'name' => $data['firstName']." ".$data['lastName'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password'])
+            'password' => bcrypt($data['password']),
+            'api_token' => str_random(60)
         ]);
     }
 }

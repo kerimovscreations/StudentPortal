@@ -74,7 +74,7 @@ class AuthController extends Controller
             'phone' => $data['phone'],
             'group_id' => 1,
             'birthDate' => $data['birthDate'],
-            'api_token' => $data['_token']
+            'api_token' => str_random(60)
         ]);
     }
 }

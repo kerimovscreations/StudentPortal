@@ -12,6 +12,7 @@
 */
 
 
+use App\Notification;
 use Illuminate\Support\Facades\Auth;
 
 Route::group(['middleware' => 'web', 'api'], function () {
@@ -105,6 +106,14 @@ Route::group(['middleware' => 'web', 'api'], function () {
     Route::get('/getMentors',function(){
         $mentors=\App\Mentor::all();
         return json_encode($mentors);
+    });
+
+    Route::get('/getNotifications/{table}/{id}',function($table,$id){
+        $notifications=DB::table('notifications')->where([
+            ['receiver_id',intval($id)],
+            ['receiver_table',$table],
+        ])->get();
+        return json_encode($notifications);
     });
 
     Route::group(['middleware' => 'teacher'], function () {

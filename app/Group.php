@@ -23,4 +23,8 @@ class Group extends Model
         return $this->belongsToMany('App\Announcement');
     }
 
+    public function students(){
+        return $this->hasMany('App\Student');
+    }
+
 }

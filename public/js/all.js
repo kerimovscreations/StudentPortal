@@ -34374,6 +34374,9 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
             $cookies.put('userName', result['name']);
             $cookies.put('userEmail', result['email']);
             $cookies.put('userType', result['type']);
+            if(result['type']=='student'){
+                $cookies.put('userGroupId', result['group_id']);
+            }
         });
 
     })
@@ -34939,8 +34942,17 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     })
     .controller('GradingController',function(){})
     .controller('ConversationController',function(){})
-    .controller('NotificationController',function($scope, $mdDialog, $mdMedia, NotificationService, Data){
-        $scope.notifications=NotificationService.notifications;
+    .controller('NotificationController',function($scope, $http,$cookies, $mdDialog, $mdMedia, Data){
+        $scope.notifications=[];
+
+        var user_type=$cookies.get('userType');
+
+        if(user_type=='student') {
+            var user_group_id=$cookies.get('userGroupId');
+            $http.get('/getNotifications/groups/' + user_group_id).success(function (data) {
+                $scope.notifications = data;
+            });
+        }
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
@@ -34962,7 +34974,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
         $scope.showDateFromNow= function (date) {
-            return moment(date,"MM-DD-YYYY, HH:mm").fromNow()
+            return moment(date,"YYYY-MM-DD HH:mm:ss").fromNow()
         };
     })
 
