@@ -19,7 +19,7 @@ class Group extends Model
         return $this->belongsTo('App\Place');
     }
 
-    public function announcement(){
+    public function announcements(){
         return $this->belongsToMany('App\Announcement');
     }
 

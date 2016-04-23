@@ -77,16 +77,18 @@ Route::group(['middleware' => 'web', 'api'], function () {
     Route::get('/getAnnouncements',function(){
         $announcements=App\Announcement::all();
         $groups=array();
+        $teacher=array();
         foreach ($announcements as $announcement) {
             array_push($groups,$announcement->groups);
+            array_push($teacher,$announcement->teacher);
         }
         $results=array();
-        array_push($results,$announcements,$groups);
+        array_push($results,$announcements,$groups,$teacher);
         return json_encode($results);
     });
 
     Route::get('/getGroups',function(){
-       $groups=App\Group::all();
+       $groups= \App\Group::all();
         return json_encode($groups);
     });
 
@@ -107,6 +109,7 @@ Route::group(['middleware' => 'web', 'api'], function () {
 
     Route::group(['middleware' => 'teacher'], function () {
        Route::post('/postAnnouncement','AnnouncementController@store');
+       Route::post('/deleteAnnouncement','AnnouncementController@delete');
     });
 });
 

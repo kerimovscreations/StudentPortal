@@ -14,19 +14,12 @@ class AnnouncementController extends Controller
         $announcement->body=$request['body'];
         $announcement->date=$request['date'];
         $announcement->teacher_id=$request['teacher_id'];
-
-        //$announcement->groups()->sync([1,2]);
         $announcement->save();
+        $announcement->groups()->sync($request['group_list']);
     }
 
-    private function syncGroups(Announcement $announcement, array $groups){
-        $announcement->groups()->sync($groups);
-    }
-
-    private function createAnnouncement(array $request){
-        return $request;
-        //$announcement=new Announcement($request['id']);
-
-        //$this->syncGroups($announcement,$request['group_list']);
+    public function delete(Request $request){
+        $announcement=Announcement::find($request['id']);
+        $announcement->delete();
     }
 }

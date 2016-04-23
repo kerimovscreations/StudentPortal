@@ -93,34 +93,25 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia,$mdToast, $http, $cookies, Data){
+    .controller('AnnouncementController',function($scope, $mdDialog, $mdMedia,$mdToast, $http, $cookies, $route, Data){
+
         $http.get('/getAnnouncements').success(function(data) {
             $scope.announcements = data[0];
             for(var i=0;i<$scope.announcements.length;i++){
                 $scope.announcements[i].groups=data[1][i];
+                $scope.announcements[i].owner=data[2][i];
             }
         });
+
         $http.get('/getGroups').success(function(data) {
             $scope.groups = data;
         });
 
-        $scope.getGroups= function (id) {
-            console.log(id);
-            $http.get('/getAnnouncementGroups/'+id).success(function(data) {
-                console.log(data);
-                return data;
-            });
-        };
-
         $scope.announcement_post='';
-        $scope.notify_checkbox=false;
-
         $scope.selected = [];
 
-        $scope.user_id=$cookies.get('userId');
-
         $scope.post=function (){
-
+            $scope.user_id=$cookies.get('userId');
             $scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
             $http({
                 method: 'POST',
@@ -128,22 +119,16 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                 data: {
                     body: $scope.announcement_post,
                     date: $scope.date,
-                    teacher_id: $scope.user_id
-                    //group_list: $scope.selected
+                    teacher_id: $scope.user_id,
+                    group_list: $scope.selected
                 }
             }).success(function () {
+                $scope.announcement_post='';
+                $scope.selected = [];
                 $mdToast.show($mdToast.simple().textContent('Posted'));
+                $route.reload();
             })
         };
-            //$scope.date = moment(new Date()).format('MM-DD-YYYY, HH:mm');
-            //$scope.announcements.splice(0, 0,
-            //    {
-            //        user: $scope.user_name,
-            //        date: $scope.date,
-            //        text: $scope.announcement_post,
-            //        groups: $scope.selected,
-            //        id: id
-            //    });
 
         $scope.deletePost=function(index){
             var confirm = $mdDialog.confirm()
@@ -151,7 +136,14 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                 .ok('Delete')
                 .cancel('Cancel');
             $mdDialog.show(confirm).then(function() {
-                $scope.announcements.splice(index,1);
+                $http({
+                    method: 'POST',
+                    url: '/deleteAnnouncement',
+                    data: {id: $scope.announcements[index].id}
+                }).success(function () {
+                    $mdToast.show($mdToast.simple().textContent('Deleted'));
+                    $route.reload();
+                })
             });
         };
 
