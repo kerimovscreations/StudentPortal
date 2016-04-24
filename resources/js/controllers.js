@@ -119,7 +119,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                 url: '/postAnnouncement',
                 data: {
                     body: $scope.announcement_post,
-                    teacher_id: $scope.user_id,
+                    owner_id: $scope.user_id,
                     group_list: $scope.selected
                 }
             }).success(function () {
@@ -352,9 +352,13 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
-        $scope.selectNotification=function(index,source){
-            Data.NotificationSource=source;
-            Data.NotificationType=$scope.notifications[index].type;
+        $scope.selectNotification=function(index){
+            $http.get('/getDataNotification/'+
+                $scope.notifications[index].source_table+'/'+
+                $scope.notifications[index].source_id).success(function(data){
+                Data.NotificationData=data;
+                Data.NotificationData.source_table=$scope.notifications[index].source_table;
+            });
             $mdDialog.show({
                 controller: notificationSelectDialogController,
                 templateUrl: 'dialogs/notificationSelectDialog.html',
@@ -676,42 +680,28 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
 
 // Notification dialog controllers
 
-function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data, AnnouncementService, ScheduleService){
-    var source=Data.NotificationSource;
-    $scope.notificationType=Data.NotificationType;
+function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data){
+    var tempKey='';
 
+    $scope.data=Data.NotificationData;
+    console.log($scope.data);
 
     $scope.editMode=false;
 
-    var tempKey='';
-
-    if($scope.notificationType == 'announcement') {
-        for (key in AnnouncementService.announcements) {
-            if (source == AnnouncementService.announcements[key].id) {
-                $scope.notification = AnnouncementService.announcements[key];
-            }
-        }
-        $scope.notificationDate = $scope.notification.date;
+    if($scope.data.source_table == 'announcements') {
+        $scope.notificationDate = $scope.data.updated_at;
         $scope.notificationTitle = 'Announcement';
-        $scope.notificationText = $scope.notification.text;
-        $scope.notificationOwner = $scope.notification.user;
+        $scope.notificationContent = $scope.data.body;
+        $scope.notificationOwner = $scope.data.owner.name;
     }
     else {
-        for (key in ScheduleService.events) {
-            if (source == ScheduleService.events[key].id) {
-                $scope.notification = ScheduleService.events[key];
-                tempKey = key;
-            }
-        }
         $scope.notificationDate = $scope.notification.date;
         $scope.notificationTitle = 'Extra lesson';
         $scope.notificationContent = $scope.notification.description;
         $scope.notificationOwner = $scope.notification.owner;
         $scope.notificationStatus = $scope.notification.status;
-
-
-
     }
+
 
 
     $scope.showStatus=function(check){

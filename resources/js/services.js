@@ -95,11 +95,8 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
         console.log(this.events);
         this.eventTypes = ['lesson', 'extra', 'meeting'];
     })
-    .service('NotificationService', function () {
-        this.notifications = [
-            {text: 'New announcement from Karim Karimov', source: 15, type: 'announcement', date: '03-24-2016, 11:45'},
-            {text: 'New request from Rahim Rahimli', source: 8, type: 'extra', date: '03-24-2016, 10:00'}
-        ]
+    .service('NotificationService', function ($http,Data) {
+
     })
     .service('AssignmentService', function () {
         this.assignments = [

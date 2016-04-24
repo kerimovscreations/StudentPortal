@@ -3,7 +3,6 @@ teacherDashboardApp.factory('Data', function () {
         EventId: '',
         AddEventType: '',
         AnnouncementId: '', //not used yet
-        NotificationType:'',
-        NotificationSource:'',
+        NotificationData: '',
         PostId: ''};
 });

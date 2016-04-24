@@ -34368,6 +34368,15 @@ var customTheme={
         '200', '300', '400', 'A100'],
     'contrastLightColors': undefined    // could also specify this if default was 'dark'
 };
+teacherDashboardApp.factory('Data', function () {
+    return {
+        EventId: '',
+        AddEventType: '',
+        AnnouncementId: '', //not used yet
+        NotificationData: '',
+        PostId: ''};
+});
+
 teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
         $http.get('/getUser').success(function(result) {
             $cookies.put('userId', result['id']);
@@ -34465,11 +34474,8 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
         console.log(this.events);
         this.eventTypes = ['lesson', 'extra', 'meeting'];
     })
-    .service('NotificationService', function () {
-        this.notifications = [
-            {text: 'New announcement from Karim Karimov', source: 15, type: 'announcement', date: '03-24-2016, 11:45'},
-            {text: 'New request from Rahim Rahimli', source: 8, type: 'extra', date: '03-24-2016, 10:00'}
-        ]
+    .service('NotificationService', function ($http,Data) {
+
     })
     .service('AssignmentService', function () {
         this.assignments = [
@@ -34478,16 +34484,6 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
             {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-22-2016, 23:59', endDate: '04-29-2016, 23:59', owner: 'Eldar Alaskarov', doneCount: 12}
         ];
     })
-teacherDashboardApp.factory('Data', function () {
-    return {
-        EventId: '',
-        AddEventType: '',
-        AnnouncementId: '', //not used yet
-        NotificationType:'',
-        NotificationSource:'',
-        PostId: ''};
-});
-
 teacherDashboardApp.filter('capitalize', function() {
     return function(input) {
         return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
@@ -34723,7 +34719,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                 url: '/postAnnouncement',
                 data: {
                     body: $scope.announcement_post,
-                    teacher_id: $scope.user_id,
+                    owner_id: $scope.user_id,
                     group_list: $scope.selected
                 }
             }).success(function () {
@@ -34956,9 +34952,13 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
-        $scope.selectNotification=function(index,source){
-            Data.NotificationSource=source;
-            Data.NotificationType=$scope.notifications[index].type;
+        $scope.selectNotification=function(index){
+            $http.get('/getDataNotification/'+
+                $scope.notifications[index].source_table+'/'+
+                $scope.notifications[index].source_id).success(function(data){
+                Data.NotificationData=data;
+                Data.NotificationData.source_table=$scope.notifications[index].source_table;
+            });
             $mdDialog.show({
                 controller: notificationSelectDialogController,
                 templateUrl: 'dialogs/notificationSelectDialog.html',
@@ -35280,42 +35280,28 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
 
 // Notification dialog controllers
 
-function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data, AnnouncementService, ScheduleService){
-    var source=Data.NotificationSource;
-    $scope.notificationType=Data.NotificationType;
+function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data){
+    var tempKey='';
 
+    $scope.data=Data.NotificationData;
+    console.log($scope.data);
 
     $scope.editMode=false;
 
-    var tempKey='';
-
-    if($scope.notificationType == 'announcement') {
-        for (key in AnnouncementService.announcements) {
-            if (source == AnnouncementService.announcements[key].id) {
-                $scope.notification = AnnouncementService.announcements[key];
-            }
-        }
-        $scope.notificationDate = $scope.notification.date;
+    if($scope.data.source_table == 'announcements') {
+        $scope.notificationDate = $scope.data.updated_at;
         $scope.notificationTitle = 'Announcement';
-        $scope.notificationText = $scope.notification.text;
-        $scope.notificationOwner = $scope.notification.user;
+        $scope.notificationContent = $scope.data.body;
+        $scope.notificationOwner = $scope.data.owner.name;
     }
     else {
-        for (key in ScheduleService.events) {
-            if (source == ScheduleService.events[key].id) {
-                $scope.notification = ScheduleService.events[key];
-                tempKey = key;
-            }
-        }
         $scope.notificationDate = $scope.notification.date;
         $scope.notificationTitle = 'Extra lesson';
         $scope.notificationContent = $scope.notification.description;
         $scope.notificationOwner = $scope.notification.owner;
         $scope.notificationStatus = $scope.notification.status;
-
-
-
     }
+
 
 
     $scope.showStatus=function(check){

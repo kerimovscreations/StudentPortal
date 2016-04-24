@@ -10,7 +10,7 @@ class Announcement extends Model
         'body','teacher_id'
     ];
 
-    public function teacher(){
+    public function owner(){
         return $this->belongsTo('App\Teacher');
     }
 

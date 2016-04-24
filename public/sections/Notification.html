@@ -2,7 +2,7 @@
     <p class="md-subhead md-margin" style="color: #909090">Recent Notifications</p>
     <md-list >
         <md-divider></md-divider>
-        <md-list-item ng-repeat="notification in notifications" class="secondary-button-padding" ng-click="selectNotification($index,notification.source_id,notification.source_table)">
+        <md-list-item ng-repeat="notification in notifications" class="secondary-button-padding" ng-click="selectNotification($index)">
             <md-icon ng-if="notification.source_table=='announcement'" md-svg-icon="svg/ic_announcement_black_24px.svg"></md-icon>
             <md-icon ng-if="notification.type!='announcement'" md-svg-icon="svg/ic_people_black_24px.svg"></md-icon>
             <p class="md-title"><% notification.text %></p>

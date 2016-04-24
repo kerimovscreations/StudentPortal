@@ -78,13 +78,13 @@ Route::group(['middleware' => 'web', 'api'], function () {
     Route::get('/getAnnouncements',function(){
         $announcements=App\Announcement::all();
         $groups=array();
-        $teacher=array();
+        $owner=array();
         foreach ($announcements as $announcement) {
             array_push($groups,$announcement->groups);
-            array_push($teacher,$announcement->teacher);
+            array_push($owner,$announcement->owner);
         }
         $results=array();
-        array_push($results,$announcements,$groups,$teacher);
+        array_push($results,$announcements,$groups,$owner);
         return json_encode($results);
     });
 
@@ -114,6 +114,17 @@ Route::group(['middleware' => 'web', 'api'], function () {
             ['receiver_table',$table],
         ])->get();
         return json_encode($notifications);
+    });
+
+    Route::get('/getDataNotification/{table}/{id}',function($table,$id){
+        if($table=='announcements'){
+            $data=App\Announcement::find($id);
+            $data->owner;
+        }
+        else{
+
+        }
+        return json_encode($data);
     });
 
     Route::group(['middleware' => 'teacher'], function () {
