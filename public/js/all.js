@@ -34817,10 +34817,14 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                     .ok('Got it'));
         }
     })
-    .controller('ScheduleController',function($scope, $mdDialog, $mdMedia,ProfileService, ScheduleService, Data){
+    .controller('ScheduleController',function($scope, $http, $cookies, $mdDialog, $mdMedia, Data){
         $scope.Data=Data;
-        $scope.user_type=ProfileService.user_type;
-        $scope.events=ScheduleService.events;
+        $scope.user_type=$cookies.get('userType');
+        $scope.events=[];
+
+        $http.get('/getEvents').success(function(data){
+            $scope.events=data;
+        });
 
         $scope.dt=new Date();
 
@@ -34866,7 +34870,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
         $scope.eventSelect=function(id){
-            $scope.Data.EventId=id;
+            Data.EventId=id;
 
             $mdDialog.show({
                 controller: eventSelectDialogController,
@@ -35012,18 +35016,29 @@ function EditPostDialogController($scope, $mdDialog, AnnouncementService,$mdToas
 
 // Schedule dialog controllers
 
-function eventSelectDialogController($scope, $mdDialog,$mdMedia,$mdToast, Data,ProfileService, ScheduleService){
+function eventSelectDialogController($scope,$http,$cookies, $mdDialog,$mdMedia,$mdToast, Data){
     var id=Data.EventId;
-    $scope.user_name=ProfileService.user_name;
-    $scope.user_type=ProfileService.user_type;
+    $scope.user_name=$cookies.get('userName');
+    $scope.user_type=$cookies.get('userType');
     var tempKey='';
-    for(key in ScheduleService.events)
-        if(id==ScheduleService.events[key].id){
-            $scope.event=ScheduleService.events[key];
-            tempKey=key;
-        }
 
-    $scope.dateExtended=moment(new Date($scope.event.date)).format("dddd, MMMM DD YYYY");
+    $scope.event=[];
+
+    $http.get('/getEvent/'+id).success(function(data){
+        $scope.event=data;
+    });
+
+    $scope.showStatus=function(status){
+        switch (status){
+            case 0: return 'Not Done'; break;
+            case 1: return 'Done'; break;
+            default: return 'Not Done'; break;
+        }
+    };
+
+    $scope.dateExtended=function(date){
+        return moment(new Date(date)).format("dddd, MMMM DD YYYY");
+    };
     $scope.edit=function(){
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
         $mdDialog.show({

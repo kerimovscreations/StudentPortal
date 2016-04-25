@@ -12,7 +12,6 @@
 */
 
 
-use App\Notification;
 use Illuminate\Support\Facades\Auth;
 
 Route::group(['middleware' => 'web', 'api'], function () {
@@ -89,7 +88,7 @@ Route::group(['middleware' => 'web', 'api'], function () {
     });
 
     Route::get('/getGroups',function(){
-       $groups= \App\Group::all();
+        $groups= \App\Group::all();
         return json_encode($groups);
     });
 
@@ -118,7 +117,7 @@ Route::group(['middleware' => 'web', 'api'], function () {
 
     Route::get('/getDataNotification/{table}/{id}',function($table,$id){
         if($table=='announcements'){
-            $data=App\Announcement::find($id);
+            $data=App\Announcement::all()->find($id);
             $data->owner;
         }
         else{
@@ -127,9 +126,24 @@ Route::group(['middleware' => 'web', 'api'], function () {
         return json_encode($data);
     });
 
+    Route::get('/getEvents',function(){
+        $events=App\Event::all();
+        return json_encode($events);
+    });
+
+    Route::get('/getEvent/{id}',function($id){
+        $event=App\Event::all()->find($id);
+        $event->group=App\Group::where('id',$event->group_id)->value('name');
+        $event->place=App\Place::where('id',$event->place_id)->value('name');
+        $event->owner=DB::table($event->owner_table)->where('id',$event->owner_id)->value('name');
+        $event->responsible_first=DB::table($event->responsible_first_table)->where('id',$event->responsible_first_id)->value('name');
+        $event->responsible_second=DB::table($event->responsible_second_table)->where('id',$event->responsible_second_id)->value('name');
+        return json_encode($event);
+    });
+
     Route::group(['middleware' => 'teacher'], function () {
-       Route::post('/postAnnouncement','AnnouncementController@store');
-       Route::post('/deleteAnnouncement','AnnouncementController@delete');
+        Route::post('/postAnnouncement','AnnouncementController@store');
+        Route::post('/deleteAnnouncement','AnnouncementController@delete');
     });
 });
 
