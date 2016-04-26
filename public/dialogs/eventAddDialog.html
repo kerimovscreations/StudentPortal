@@ -27,8 +27,8 @@
                         <md-input-container>
                             <label>Place</label>
                             <md-select ng-model="eventPlace" class="md-subhead" >
-                                <md-option ng-repeat="place in places" value="<% place.selectedPlace %>">
-                                    <% place.selectedPlace %>
+                                <md-option ng-repeat="place in places" value="<% place.id %>">
+                                    <% place.name %>
                                 </md-option>
                             </md-select>
                         </md-input-container>
@@ -36,26 +36,17 @@
                         <md-input-container ng-if="eventType!='extra'">
                             <label>Group</label>
                             <md-select ng-model="eventGroup" class="md-subhead">
-                                <md-option ng-repeat="group in groups" value="<% group.selectedGroup %>">
-                                    <% group.selectedGroup %>
+                                <md-option ng-repeat="group in groups" value="<% group.id %>">
+                                    <% group.name %>
                                 </md-option>
                             </md-select>
                         </md-input-container>
                         <div style="width: 10px"></div>
-                        <md-input-container ng-if="eventType!='extra'">
-                            <label>Type</label>
-                            <md-select ng-model="eventType" class="md-subhead">
-                                <md-option ng-repeat="type in types" value="<% type.selectedType %>">
-                                    <% type.selectedType %>
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
                     </div>
-
                     <div layout="column" layout-align="none center" style="color: #b0cf79">
                         <span style="margin-right: 10px">Responsible person</span>
                         <md-autocomplete
-                                md-selected-item="selectedItem"
+                                md-selected-item="selectedPerson"
                                 md-search-text="searchText"
                                 md-items="item in querySearch(searchText)"
                                 md-item-text="item.display"

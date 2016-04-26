@@ -574,7 +574,7 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
     };
 }
 
-function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ProfileService, ScheduleService, NotificationService, PeopleService){
+function eventAddDialogController($scope,$http, $mdDialog, $timeout, $q, $mdToast, Data, ProfileService, ScheduleService, NotificationService, PeopleService){
     var type=Data.AddEventType;
 
     $scope.minDate=new Date();
@@ -593,16 +593,29 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
     $scope.endHour='';
     $scope.endMinute='';
 
+    $scope.places=[];
+    $http.get('/getPlaces').success(function(data){
+        $scope.places=data;
+    });
+
+    $scope.groups=[];
+    $http.get('/getGroups').success(function(data){
+        $scope.groups=data;
+    });
+
+    $scope.people=[];
+    $http.get('/getTeachers').success(function(data){
+        $scope.people = loadAll(data);
+    });
+    $scope.querySearch = querySearch;
+    $scope.selectedPerson=$scope.eventResponsible;
+
     //options to selectors
     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) { return { selectedHour: hour }; });
     $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) { return { selectedMinute: minute }; });
     $scope.types=['lesson','meeting'].map(function (type) { return { selectedType: type }; });
-    //$scope.places=PeopleService.places.map(function (place) { return { selectedPlace: place }; });
-    //$scope.groups=PeopleService.groups.map(function (group) { return { selectedGroup: group }; });
 
-    $scope.people = loadAll();
-    $scope.querySearch = querySearch;
-    $scope.selectedItem=$scope.eventResponsible;
+
 
     function querySearch (query) {
         var results = query ? $scope.people.filter( createFilterFor(query) ) : $scope.people, deferred;
@@ -617,23 +630,12 @@ function eventAddDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Dat
         };
     }
 
-    function loadAll() {
-        $scope.tempPeople=PeopleService.people;
+    function loadAll(people) {
         var stuffName=[];
         var stuffId=[];
-        for(key in $scope.tempPeople){
-            if($scope.eventType=='extra'){
-                if($scope.tempPeople[key].type=='mentor'){
-                    stuffName.push($scope.tempPeople[key].name);
-                    stuffId.push($scope.tempPeople[key].id);
-                }
-            }else{
-                if($scope.tempPeople[key].type=='mentor' || $scope.tempPeople[key].type=='teacher'){
-                    stuffName.push($scope.tempPeople[key].name);
-                    stuffId.push($scope.tempPeople[key].id);
-                }
-            }
-
+        for(var key in people){
+            stuffName.push(people[key].name);
+            stuffId.push(people[key].id);
         }
         return stuffName.map( function (name) {
             return {

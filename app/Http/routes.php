@@ -87,6 +87,11 @@ Route::group(['middleware' => 'web', 'api'], function () {
         return json_encode($results);
     });
 
+    Route::get('/getPlaces',function(){
+        $places= \App\Place::all();
+        return json_encode($places);
+    });
+
     Route::get('/getGroups',function(){
         $groups= \App\Group::all();
         return json_encode($groups);
@@ -140,6 +145,8 @@ Route::group(['middleware' => 'web', 'api'], function () {
         $event->responsible_second=DB::table($event->responsible_second_table)->where('id',$event->responsible_second_id)->value('name');
         return json_encode($event);
     });
+
+    Route::get('/postEvent','EventController@store');
 
     Route::group(['middleware' => 'teacher'], function () {
         Route::post('/postAnnouncement','AnnouncementController@store');

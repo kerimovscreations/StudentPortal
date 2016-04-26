@@ -15,6 +15,10 @@ class EventController extends Controller
         'responsible_second_id', 'responsible_second_table'
     ];
 
+    public function store(Request $request){
+
+    }
+
     public function group(){
         return $this->belongsTo('App\Group');
     }
