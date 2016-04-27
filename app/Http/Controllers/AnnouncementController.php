@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Announcement;
 use App\Notification;
-use App\Teacher;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;

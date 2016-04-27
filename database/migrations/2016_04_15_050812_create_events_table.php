@@ -27,8 +27,8 @@ class CreateEventsTable extends Migration
             $table->string('owner_table',255);
             $table->integer('responsible_first_id')->unsigned();
             $table->string('responsible_first_table',255);
-            $table->integer('responsible_second_id')->unsigned();
-            $table->string('responsible_second_table',255);
+            $table->integer('responsible_second_id')->unsigned()->nullable();
+            $table->string('responsible_second_table',255)->nullable();
 
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
             $table->foreign('place_id')->references('id')->on('places')->onDelete('cascade');

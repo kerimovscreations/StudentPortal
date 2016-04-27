@@ -16,6 +16,10 @@ class Place extends Model
     ];
 
     public function groups(){
-        return $this->belongsToMany('App\Group');
+        return $this->hasMany('App\Group');
+    }
+
+    public function events(){
+        return $this->hasMany('App\Event');
     }
 }

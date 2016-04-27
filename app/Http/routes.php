@@ -142,11 +142,13 @@ Route::group(['middleware' => 'web', 'api'], function () {
         $event->place=App\Place::where('id',$event->place_id)->value('name');
         $event->owner=DB::table($event->owner_table)->where('id',$event->owner_id)->value('name');
         $event->responsible_first=DB::table($event->responsible_first_table)->where('id',$event->responsible_first_id)->value('name');
-        $event->responsible_second=DB::table($event->responsible_second_table)->where('id',$event->responsible_second_id)->value('name');
+        if(!is_null($event->responsible_second_id)){
+            $event->responsible_second=DB::table($event->responsible_second_table)->where('id',$event->responsible_second_id)->value('name');
+        }
         return json_encode($event);
     });
 
-    Route::get('/postEvent','EventController@store');
+    Route::post('/postEvent','EventController@store');
 
     Route::group(['middleware' => 'teacher'], function () {
         Route::post('/postAnnouncement','AnnouncementController@store');

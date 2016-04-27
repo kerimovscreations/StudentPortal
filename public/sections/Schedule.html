@@ -105,11 +105,11 @@
         <md-toolbar>
             <md-fab-actions class="md-toolbar-tools">
                 <!--Event add button-->
-                <md-button ng-if="user_type!='student'" aria-label="lesson" class="md-icon-button" ng-click="eventAdd('event')">
+                <md-button ng-if="user_type!='student'" aria-label="lesson" class="md-icon-button" ng-click="eventAdd('lesson')">
                     <md-icon md-svg-src="svg/ic_assignment_white_36px.svg"></md-icon>
                 </md-button>
                 <!--Meeting add button-->
-                <md-button ng-if="user_type!='mentor'" aria-label="meeting" class="md-icon-button" ng-click="eventAdd('extra')">
+                <md-button ng-if="user_type!='mentor'" aria-label="meeting" class="md-icon-button" ng-click="eventAdd('meeting')">
                     <md-icon md-svg-src="svg/ic_people_white_36px.svg"></md-icon>
                 </md-button>
             </md-fab-actions>

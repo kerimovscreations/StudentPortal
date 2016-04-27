@@ -48,51 +48,6 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
         this.groups = ['16102', '16101', '16201', '16202'];
     })
     .service('ScheduleService', function () {
-        this.events = [
-            {
-                title: 'PHP Lesson 4',
-                type: 'lesson',
-                description: "1.Classes, 2.methods",
-                date: '03-28-2016',
-                startTime: '18:30',
-                endTime: '21:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'done',
-                owner: 'Karim Karimov',
-                responsible: "Samir Karimov",
-                id: 1
-            },
-            {
-                title: 'Extra',
-                type: 'extra',
-                description: "Extra",
-                date: '03-28-2016',
-                startTime: '09:00',
-                endTime: '10:30',
-                group: '',
-                place: 'HTP',
-                status: 'accepted',
-                owner: 'Ulvi Aslanov',
-                responsible: "Orxan Farmanli",
-                id: 2
-            },
-            {
-                title: 'PHP Lesson 5',
-                type: 'lesson',
-                description: "1.Classes, 2.methods",
-                date: '03-26-2016',
-                startTime: '12:00',
-                endTime: '14:30',
-                group: '16102',
-                place: 'HTP',
-                status: 'not done',
-                owner: 'Karim Karimov',
-                responsible: "Farid Osmanli",
-                id: 3
-            }
-        ];
-        console.log(this.events);
         this.eventTypes = ['lesson', 'extra', 'meeting'];
     })
     .service('NotificationService', function ($http,Data) {

@@ -20,11 +20,15 @@ class Group extends Model
     }
 
     public function announcements(){
-        return $this->belongsToMany('App\Announcement');
+        return $this->hasMany('App\Announcement');
     }
 
     public function students(){
         return $this->hasMany('App\Student');
+    }
+
+    public function events(){
+        return $this->hasMany('App\Event');
     }
 
 }
