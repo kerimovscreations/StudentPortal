@@ -88,7 +88,6 @@
     <div layout="row" layout-align="end center">
         <div class="schedule-agenda extra">Extra</div>
         <div class="schedule-agenda">Lesson</div>
-        <div class="schedule-agenda meeting">Meeting</div>
         <div style="width: 20px"></div>
     </div>
     <div style="height: 100px"></div> <!--Empty space for dividing event add button and schedule-->
@@ -109,7 +108,7 @@
                     <md-icon md-svg-src="svg/ic_assignment_white_36px.svg"></md-icon>
                 </md-button>
                 <!--Meeting add button-->
-                <md-button ng-if="user_type!='mentor'" aria-label="meeting" class="md-icon-button" ng-click="eventAdd('meeting')">
+                <md-button ng-if="user_type!='mentor'" aria-label="extra" class="md-icon-button" ng-click="eventAdd('extra')">
                     <md-icon md-svg-src="svg/ic_people_white_36px.svg"></md-icon>
                 </md-button>
             </md-fab-actions>

@@ -149,6 +149,7 @@ Route::group(['middleware' => 'web', 'api'], function () {
     });
 
     Route::post('/postEvent','EventController@store');
+    Route::post('/postEventStatus','EventController@statusChange');
 
     Route::group(['middleware' => 'teacher'], function () {
         Route::post('/postAnnouncement','AnnouncementController@store');

@@ -20,7 +20,7 @@ class CreateEventsTable extends Migration
             $table->string('date',255);
             $table->string('start_time',255);
             $table->string('end_time',255);
-            $table->integer('group_id')->unsigned();
+            $table->integer('group_id')->unsigned()->nullable();
             $table->integer('place_id')->unsigned();
             $table->boolean('status');
             $table->integer('owner_id')->unsigned();

@@ -46,29 +46,12 @@
                     <div style="width: 10px"></div>
                 </div>
                 <div layout="row">
-                    <div layout="column" ng-show="eventType=='lesson'" layout-align="none center" style="color: #b0cf79">
-                        <span style="margin-right: 10px">Responsible teacher</span>
+                    <div layout="column" layout-align="none center" style="color: #b0cf79">
+                        <span style="margin-right: 10px">Responsible <% eventResponsible1Table.slice(0, -1); %></span>
                         <md-autocomplete
                                 md-selected-item="selectedResponsible1"
                                 md-search-text="searchText1"
-                                md-items="item1 in querySearch(searchText, teachers)"
-                                md-item-text="item1.name"
-                                md-min-length="0"
-                                placeholder="Who is responsible?" required>
-                            <md-item-template>
-                                <% item1.name %>
-                            </md-item-template>
-                            <md-not-found>
-                                No person matching "<% searchText1 %>" was found.
-                            </md-not-found>
-                        </md-autocomplete>
-                    </div>
-                    <div layout="column" ng-show="eventType=='meeting'" layout-align="none center" style="color: #b0cf79">
-                        <span style="margin-right: 10px">Responsible student</span>
-                        <md-autocomplete
-                                md-selected-item="selectedResponsible1"
-                                md-search-text="searchText1"
-                                md-items="item1 in querySearch(searchText, students)"
+                                md-items="item1 in querySearch(searchText, searchResponsiblePeople1)"
                                 md-item-text="item1.name"
                                 md-min-length="0"
                                 placeholder="Who is responsible?" required>
@@ -81,12 +64,12 @@
                         </md-autocomplete>
                     </div>
                     <div style="width: 30px"></div>
-                    <div layout="column" ng-show="eventType=='meeting'" layout-align="none center" style="color: #b0cf79">
+                    <div layout="column" ng-show="eventType=='extra'" layout-align="none center" style="color: #b0cf79">
                         <span style="margin-right: 10px">Responsible mentor</span>
                         <md-autocomplete
                                 md-selected-item="selectedResponsible2"
                                 md-search-text="searchText2"
-                                md-items="item2 in querySearch(searchText, mentors)"
+                                md-items="item2 in querySearch(searchText, searchResponsiblePeople2)"
                                 md-item-text="item2.name"
                                 md-min-length="0"
                                 placeholder="Who is responsible?" required>

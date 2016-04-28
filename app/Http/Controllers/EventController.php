@@ -31,6 +31,12 @@ class EventController extends Controller
         $event->save();
     }
 
+    public function statusChange(Request $request){
+        $event=\App\Event::all()->find($request['id']);
+        $event->status=$request['status'];
+        $event->save();
+    }
+
     public function group()
     {
         return $this->belongsTo('App\Group');

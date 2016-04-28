@@ -424,15 +424,37 @@ function EditPostDialogController($scope, $mdDialog, AnnouncementService, $mdToa
 function eventSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
     var id = Data.EventId;
     $scope.user_name = $cookies.get('userName');
+    $scope.user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
     var tempKey = '';
 
-    $scope.select_event = [];
+    $scope.temp_event = [];
+    $scope.temp_event_status=false;
 
     $http.get('/getEvent/' + id).success(function (data) {
-        $scope.select_event = data;
-        console.log($scope.select_event);
+        $scope.temp_event = data;
+        if($scope.temp_event.status)
+            $scope.temp_event_status=true;
+        else
+            $scope.temp_event_status=false;
     });
+
+    $scope.onChange = function(cbState) {
+        if(cbState)
+            $scope.temp_event.status = 1;
+        else
+            $scope.temp_event.status = 0;
+        $http({
+            method: 'POST',
+            url: '/postEventStatus',
+            data: {
+                id: id,
+                status: $scope.temp_event.status
+            }
+        }).success(function () {
+            $mdToast.show($mdToast.simple().textContent('Event marked as '+$scope.showStatus($scope.temp_event.status)));
+        });
+    };
 
     $scope.showStatus = function (status) {
         switch (status) {
@@ -472,7 +494,7 @@ function eventSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedi
             .ok('Delete')
             .cancel('Cancel');
         $mdDialog.show(confirm).then(function () {
-            ScheduleService.events.splice(tempKey, 1);
+
             $mdToast.show($mdToast.simple().textContent('Event deleted'));
         });
     };
@@ -516,7 +538,7 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
     $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) {
         return {selectedMinute: minute};
     });
-    $scope.types = ['lesson', 'meeting', 'extra'].map(function (type) {
+    $scope.types = ['lesson', 'extra'].map(function (type) {
         return {selectedType: type};
     });
     $scope.places = ['HTP', 'BBF'].map(function (place) {
@@ -611,7 +633,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     $scope.eventTitle = '';
     $scope.eventDescription = '';
     $scope.eventPlace = '';
-    $scope.eventGroup = '';
+    $scope.eventGroup = null;
     $scope.eventResponsible1 = null;
     $scope.eventResponsible1Table = null;
     $scope.eventResponsible2 = [];
@@ -634,14 +656,11 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         $scope.groups = data;
     });
 
-    $scope.teachers = [];
-    $scope.students = [];
-    $scope.mentors = [];
 
     if (type == 'lesson') {
         $scope.eventResponsible1Table = 'teachers';
         $http.get('/getTeachers').success(function (data) {
-            $scope.teachers = loadAll(data);
+            $scope.searchResponsiblePeople1 = loadAll(data);
         });
     }
     else {
@@ -649,10 +668,10 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         $scope.eventResponsible2Table = 'mentors';
 
         $http.get('/getStudents').success(function (data) {
-            $scope.students = loadAll(data);
+            $scope.searchResponsiblePeople1 = loadAll(data);
         });
         $http.get('/getMentors').success(function (data) {
-            $scope.mentors = loadAll(data);
+            $scope.searchResponsiblePeople2 = loadAll(data);
         });
     }
 

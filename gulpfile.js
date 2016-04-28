@@ -16,19 +16,10 @@ elixir(function(mix) {
 
     mix.styles([
         '/app.css',
-        '../../css/angular-material.min.css',
         '../../css/style.css'
     ]);
 
     mix.scripts([
-        "../../js/angular.js",
-        "../../js/angular-route.min.js",
-        "../../js/angular-resource.min.js",
-        "../../js/angular-cookies.min.js",
-        "../../js/angular-messages.min.js",
-        "../../js/angular-animate.min.js",
-        "../../js/angular-aria.min.js",
-        "../../js/angular-material.min.js",
         "../../js/moment.js",
         "../../js/app.js",
         "../../js/factories.js",
