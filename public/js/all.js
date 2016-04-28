@@ -4339,26 +4339,25 @@ function EditPostDialogController($scope, $mdDialog, AnnouncementService, $mdToa
 
 // Schedule dialog controllers
 
-function eventSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
+function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
     var id = Data.EventId;
     $scope.user_name = $cookies.get('userName');
     $scope.user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
-    var tempKey = '';
 
     $scope.temp_event = [];
-    $scope.temp_event_status=false;
+    $scope.temp_event_status = false;
 
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.temp_event = data;
-        if($scope.temp_event.status)
-            $scope.temp_event_status=true;
+        if ($scope.temp_event.status)
+            $scope.temp_event_status = true;
         else
-            $scope.temp_event_status=false;
+            $scope.temp_event_status = false;
     });
 
-    $scope.onChange = function(cbState) {
-        if(cbState)
+    $scope.onChange = function (cbState) {
+        if (cbState)
             $scope.temp_event.status = 1;
         else
             $scope.temp_event.status = 0;
@@ -4370,7 +4369,7 @@ function eventSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedi
                 status: $scope.temp_event.status
             }
         }).success(function () {
-            $mdToast.show($mdToast.simple().textContent('Event marked as '+$scope.showStatus($scope.temp_event.status)));
+            $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
         });
     };
 
@@ -4412,8 +4411,17 @@ function eventSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedi
             .ok('Delete')
             .cancel('Cancel');
         $mdDialog.show(confirm).then(function () {
-
-            $mdToast.show($mdToast.simple().textContent('Event deleted'));
+            $http({
+                method: 'POST',
+                url: '/postEventDelete',
+                data: {
+                    id: id
+                }
+            }).success(function () {
+                $mdDialog.hide();
+                $mdToast.show($mdToast.simple().textContent('Event deleted'));
+                $route.reload();
+            });
         });
     };
     $scope.hide = function () {
@@ -4424,31 +4432,90 @@ function eventSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedi
     };
 }
 
-function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Data, ScheduleService, PeopleService) {
+function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data, ScheduleService, PeopleService) {
     var id = Data.EventId;
-    var tempKey = null;
-    $scope.event = null;
+    var user_id = $cookies.get('userId');
+    var user_type = $cookies.get('userType');
+    $scope.edit_event = null;
 
-    for (key in ScheduleService.events)
-        if (id == ScheduleService.events[key].id) {
-            $scope.event = ScheduleService.events[key];
-            tempKey = key;
+    var startTime = [];
+    var endTime = [];
+
+    $http.get('/getEvent/' + id).success(function (data) {
+        $scope.edit_event = data;
+        $scope.event_id = $scope.edit_event.id;
+        $scope.event_title = $scope.edit_event.title;
+        $scope.event_description = $scope.edit_event.description;
+        $scope.event_type = $scope.edit_event.type;
+        $scope.event_date = new Date($scope.edit_event.date);
+        $scope.event_start_time = $scope.edit_event.start_time;
+        $scope.event_end_time = $scope.edit_event.end_time;
+        $scope.event_group_id = $scope.edit_event.group_id;
+        $scope.event_place_id = $scope.edit_event.place_id;
+        $scope.event_status = $scope.edit_event.status;
+        $scope.event_owner_id = $scope.edit_event.owner_id;
+        $scope.event_owner_table = $scope.edit_event.owner_table;
+        $scope.event_responsible_first_id = $scope.edit_event.responsible_first_id;
+        $scope.event_responsible_first_table = $scope.edit_event.responsible_first_table;
+        $scope.event_responsible_second_id = $scope.edit_event.responsible_second_id;
+        $scope.event_responsible_second_table = $scope.edit_event.responsible_second_table;
+
+        startTime = $scope.event_start_time.split(':');
+        endTime = $scope.event_end_time.split(':');
+
+        $scope.startHour = startTime[0];
+        $scope.startMinute = startTime[1];
+        $scope.endHour = endTime[0];
+        $scope.endMinute = endTime[1];
+
+        $scope.selectedResponsible1 = null;
+        $scope.selectedResponsible2 = null;
+
+        if ($scope.event_type == 'lesson') {
+            $scope.eventResponsible1Table = 'teachers';
+            $http.get('/getTeachers').success(function (data) {
+                $scope.searchResponsiblePeople1 = loadAll(data);
+                for (key in $scope.searchResponsiblePeople1) {
+                    if ($scope.searchResponsiblePeople1[key].id == $scope.event_responsible_first_id) {
+                        $scope.selectedResponsible1 = $scope.searchResponsiblePeople1[key];
+                    }
+                }
+            });
         }
-    $scope.editedEvent = clone($scope.event);
-    $scope.eventTitle = $scope.editedEvent.title;
-    $scope.eventContent = $scope.editedEvent.description;
-    $scope.eventPlace = $scope.editedEvent.place;
-    $scope.eventGroup = $scope.editedEvent.group;
-    $scope.eventResponsible = $scope.editedEvent.responsible;
-    $scope.eventType = $scope.editedEvent.type;
+        else {
+            $scope.eventResponsible1Table = 'students';
+            $scope.eventResponsible2Table = 'mentors';
 
-    var startTime = $scope.event.startTime.split(':');
-    var endTime = $scope.event.endTime.split(':');
+            $http.get('/getStudents').success(function (data) {
+                $scope.searchResponsiblePeople1 = loadAll(data);
+                for (key in $scope.searchResponsiblePeople1) {
+                    if ($scope.searchResponsiblePeople1[key].id == $scope.event_responsible_first_id) {
+                        $scope.selectedResponsible1 = $scope.searchResponsiblePeople1[key];
+                    }
+                }
+            });
+            $http.get('/getMentors').success(function (data) {
+                $scope.searchResponsiblePeople2 = loadAll(data);
+                for (key in $scope.searchResponsiblePeople2) {
+                    if ($scope.searchResponsiblePeople2[key].id == $scope.event_responsible_second_id) {
+                        $scope.selectedResponsible2 = $scope.searchResponsiblePeople2[key];
+                    }
+                }
+            });
+        }
+    });
 
-    $scope.startHour = startTime[0];
-    $scope.startMinute = startTime[1];
-    $scope.endHour = endTime[0];
-    $scope.endMinute = endTime[1];
+    $scope.places = [];
+    $http.get('/getPlaces').success(function (data) {
+        $scope.places = data;
+    });
+
+    $scope.groups = [];
+    $http.get('/getGroups').success(function (data) {
+        $scope.groups = data;
+    });
+
+    $scope.querySearch = querySearch;
 
     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {
         return {selectedHour: hour};
@@ -4456,22 +4523,9 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
     $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) {
         return {selectedMinute: minute};
     });
-    $scope.types = ['lesson', 'extra'].map(function (type) {
-        return {selectedType: type};
-    });
-    $scope.places = ['HTP', 'BBF'].map(function (place) {
-        return {selectedPlace: place};
-    });
-    $scope.groups = ['16101', '16102', '16103'].map(function (group) {
-        return {selectedGroup: group};
-    });
 
-    $scope.people = loadAll();
-    $scope.querySearch = querySearch;
-    $scope.selectedItem = $scope.eventResponsible;
-
-    function querySearch(query) {
-        var results = query ? $scope.people.filter(createFilterFor(query)) : $scope.people, deferred;
+    function querySearch(query, people) {
+        var results = query ? people.filter(createFilterFor(query)) : people, deferred;
         deferred = $q.defer();
         $timeout(function () {
             deferred.resolve(results);
@@ -4486,47 +4540,49 @@ function eventEditDialogController($scope, $mdDialog, $timeout, $q, $mdToast, Da
         };
     }
 
-    function loadAll() {
-        $scope.tempPeople = PeopleService.people;
-        var stuffName = [];
-        var stuffId = [];
-        for (key in $scope.tempPeople) {
-            if ($scope.tempPeople[key].type == 'mentor' || $scope.tempPeople[key].type == 'teacher') {
-                stuffName.push($scope.tempPeople[key].name);
-                stuffId.push($scope.tempPeople[key].id);
-            }
+    function loadAll(people) {
+        for (key in people) {
+            people[key].value = (people[key].name).toLowerCase();
         }
-        return stuffName.map(function (name) {
-            return {
-                value: name.toLowerCase(),
-                display: name
-            };
-        });
+        return people;
     }
 
     $scope.submit = function () {
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
+        if ($scope.selectedResponsible1 != null)
+            $scope.event_responsible_first_id = $scope.selectedResponsible1.id;
+        if ($scope.selectedResponsible2 != null)
+            $scope.event_responsible_second_id = $scope.selectedResponsible2.id;
+
         if (startTime.isBefore(endTime)) {
-            $scope.editedEvent.startTime = startTime.format('HH:mm');
-            $scope.editedEvent.endTime = endTime.format('HH:mm');
-            $scope.editedEvent.title = $scope.eventTitle;
-            $scope.editedEvent.description = $scope.eventContent;
-            $scope.editedEvent.place = $scope.eventPlace;
-            $scope.editedEvent.type = $scope.eventType;
-            $scope.editedEvent.group = $scope.eventType == 'extra' ? '' : $scope.eventGroup;
-            if ($scope.selectedItem != undefined) {
-                $scope.editedEvent.responsible = $scope.selectedItem.display;
-            }
-            else {
-                $scope.editedEvent.responsible = 'No one';
-            }
-
-            ScheduleService.events[tempKey] = $scope.editedEvent;
-
-            $mdDialog.hide();
-            $mdToast.show($mdToast.simple().textContent('Event updated'));
+            $http({
+                method: 'POST',
+                url: '/postEventUpdate',
+                data: {
+                    id: $scope.event_id,
+                    title: $scope.event_title,
+                    description: $scope.event_description,
+                    type: $scope.event_type,
+                    date: moment($scope.event_date).format("MM-DD-YYYY"),
+                    start_time: startTime.format('HH:mm'),
+                    end_time: endTime.format('HH:mm'),
+                    group_id: $scope.event_group_id,
+                    place_id: $scope.event_place_id,
+                    status: $scope.event_status,
+                    owner_id: user_id,
+                    owner_table: user_type + 's',
+                    responsible_first_id: $scope.event_responsible_first_id,
+                    responsible_first_table: $scope.event_responsible_first_table,
+                    responsible_second_id: $scope.event_responsible_second_id,
+                    responsible_second_table: $scope.event_responsible_second_table
+                }
+            }).success(function () {
+                $mdDialog.hide();
+                $mdToast.show($mdToast.simple().textContent('Event updated'));
+                $route.reload();
+            })
         } else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));
         }
@@ -4594,8 +4650,8 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     }
 
     $scope.querySearch = querySearch;
-    $scope.selectedResponsible1=$scope.eventResponsible1;
-    $scope.selectedResponsible2=$scope.eventResponsible2;
+    $scope.selectedResponsible1 = $scope.eventResponsible1;
+    $scope.selectedResponsible2 = $scope.eventResponsible2;
 
     //options to selectors
     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {

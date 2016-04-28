@@ -31,10 +31,23 @@ class EventController extends Controller
         $event->save();
     }
 
-    public function statusChange(Request $request){
-        $event=\App\Event::all()->find($request['id']);
-        $event->status=$request['status'];
+    public function statusChange(Request $request)
+    {
+        $event = \App\Event::findOrFail($request['id']);
+        $event->status = $request['status'];
         $event->save();
+    }
+
+    public function update(Request $request)
+    {
+        $event = \App\Event::findOrFail($request['id']);
+        $event->update($request->all());
+    }
+
+    public function delete(Request $request)
+    {
+        $event = \App\Event::findOrFail($request['id']);
+        $event->delete();
     }
 
     public function group()
