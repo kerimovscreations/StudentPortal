@@ -94,6 +94,9 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
     })
     .controller('AnnouncementController', function ($scope, $mdDialog, $mdMedia, $mdToast, $http, $cookies, $route, Data) {
+        $scope.announcement_post = '';
+        $scope.selected = [];
+        $scope.user_type = $cookies.get('userType');
 
         $http.get('/getAnnouncements').success(function (data) {
             $scope.announcements = data[0];
@@ -106,11 +109,6 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $http.get('/getGroups').success(function (data) {
             $scope.groups = data;
         });
-
-        $scope.announcement_post = '';
-        $scope.selected = [];
-
-        $scope.user_type = $cookies.get('userType');
 
         $scope.post = function () {
             $scope.user_id = $cookies.get('userId');
@@ -151,7 +149,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             Data.PostId = index;
             var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
             $mdDialog.show({
-                controller: EditPostDialogController,
+                controller: postEditDialogController,
                 templateUrl: 'dialogs/editPostDialog.html',
                 parent: angular.element(document.body),
                 clickOutsideToClose: true,
@@ -348,25 +346,27 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     .controller('ConversationController', function () {
     })
     .controller('NotificationController', function ($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
-        $scope.notifications = [];
+        $scope.group_notifications = [];
+        $scope.personal_notifications = [];
 
-        var user_type = $cookies.get('userType');
+        $scope.user_type = $cookies.get('userType');
+        var user_id = $cookies.get('userId');
 
-        if (user_type == 'student') {
+        if ($scope.user_type == 'student') {
             var user_group_id = $cookies.get('userGroupId');
             $http.get('/getNotifications/groups/' + user_group_id).success(function (data) {
-                $scope.notifications = data;
+                $scope.group_notifications = data;
+            });
+            $http.get('/getNotifications/students/' + user_id).success(function (data) {
+                $scope.personal_notifications = data;
             });
         }
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
 
-        $scope.selectNotification = function (index) {
-            $http.get('/getDataNotification/' +
-                $scope.notifications[index].source_table + '/' +
-                $scope.notifications[index].source_id).success(function (data) {
+        $scope.selectNotification = function (id) {
+            $http.get('/getDataNotification/' + $scope.user_type + 's' + '/' + id).success(function (data) {
                 Data.NotificationData = data;
-                Data.NotificationData.source_table = $scope.notifications[index].source_table;
             });
             $mdDialog.show({
                 controller: notificationSelectDialogController,
@@ -389,7 +389,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
 // Announcement edit dialog controller
 
-function EditPostDialogController($scope, $mdDialog, AnnouncementService, $mdToast, Data) {
+function postEditDialogController($scope, $mdDialog, AnnouncementService, $mdToast, Data) {
     var index = Data.PostId;
     $scope.tempAnnouncement = AnnouncementService.announcements[index];
     $scope.selected = $scope.tempAnnouncement.groups.slice();
@@ -445,7 +445,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             $scope.temp_event.status = 0;
         $http({
             method: 'POST',
-            url: '/postEventStatus',
+            url: '/changeStatusEvent',
             data: {
                 id: id,
                 status: $scope.temp_event.status
@@ -495,7 +495,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
         $mdDialog.show(confirm).then(function () {
             $http({
                 method: 'POST',
-                url: '/postEventDelete',
+                url: '/deleteEvent',
                 data: {
                     id: id
                 }
@@ -641,7 +641,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         if (startTime.isBefore(endTime)) {
             $http({
                 method: 'POST',
-                url: '/postEventUpdate',
+                url: '/updateEvent',
                 data: {
                     id: $scope.event_id,
                     title: $scope.event_title,
@@ -813,23 +813,23 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
     var tempKey = '';
 
-    $scope.data = Data.NotificationData;
-    console.log($scope.data);
+    $scope.notification_data = Data.NotificationData;
+    console.log($scope.notification_data);
 
     $scope.editMode = false;
 
-    if ($scope.data.source_table == 'announcements') {
-        $scope.notificationDate = $scope.data.updated_at;
+    if ($scope.notification_data.source_table == 'announcements') {
+        $scope.notificationDate = $scope.notification_data.updated_at;
         $scope.notificationTitle = 'Announcement';
-        $scope.notificationContent = $scope.data.body;
-        $scope.notificationOwner = $scope.data.owner.name;
+        $scope.notificationContent = $scope.notification_data.body;
+        $scope.notificationOwner = $scope.notification_data.owner.name;
     }
     else {
-        $scope.notificationDate = $scope.notification.date;
+        $scope.notificationDate = $scope.notification_data.date;
         $scope.notificationTitle = 'Extra lesson';
-        $scope.notificationContent = $scope.notification.description;
-        $scope.notificationOwner = $scope.notification.owner;
-        $scope.notificationStatus = $scope.notification.status;
+        $scope.notificationContent = $scope.notification_data.description;
+        $scope.notificationOwner = $scope.notification_data.owner;
+        $scope.notificationStatus = $scope.notification_data.status;
     }
 
 

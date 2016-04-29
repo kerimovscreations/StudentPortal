@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\Event;
+use App\Notification;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -12,23 +12,27 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-        $event = new \App\Event();
-        $event->title = $request['title'];
-        $event->description = $request['description'];
-        $event->type = $request['type'];
-        $event->date = $request['date'];
-        $event->start_time = $request['start_time'];
-        $event->end_time = $request['end_time'];
-        $event->group_id = $request['group_id'];
-        $event->place_id = $request['place_id'];
-        $event->status = $request['status'];
-        $event->owner_id = $request['owner_id'];
-        $event->owner_table = $request['owner_table'];
-        $event->responsible_first_id = $request['responsible_first_id'];
-        $event->responsible_first_table = $request['responsible_first_table'];
-        $event->responsible_second_id = $request['responsible_second_id'];
-        $event->responsible_second_table = $request['responsible_second_table'];
-        $event->save();
+        $event = \App\Event::create($request->all());
+
+        if ($event->type == 'lesson') {
+            Notification::create([
+                'text' => 'New lesson',
+                'status' => 0,
+                'receiver_id' => $event->group_id,
+                'receiver_table' => 'groups',
+                'source_id' => $event->id,
+                'source_table' => 'events']);
+        } else {
+            Notification::create([
+                'text' => 'New extra lesson',
+                'status' => 0,
+                'receiver_id' => $event->responsible_first_id,
+                'receiver_table' => 'students',
+                'source_id' => $event->id,
+                'source_table' => 'events']);
+        }
+
+
     }
 
     public function statusChange(Request $request)

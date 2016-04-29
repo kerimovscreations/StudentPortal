@@ -149,9 +149,9 @@ Route::group(['middleware' => 'web', 'api'], function () {
     });
 
     Route::post('/postEvent','EventController@store');
-    Route::post('/postEventUpdate','EventController@update');
-    Route::post('/postEventDelete','EventController@delete');
-    Route::post('/postEventStatus','EventController@statusChange');
+    Route::post('/updateEvent','EventController@update');
+    Route::post('/deleteEvent','EventController@delete');
+    Route::post('/changeStatusEvent','EventController@statusChange');
 
     Route::group(['middleware' => 'teacher'], function () {
         Route::post('/postAnnouncement','AnnouncementController@store');
