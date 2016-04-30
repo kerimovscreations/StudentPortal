@@ -4,7 +4,7 @@
             <div class="md-toolbar-tools">
                 <h3><% notificationTitle | capitalize %></h3>
                 <span flex></span>
-                <md-button ng-if="notificationType=='extra' && !editMode && notificationStatus=='requested'" class="md-icon-button" ng-click="edit()">
+                <md-button ng-if="notificationType=='extra' && !editMode && notificationStatus==0" class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
                 </md-button>
                 <md-button class="md-icon-button" ng-click="hide()">
@@ -15,7 +15,7 @@
         <md-dialog-content>
             <div  class="md-dialog-content" layout="column" layout-align="center center" >
                 <span class="md-display-1" style="color: #6a72a2"><% notificationTitle %></span>
-                <span class="md-headline" style="color: #d98084" ng-if="notificationType=='extra' && !editMode">(<% notification.startTime %> - <% notification.endTime %>)</span>
+                <span class="md-headline" style="color: #d98084" ng-if="notificationEventType=='extra' && !editMode">(<% notificationStartTime %> - <% notificationEndTime %>)</span>
                 <span class="md-title" style="color: #d98084"><% notificationDate %></span>
                 <div layout="row" style="margin-top: 15px" ng-show="editMode">
                     <div layout="row" layout-align="center center" style="color: #88c8d0" >
@@ -67,21 +67,21 @@
                 <span class="md-body-2" style="color: #94cac2; margin-top: 10px">By <% notificationOwner %></span>
                 <span class="md-headline" style="margin-top: 10px">Content</span>
                 <span class="md-title"><% notificationContent %></span>
-                <span ng-if="notificationType=='extra'" aria-label="Event request" style="color: #505050; font-size: 18px; margin-top: 20px">
+                <span ng-if="notificationEventType=='extra'" aria-label="Event request" style="color: #505050; font-size: 18px; margin-top: 20px">
                     <% showStatus(notificationStatus) %>
                 </span>
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row" layout-align="none center">
             <!--buttons for announcement-->
-            <md-button ng-if="notificationType=='announcement'" class="md-primary" ng-click="hide()" style="margin-right:20px;">
+            <md-button ng-if="notificationType=='announcements'" class="md-primary" ng-click="hide()" style="margin-right:20px;">
                 Ok
             </md-button>
             <!--buttons for extra lesson -->
-            <md-button ng-if="notificationType=='extra' && !editMode && notificationStatus=='requested'" class="md-primary" ng-click="eventAccept(false)" style="margin-right:20px;">
+            <md-button ng-if="notificationType=='events' && !editMode && notificationStatus==null" class="md-primary" ng-click="eventAccept(false)" style="margin-right:20px;">
                 Decline
             </md-button>
-            <md-button ng-if="notificationType=='extra' && !editMode && notificationStatus=='requested'" class="md-raised md-primary" ng-click="eventAccept(true)" style="margin-right:20px;">
+            <md-button ng-if="notificationType=='events' && !editMode && notificationStatus==null" class="md-raised md-primary" ng-click="eventAccept(true)" style="margin-right:20px;">
                 Accept
             </md-button>
             <!--buttons for edit mode -->

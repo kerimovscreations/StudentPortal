@@ -22,7 +22,7 @@ class CreateEventsTable extends Migration
             $table->string('end_time',255);
             $table->integer('group_id')->unsigned()->nullable();
             $table->integer('place_id')->unsigned();
-            $table->boolean('status');
+            $table->tinyInteger('status')->nullable();
             $table->integer('owner_id')->unsigned();
             $table->string('owner_table',255);
             $table->integer('responsible_first_id')->unsigned();

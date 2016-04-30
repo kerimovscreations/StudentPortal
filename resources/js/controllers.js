@@ -365,20 +365,22 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
 
         $scope.selectNotification = function (id) {
-            $http.get('/getDataNotification/' + $scope.user_type + 's' + '/' + id).success(function (data) {
+            $http.get('/getDataNotification/' + id).success(function (data) {
                 Data.NotificationData = data;
-            });
-            $mdDialog.show({
-                controller: notificationSelectDialogController,
-                templateUrl: 'dialogs/notificationSelectDialog.html',
-                parent: angular.element(document.body),
-                clickOutsideToClose: true,
-                fullscreen: useFullScreen
-            });
-            $scope.$watch(function () {
-                return $mdMedia('xs') || $mdMedia('sm');
-            }, function (wantsFullScreen) {
-                $scope.customFullscreen = (wantsFullScreen === true);
+
+                $mdDialog.show({
+                    controller: notificationSelectDialogController,
+                    templateUrl: 'dialogs/notificationSelectDialog.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen
+                });
+
+                $scope.$watch(function () {
+                    return $mdMedia('xs') || $mdMedia('sm');
+                }, function (wantsFullScreen) {
+                    $scope.customFullscreen = (wantsFullScreen === true);
+                });
             });
         };
 
@@ -690,6 +692,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     $scope.eventDescription = '';
     $scope.eventPlace = '';
     $scope.eventGroup = null;
+    $scope.eventStatus = null;
     $scope.eventResponsible1 = null;
     $scope.eventResponsible1Table = null;
     $scope.eventResponsible2 = [];
@@ -714,6 +717,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 
 
     if (type == 'lesson') {
+        $scope.eventStatus=0;
         $scope.eventResponsible1Table = 'teachers';
         $http.get('/getTeachers').success(function (data) {
             $scope.searchResponsiblePeople1 = loadAll(data);
@@ -783,7 +787,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                     end_time: endTime.format('HH:mm'),
                     group_id: $scope.eventGroup,
                     place_id: $scope.eventPlace,
-                    status: 0,
+                    status: $scope.eventStatus,
                     owner_id: user_id,
                     owner_table: user_type + 's',
                     responsible_first_id: $scope.selectedResponsible1.id,
@@ -815,10 +819,12 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
 
     $scope.notification_data = Data.NotificationData;
     console.log($scope.notification_data);
+    $scope.notificationType = $scope.notification_data.notification_type;
+    $scope.notificationEventType = null;
 
     $scope.editMode = false;
 
-    if ($scope.notification_data.source_table == 'announcements') {
+    if ($scope.notificationType == 'announcements') {
         $scope.notificationDate = $scope.notification_data.updated_at;
         $scope.notificationTitle = 'Announcement';
         $scope.notificationContent = $scope.notification_data.body;
@@ -828,18 +834,30 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
         $scope.notificationDate = $scope.notification_data.date;
         $scope.notificationTitle = 'Extra lesson';
         $scope.notificationContent = $scope.notification_data.description;
-        $scope.notificationOwner = $scope.notification_data.owner;
+        $scope.notificationOwner = $scope.notification_data.owner.name;
         $scope.notificationStatus = $scope.notification_data.status;
+        $scope.notificationEventType = $scope.notification_data.type;
+        $scope.notificationStartTime = $scope.notification_data.start_time;
+        $scope.notificationEndTime = $scope.notification_data.end_time;
+
+        var startTime = $scope.notificationStartTime.split(':');
+        var endTime = $scope.notificationEndTime.split(':');
+
+        $scope.startHour = startTime[0];
+        $scope.startMinute = startTime[1];
+        $scope.endHour = endTime[0];
+        $scope.endMinute = endTime[1];
     }
 
-
     $scope.showStatus = function (check) {
-        if (check == 'requested')
+        if (check == null)
             return 'Not answered yet';
-        else if (check == 'accepted')
+        else if (check == 0)
             return 'Accepted';
-        else
+        else if (check == 2)
             return 'Rejected';
+        else if (check == 1)
+            return 'Done';
     };
 
     $scope.eventAccept = function (bool) {
@@ -865,14 +883,6 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
     $scope.edit = function () {
         $scope.editMode = true;
     };
-    //var startTime = $scope.notification.startTime.split(':');
-    //var endTime = $scope.notification.endTime.split(':');
-
-    $scope.startHour = '10';
-    $scope.startMinute = '00';
-    $scope.endHour = '12';
-    $scope.endMinute = '15';
-
 
     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {
         return {selectedHour: hour};

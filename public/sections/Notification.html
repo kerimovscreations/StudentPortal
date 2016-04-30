@@ -1,8 +1,9 @@
-<md-content ng-controller="NotificationController">
-    <section ng-if="group_notifications!=[]">
+<md-content ng-controller="NotificationController" style="height: 600px;">
+    <section ng-if="group_notifications.length!=0">
         <md-subheader class="md-accent">Group Notifications</md-subheader>
-        <md-list layout-padding>
-            <md-list-item ng-repeat="notification1 in group_notifications" class="md-3-line secondary-button-padding"
+        <md-list layout="column">
+            <md-list-item ng-repeat="notification1 in group_notifications"
+                          class="md-3-line"
                           ng-click="selectNotification(notification1.id)">
                 <md-icon md-svg-icon="svg/ic_announcement_black_24px.svg"></md-icon>
                 <div class="md-list-item-text">
@@ -13,10 +14,11 @@
             </md-list-item>
         </md-list>
     </section>
-    <section ng-if="personal_notifications!=[]">
+    <section ng-if="personal_notifications.length!=0">
         <md-subheader class="md-primary">Personal Notifications</md-subheader>
-        <md-list layout-padding>
-            <md-list-item ng-repeat="notification2 in personal_notifications" class="md-3-line secondary-button-padding"
+        <md-list layout="column">
+            <md-list-item ng-repeat="notification2 in personal_notifications"
+                          class="md-3-line"
                           ng-click="selectNotification(notification2.id)">
                 <md-icon md-svg-icon="svg/ic_people_black_24px.svg"></md-icon>
                 <div class="md-list-item-text">
