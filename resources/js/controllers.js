@@ -345,9 +345,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
     })
     .controller('ConversationController', function () {
     })
-    .controller('NotificationController', function ($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
-        $scope.group_notifications = [];
-        $scope.personal_notifications = [];
+    .controller('NotificationController', function ($scope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
+        $scope.notifications = [];
 
         $scope.user_type = $cookies.get('userType');
         var user_id = $cookies.get('userId');
@@ -355,17 +354,37 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         if ($scope.user_type == 'student') {
             var user_group_id = $cookies.get('userGroupId');
             $http.get('/getNotifications/groups/' + user_group_id).success(function (data) {
-                $scope.group_notifications = data;
+                $scope.notifications[0] = data;
             });
             $http.get('/getNotifications/students/' + user_id).success(function (data) {
-                $scope.personal_notifications = data;
+                $scope.notifications[1] = data;
+            });
+        }
+        else {
+            $scope.notifications[0] = [];
+            $http.get('/getNotifications/mentors/' + user_id).success(function (data) {
+                $scope.notifications[1] = data;
             });
         }
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
 
-        $scope.selectNotification = function (id) {
-            $http.get('/getDataNotification/' + id).success(function (data) {
+        $scope.selectNotification = function (id, index, type) {
+            if ($scope.notifications[type][index].status == 0)
+                $http({
+                    method: 'POST',
+                    url: '/changeStatusNotification',
+                    data: {id: id}
+                }).success(function () {
+                    $scope.notifications[type][index].status = 1;
+                    showSelectNotificationDialog(id);
+                });
+            else
+                showSelectNotificationDialog(id);
+        };
+
+        function showSelectNotificationDialog(id) {
+            $http.get('/getNotification/' + id).success(function (data) {
                 Data.NotificationData = data;
 
                 $mdDialog.show({
@@ -382,11 +401,12 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                     $scope.customFullscreen = (wantsFullScreen === true);
                 });
             });
-        };
+        }
 
         $scope.showDateFromNow = function (date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").fromNow()
         };
+
     })
 
 // Announcement edit dialog controller
@@ -432,12 +452,26 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     $scope.temp_event = [];
     $scope.temp_event_status = false;
 
+    $scope.statusChangeCheck = true;
+
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.temp_event = data;
         if ($scope.temp_event.status)
             $scope.temp_event_status = true;
         else
             $scope.temp_event_status = false;
+
+        if ($scope.temp_event.type == 'lesson')
+            $scope.statusChangeCheck = (
+                $scope.user_id == $scope.temp_event.owner_id
+                && ($scope.user_type + 's') == $scope.temp_event.owner_table
+            );
+        else if ($scope.temp_event.type == 'extra')
+            $scope.statusChangeCheck = (
+                $scope.user_id == $scope.temp_event.responsible_first_id
+                && ($scope.user_type + 's') == $scope.temp_event.responsible_first_table
+                && $scope.temp_event.status != null
+            );
     });
 
     $scope.onChange = function (cbState) {
@@ -459,6 +493,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
 
     $scope.showStatus = function (status) {
         switch (status) {
+            case null:
+                return 'Not decided';
+                break;
             case 0:
                 return 'Not Done';
                 break;
@@ -683,7 +720,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
 function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $timeout, $q, $mdToast, Data) {
     var type = Data.AddEventType;
     var user_id = $cookies.get('userId');
-    var user_type = $cookies.get('userType');
+    $scope.user_type = $cookies.get('userType');
 
     $scope.minDate = new Date();
     $scope.minDate.setDate((new Date()).getDate() - 1);
@@ -693,7 +730,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     $scope.eventPlace = '';
     $scope.eventGroup = null;
     $scope.eventStatus = null;
-    $scope.eventResponsible1 = null;
+    $scope.eventResponsible1 = [];
     $scope.eventResponsible1Table = null;
     $scope.eventResponsible2 = [];
     $scope.eventResponsible2Table = null;
@@ -715,9 +752,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         $scope.groups = data;
     });
 
-
     if (type == 'lesson') {
-        $scope.eventStatus=0;
         $scope.eventResponsible1Table = 'teachers';
         $http.get('/getTeachers').success(function (data) {
             $scope.searchResponsiblePeople1 = loadAll(data);
@@ -774,6 +809,12 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
+        if ($scope.user_type == 'teacher')
+            $scope.eventStatus = 0;
+        else if ($scope.user_type == 'student') {
+            $scope.selectedResponsible1.id = user_id;
+        }
+
         if (startTime.isBefore(endTime)) {
             $http({
                 method: 'POST',
@@ -789,11 +830,12 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                     place_id: $scope.eventPlace,
                     status: $scope.eventStatus,
                     owner_id: user_id,
-                    owner_table: user_type + 's',
+                    owner_table: $scope.user_type + 's',
                     responsible_first_id: $scope.selectedResponsible1.id,
                     responsible_first_table: $scope.eventResponsible1Table,
                     responsible_second_id: $scope.selectedResponsible2.id,
-                    responsible_second_table: $scope.eventResponsible2Table
+                    responsible_second_table: $scope.eventResponsible2Table,
+                    from: $scope.user_type
                 }
             }).success(function () {
                 $mdDialog.hide();
@@ -814,13 +856,17 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 
 // Notification dialog controllers
 
-function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
+function notificationSelectDialogController($scope, $route, $http, $cookies, $mdDialog, $mdToast, Data) {
     var tempKey = '';
 
     $scope.notification_data = Data.NotificationData;
     console.log($scope.notification_data);
+
     $scope.notificationType = $scope.notification_data.notification_type;
     $scope.notificationEventType = null;
+
+    $scope.user_id = $cookies.get('userId');
+    $scope.user_type = $cookies.get('userType');
 
     $scope.editMode = false;
 
@@ -829,12 +875,17 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
         $scope.notificationTitle = 'Announcement';
         $scope.notificationContent = $scope.notification_data.body;
         $scope.notificationOwner = $scope.notification_data.owner.name;
+        $scope.notificationOwnerId = $scope.notification_data.owner.id;
+        $scope.notificationOwnerType = $scope.notification_data.owner_type;
     }
     else {
         $scope.notificationDate = $scope.notification_data.date;
         $scope.notificationTitle = 'Extra lesson';
         $scope.notificationContent = $scope.notification_data.description;
-        $scope.notificationOwner = $scope.notification_data.owner.name;
+        $scope.notificationOwner = $scope.notification_data.owner[0].name;
+        $scope.notificationReceiverId = $scope.notification_data.receiver[0].id;
+        $scope.notificationReceiverType = $scope.notification_data.receiver_type;
+        $scope.notificationOwnerType = $scope.notification_data.owner_type;
         $scope.notificationStatus = $scope.notification_data.status;
         $scope.notificationEventType = $scope.notification_data.type;
         $scope.notificationStartTime = $scope.notification_data.start_time;
@@ -849,9 +900,26 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
         $scope.endMinute = endTime[1];
     }
 
+    //edit icon checker
+    $scope.edit_check = (
+    $scope.notificationEventType == 'extra'
+    && !$scope.editMode
+    && $scope.notificationStatus != 1
+    && $scope.notificationStatus != 2
+    && $scope.notificationOwnerType != 'teacher'
+    && $scope.notificationReceiverType == $scope.user_type
+    && $scope.notificationReceiverId == $scope.user_id);
+
+    $scope.extra_respond_check = (
+        $scope.notificationEventType == 'extra'
+        && !$scope.editMode
+        && $scope.notificationStatus == null
+        && $scope.notificationOwnerType != 'teacher'
+    );
+
     $scope.showStatus = function (check) {
         if (check == null)
-            return 'Not answered yet';
+            return 'Not decided yet';
         else if (check == 0)
             return 'Accepted';
         else if (check == 2)
@@ -862,21 +930,54 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
 
     $scope.eventAccept = function (bool) {
         if (bool) {
-            ScheduleService.events[tempKey].status = 'accepted';
-            $mdDialog.hide();
-            $mdToast.show($mdToast.simple().textContent('Extra lesson request accepted'));
-        } else {
-            ScheduleService.events[tempKey].status = 'rejected';
-            $mdDialog.hide();
-            var toast = $mdToast.simple()
-                .textContent('Extra lesson request rejected')
-                .action('UNDO')
-                .highlightAction(true);
-            $mdToast.show(toast).then(function (response) {
-                if (response == 'ok') {
-                    ScheduleService.events[tempKey].status = 'requested';
+            $http({
+                method: 'POST',
+                url: '/changeStatusEvent',
+                data: {
+                    id: $scope.notification_data.id,
+                    status: 0,
+                    from: $scope.user_type
                 }
+            }).success(function () {
+                $route.reload();
+                $mdDialog.hide();
+                $mdToast.show($mdToast.simple().textContent('Extra lesson request accepted'));
             });
+        } else {
+            $http({
+                method: 'POST',
+                url: '/changeStatusEvent',
+                data: {
+                    id: $scope.notification_data.id,
+                    status: 2,
+                    from: $scope.user_type
+                }
+            }).success(function () {
+                $route.reload();
+                $mdDialog.hide();
+                var toast = $mdToast.simple()
+                    .textContent('Extra lesson request rejected')
+                    .action('UNDO')
+                    .highlightAction(true);
+                $mdToast.show(toast).then(function (response) {
+                    if (response == 'ok') {
+                        $http({
+                            method: 'POST',
+                            url: '/changeStatusEvent',
+                            data: {
+                                id: $scope.notification_data.id,
+                                status: null,
+                                from: $scope.user_type
+                            }
+                        }).success(function () {
+                            $route.reload();
+                            $mdDialog.hide();
+                            $mdToast.show($mdToast.simple().textContent('Your response rolled back'));
+                        });
+                    }
+                });
+            });
+
         }
     };
 
@@ -897,13 +998,21 @@ function notificationSelectDialogController($scope, $mdDialog, $mdToast, Data) {
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
         if (startTime.isBefore(endTime)) {
-            $scope.notification.startTime = startTime.format('HH:mm');
-            $scope.notification.endTime = endTime.format('HH:mm');
 
-            ScheduleService.events[tempKey] = $scope.notification;
-
-            $mdDialog.hide();
-            $mdToast.show($mdToast.simple().textContent('Request updated'));
+            $http({
+                method: 'POST',
+                url: '/changeTimeEvent',
+                data: {
+                    id: $scope.notification_data.id,
+                    startTime: startTime.format('HH:mm'),
+                    endTime: endTime.format('HH:mm'),
+                    from: $scope.user_type
+                }
+            }).success(function () {
+                $route.reload();
+                $mdDialog.hide();
+                $mdToast.show($mdToast.simple().textContent('Extra lesson time changed changed'));
+            });
         } else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));
         }

@@ -14,7 +14,7 @@
 
 use Illuminate\Support\Facades\Auth;
 
-Route::group(['middleware' => 'web', 'api'], function () {
+Route::group(['middleware' => ['web', 'api']], function () {
 
     /**
      * set the validation for default page
@@ -55,6 +55,9 @@ Route::group(['middleware' => 'web', 'api'], function () {
     //to check mentor's logged in status
     Route::get('/mentor', 'MentorController@index');
 
+    /**
+     * Login/Register routes generation
+     */
     Route::auth();
 
     Route::get('login/{type}', 'LoginController@setType');
@@ -63,17 +66,27 @@ Route::group(['middleware' => 'web', 'api'], function () {
 
     Route::get('/home', 'HomeController@index');
 
+
+    /**
+     * Get the sections' names for navigation drawer
+     */
     Route::get('/getSections', function () {
         $sections = \App\Section::all();
         return json_encode($sections);
     });
 
+    /**
+     * Get the user's data to save on cookie on angular js $cookies part
+     */
     Route::get('/getUser', function () {
         $result = Auth::guard(session('userType'))->user()->toArray();
         $result['type'] = session('userType');
         return json_encode($result);
     });
 
+    /**
+     * Get the announcements to show on announcement section
+     */
     Route::get('/getAnnouncements', function () {
         $announcements = App\Announcement::all();
         $groups = array();
@@ -87,31 +100,49 @@ Route::group(['middleware' => 'web', 'api'], function () {
         return json_encode($results);
     });
 
+    /**
+     * Get the list of places
+     */
     Route::get('/getPlaces', function () {
         $places = \App\Place::all();
         return json_encode($places);
     });
 
+    /**
+     * Get the list of groups
+     */
     Route::get('/getGroups', function () {
         $groups = \App\Group::all();
         return json_encode($groups);
     });
 
+    /**
+     * Get the list of students
+     */
     Route::get('/getStudents', function () {
         $students = \App\Student::all();
         return json_encode($students);
     });
 
+    /**
+     * Get the list of teachers
+     */
     Route::get('/getTeachers', function () {
         $teachers = \App\Teacher::all();
         return json_encode($teachers);
     });
 
+    /**
+     * Get the list of mentors
+     */
     Route::get('/getMentors', function () {
         $mentors = \App\Mentor::all();
         return json_encode($mentors);
     });
 
+    /**
+     * Get the list of notification due to tables(group or personal notification)
+     */
     Route::get('/getNotifications/{table}/{id}', function ($table, $id) {
         $notifications = DB::table('notifications')->where([
             ['receiver_id', intval($id)],
@@ -120,26 +151,43 @@ Route::group(['middleware' => 'web', 'api'], function () {
         return json_encode($notifications);
     });
 
-    Route::get('/getDataNotification/{id}', function ($id) {
+    /**
+     * Get data of selected notification
+     */
+    Route::get('/getNotification/{id}', function ($id) {
         $notification = App\Notification::all()->find($id);
-        if ($notification->source_table == 'announcements'){
+        if ($notification->source_table == 'announcements') {
             $data = \App\Announcement::all()->find($notification->source_id);
             $data->owner;
-        }
-        else {
+            $data->owner_type = 'teacher';
+        } else {
             $data = \App\Event::all()->find($notification->source_id);
-            $data->owner=DB::table($data->owner_table)->where('id',intval($data->owner_id))->select('id','name')->get();
+            $data->owner = DB::table($data->owner_table)->where('id', intval($data->owner_id))->select('id', 'name')->get();
+            $data->owner_type = substr($data->owner_table, 0, -1);
+            $data->receiver = DB::table($notification->receiver_table)->where('id', intval($notification->receiver_id))->select('id', 'name')->get();
+            $data->receiver_type = substr($notification->receiver_table, 0, -1);
         }
         $data->notification_type = $notification->source_table;
 
         return json_encode($data);
     });
 
+    /**
+     * Change the status notification when it is read
+     */
+    Route::post('/changeStatusNotification', 'NotificationController@changeStatus');
+
+    /**
+     * Get the list of events
+     */
     Route::get('/getEvents', function () {
         $events = App\Event::all();
         return json_encode($events);
     });
 
+    /**
+     * Get the selected event data
+     */
     Route::get('/getEvent/{id}', function ($id) {
         $event = App\Event::all()->find($id);
         $event->group = App\Group::where('id', $event->group_id)->value('name');
@@ -152,11 +200,19 @@ Route::group(['middleware' => 'web', 'api'], function () {
         return json_encode($event);
     });
 
+    /**
+     * Post methods about events
+     */
     Route::post('/postEvent', 'EventController@store');
     Route::post('/updateEvent', 'EventController@update');
     Route::post('/deleteEvent', 'EventController@delete');
-    Route::post('/changeStatusEvent', 'EventController@statusChange');
+    Route::post('/changeStatusEvent', 'EventController@changeStatus');
+    Route::post('/changeTimeEvent', 'EventController@changeTime');
 
+
+    /**
+     * Set the access to post announcement only for teachers
+     */
     Route::group(['middleware' => 'teacher'], function () {
         Route::post('/postAnnouncement', 'AnnouncementController@store');
         Route::post('/deleteAnnouncement', 'AnnouncementController@delete');

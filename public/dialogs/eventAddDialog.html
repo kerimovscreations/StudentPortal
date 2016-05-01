@@ -46,7 +46,7 @@
                     <div style="width: 10px"></div>
                 </div>
                 <div layout="row">
-                    <div layout="column" layout-align="none center" style="color: #b0cf79">
+                    <div layout="column" layout-align="none center" style="color: #b0cf79" ng-show="user_type=='teacher'">
                         <span style="margin-right: 10px">Responsible <% eventResponsible1Table.slice(0, -1); %></span>
                         <md-autocomplete
                                 md-selected-item="selectedResponsible1"

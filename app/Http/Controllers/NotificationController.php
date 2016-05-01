@@ -8,7 +8,10 @@ use App\Http\Requests;
 
 class NotificationController extends Controller
 {
-    public static function create(Request $request){
-
+    public function changeStatus(Request $request)
+    {
+        $event = \App\Notification::findOrFail($request['id']);
+        $event->status = 1;
+        $event->save();
     }
 }

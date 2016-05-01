@@ -103,11 +103,10 @@
     margin: 5px auto;
 }
 
-.meeting{
-    background: #9ad5f8;
-}
-
 .extra{
     background: #3d5972;
+}
+.unread{
+    background: lightgray;
 }
 /*# sourceMappingURL=all.css.map */
