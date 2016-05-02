@@ -723,7 +723,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     $scope.user_type = $cookies.get('userType');
 
     $scope.minDate = new Date();
-    $scope.minDate.setDate((new Date()).getDate() - 1);
+    $scope.minDate.setDate((new Date()).getDate());
 
     $scope.eventTitle = '';
     $scope.eventDescription = '';
@@ -1025,7 +1025,7 @@ function assignmentAddDialogController($scope, $mdDialog, $mdToast, ProfileServi
 
 
     $scope.minDate = new Date();
-    $scope.minDate.setDate((new Date()).getDate() - 1);
+    $scope.minDate.setDate((new Date()).getDate());
 
     $scope.assignmentTitle = '';
     $scope.assignmentRule = '';
