@@ -4390,8 +4390,6 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
                 && ($scope.user_type + 's') == $scope.temp_event.responsible_first_table
                 && $scope.temp_event.status != null
             );
-
-        console.log($scope.statusChangeCheck);
     });
 
     $scope.onChange = function (cbState) {
@@ -4777,8 +4775,6 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 // Notification dialog controllers
 
 function notificationSelectDialogController($scope, $route, $http, $cookies, $mdDialog, $mdToast, Data) {
-    var tempKey = '';
-
     $scope.notification_data = Data.NotificationData;
     console.log($scope.notification_data);
 
@@ -4822,17 +4818,13 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
 
     //edit icon checker
     $scope.edit_check = (
-    $scope.notificationEventType == 'extra'
-    && !$scope.editMode
-    && $scope.notificationStatus != 1
-    && $scope.notificationStatus != 2
+    !$scope.editMode
+    && $scope.notificationStatus == null
     && $scope.notificationOwnerType != 'teacher'
     && $scope.notificationReceiverType == $scope.user_type
     && $scope.notificationReceiverId == $scope.user_id);
 
-    $scope.extra_respond_check = (
-        $scope.notificationEventType == 'extra'
-        && !$scope.editMode
+    $scope.extra_respond_check = ( !$scope.editMode
         && $scope.notificationStatus == null
         && $scope.notificationOwnerType != 'teacher'
     );
