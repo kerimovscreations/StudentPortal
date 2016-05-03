@@ -1,30 +1,34 @@
-<md-content class="md-padding">
+<md-content class="md-padding" style="max-width: 1000px; margin: 0 auto;">
     <div ng-show="user_type=='teacher'">
         <form>
             <md-input-container class="md-block" style="margin-bottom: 0">
                 <label>Enter new announcement</label>
-                <textarea ng-model="announcement_post" md-maxlength="300" md-select-on-focus ng-model-options="{ debounce: 100 }"></textarea>
+                <textarea ng-model="announcement_post" md-maxlength="300" md-select-on-focus
+                          ng-model-options="{ debounce: 100 }"></textarea>
             </md-input-container>
             <div layout="row" layout-align="end center">
                 <div>
                     <p style="font-size: 16px; color: #585858;">Select groups to notify</p>
                     <div layout="row" layout-wrap>
-                        <md-checkbox ng-repeat="group in groups track by $index" ng-checked="exists(group.id, selected)" ng-click="toggle(group.id, selected)">
+                        <md-checkbox ng-repeat="group in groups track by $index" ng-checked="exists(group.id, selected)"
+                                     ng-click="toggle(group.id, selected)">
                             <% group.name %>
                         </md-checkbox>
                     </div>
                 </div>
                 <div flex></div>
-                <input type="submit" class="md-button md-raised md-primary" ng-disabled="announcement_post.length==0" value="POST" style="color: white" ng-click="post()"/>
+                <input type="submit" class="md-button md-raised md-primary" ng-disabled="announcement_post.length==0"
+                       value="POST" style="color: white" ng-click="post()"/>
             </div>
         </form>
         <md-divider></md-divider>
     </div>
     <div style="width: 100%; height: 20px"></div>
-    <md-card ng-repeat="announcement in announcements track by $index" class="md-whiteframe-5dp">
+    <md-card ng-repeat="announcement in announcements track by $index" class="md-whiteframe-2dp">
         <md-card-header>
             <md-card-avatar>
-                <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" md-menu-origin style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
+                <img class="md-avatar" ng-src="images/kr_profile_pic.JPG" md-menu-origin
+                     style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
             </md-card-avatar>
             <md-card-header-text layout="row" layout-align="none center">
                 <span class="md-headline"><% announcement.owner.name %></span>
@@ -34,12 +38,13 @@
                     <md-button aria-label="Post Edit" class="md-icon-button" ng-click="$mdOpenMenu($event)">
                         <md-icon md-menu-origin md-svg-icon="svg/ic_more_vert_black_36px.svg"></md-icon>
                     </md-button>
-                    <md-menu-content width="4" >
+                    <md-menu-content width="4">
                         <md-menu-item layout="column">
                             <md-button ng-click="editPost($index)">
                                 <div layout="row" flex>
                                     <p flex>Edit</p>
-                                    <md-icon md-menu-align-target md-svg-icon="svg/ic_edit_black_36px.svg" style="margin: auto 3px auto 0;"></md-icon>
+                                    <md-icon md-menu-align-target md-svg-icon="svg/ic_edit_black_36px.svg"
+                                             style="margin: auto 3px auto 0;"></md-icon>
                                 </div>
                             </md-button>
                         </md-menu-item>
@@ -47,7 +52,8 @@
                             <md-button ng-click="deletePost($index)">
                                 <div layout="row" flex>
                                     <p flex>Delete</p>
-                                    <md-icon md-menu-align-target md-svg-icon="svg/ic_delete_black_36px.svg" style="margin: auto 3px auto 0;"></md-icon>
+                                    <md-icon md-menu-align-target md-svg-icon="svg/ic_delete_black_36px.svg"
+                                             style="margin: auto 3px auto 0;"></md-icon>
                                 </div>
                             </md-button>
                         </md-menu-item>
@@ -56,16 +62,15 @@
             </md-card-header-text>
         </md-card-header>
         <md-card-content>
-            <p class="md-title">
+            <p class="md-subhead">
                 <% announcement.body %>
             </p>
             <div layout="row" layout-align="none center" style="color: #808080" ng-hide="!announcement.groups.length">
-                <h4 class="md-subhead" >Notified:</h4><br>
-                <h4 class="md-subhead" ng-repeat="group in announcement.groups track by $index" style="margin: 0 5px"><% group.name %></h4>
+                <h4 class="md-subhead">Notified:</h4><br>
+                <h4 class="md-subhead" ng-repeat="group in announcement.groups track by $index" style="margin: 0 5px"><%
+                    group.name %></h4>
                 <div flex></div>
-
             </div>
-
         </md-card-content>
     </md-card>
 

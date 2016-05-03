@@ -173,7 +173,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('PeopleController', function ($http, $scope, $mdDialog) {
+    .controller('PeopleController', function ($http, $scope, $mdDialog, $mdMedia) {
         $scope.students = [];
         $scope.teachers = [];
         $scope.mentors = [];
@@ -190,32 +190,36 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         $scope.selectedIndex = 0;
 
-        $scope.showContact = function (id) {
-            for (elem in $scope.people) {
-                if ($scope.people[elem].id == id) {
-                    var index = id;
-                }
-            }
-            index--;
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title($scope.people[index].name)
-                    .textContent('Email: ' + $scope.people[index].email)
-                    .ok('Got it')
-            )
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+
+        $scope.showContact = function (id, table) {
+            $http.get('/getDataUser/' + table + '/' + id).success(function (data) {
+                $scope.show_user_data = data;
+
+                if (table == 'students')
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .clickOutsideToClose(true)
+                            .title($scope.show_user_data.name)
+                            .textContent('Email: ' + $scope.show_user_data.email +
+                                '\nGroup: ' + $scope.show_user_data.group +
+                                '\nPhone: ' + $scope.show_user_data.phone +
+                                '\nBirth date: ' + $scope.show_user_data.birthDate)
+                            .ok('OK')
+                    );
+                else
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .clickOutsideToClose(true)
+                            .title($scope.show_user_data.name)
+                            .textContent('Email: ' + $scope.show_user_data.email)
+                            .ok('OK')
+                    )
+            })
         };
+
         $scope.sendEmail = function (id) {
-            for (elem in $scope.people) {
-                if ($scope.people[elem].id == id) {
-                    var index = id;
-                }
-            }
-            index--;
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title('Send an email')
-                    .textContent('Email: ' + $scope.people[index].email)
-                    .ok('Got it'));
+
         }
     })
     .controller('ScheduleController', function ($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {

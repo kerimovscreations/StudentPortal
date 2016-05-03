@@ -125,6 +125,19 @@ Route::group(['middleware' => ['web', 'api']], function () {
     });
 
     /**
+     * Get the data of user
+     */
+    Route::get('/getDataUser/{table}/{id}', function ($table, $id) {
+        if ($table == 'students') {
+            $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate')->get();
+            $user[0]->group = \App\Group::find($user[0]->group_id)->name;
+        } else {
+            $user = DB::table($table)->where('id', intval($id))->select('name', 'email')->get();
+        }
+        return json_encode($user[0]);
+    });
+
+    /**
      * Get the list of teachers
      */
     Route::get('/getTeachers', function () {
@@ -166,7 +179,7 @@ Route::group(['middleware' => ['web', 'api']], function () {
             $data->owner_type = substr($data->owner_table, 0, -1);
             $data->receiver = DB::table($notification->receiver_table)->where('id', intval($notification->receiver_id))->select('id', 'name')->get();
             $data->receiver_type = substr($notification->receiver_table, 0, -1);
-            if($data->receiver_type=='student')
+            if ($data->receiver_type == 'student')
                 $data->responsible_another = DB::table($data->responsible_second_table)->where('id', intval($data->responsible_second_id))->value('name');
             else
                 $data->responsible_another = DB::table($data->responsible_first_table)->where('id', intval($data->responsible_first_id))->value('name');

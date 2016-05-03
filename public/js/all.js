@@ -4091,7 +4091,7 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('PeopleController', function ($http, $scope, $mdDialog) {
+    .controller('PeopleController', function ($http, $scope, $mdDialog, $mdMedia) {
         $scope.students = [];
         $scope.teachers = [];
         $scope.mentors = [];
@@ -4108,32 +4108,37 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         $scope.selectedIndex = 0;
 
-        $scope.showContact = function (id) {
-            for (elem in $scope.people) {
-                if ($scope.people[elem].id == id) {
-                    var index = id;
-                }
-            }
-            index--;
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title($scope.people[index].name)
-                    .textContent('Email: ' + $scope.people[index].email)
-                    .ok('Got it')
-            )
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+
+        $scope.showContact = function (id, table) {
+            console.log('hey');
+            $http.get('/getDataUser/' + table + '/' + id).success(function (data) {
+                $scope.show_user_data = data;
+
+                if (table == 'students')
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .clickOutsideToClose(true)
+                            .title($scope.show_user_data.name)
+                            .textContent('Email: ' + $scope.show_user_data.email +
+                                '\nGroup: ' + $scope.show_user_data.group +
+                                '\nPhone: ' + $scope.show_user_data.phone +
+                                '\nBirth date: ' + $scope.show_user_data.birthDate)
+                            .ok('OK')
+                    );
+                else
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .clickOutsideToClose(true)
+                            .title($scope.show_user_data.name)
+                            .textContent('Email: ' + $scope.show_user_data.email)
+                            .ok('OK')
+                    )
+            })
         };
+
         $scope.sendEmail = function (id) {
-            for (elem in $scope.people) {
-                if ($scope.people[elem].id == id) {
-                    var index = id;
-                }
-            }
-            index--;
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title('Send an email')
-                    .textContent('Email: ' + $scope.people[index].email)
-                    .ok('Got it'));
+
         }
     })
     .controller('ScheduleController', function ($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
@@ -4370,7 +4375,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     $scope.temp_event = [];
     $scope.temp_event_status = false;
 
-    $scope.statusChangeCheck = function(){ return true };
+    $scope.statusChangeCheck = function () {
+        return true
+    };
 
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.temp_event = data;
@@ -4897,7 +4904,6 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
 
     $scope.edit = function () {
         $scope.editMode = true;
-        console.log($scope.extra_respond_check());
     };
 
     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {
