@@ -90,11 +90,11 @@
         <div class="schedule-agenda">Lesson</div>
         <div style="width: 20px"></div>
     </div>
-    <div style="height: 100px"></div> <!--Empty space for dividing event add button and schedule-->
+    <div ng-if="user_type!='mentor'" style="height: 100px"></div> <!--Empty space for dividing event add button and schedule-->
 
     <!--Event add float button -->
 
-    <md-fab-toolbar md-open="isOpen" count="demo.count" md-direction="left" style=" width: 100%; position: absolute; bottom: 0; right: 0">
+    <md-fab-toolbar ng-if="user_type!='mentor'" md-open="isOpen" count="demo.count" md-direction="left" style=" width: 100%; position: absolute; bottom: 0; right: 0">
         <!--Main button-->
         <md-fab-trigger class="align-with-text" style="margin-right: 20px">
             <md-button aria-label="add" class="md-fab md-primary">
@@ -104,7 +104,7 @@
         <md-toolbar>
             <md-fab-actions class="md-toolbar-tools">
                 <!--Event add button-->
-                <md-button ng-if="user_type!='student'" aria-label="lesson" class="md-icon-button" ng-click="eventAdd('lesson')">
+                <md-button ng-if="user_type=='teacher'" aria-label="lesson" class="md-icon-button" ng-click="eventAdd('lesson')">
                     <md-icon md-svg-src="svg/ic_assignment_white_36px.svg"></md-icon>
                 </md-button>
                 <!--Meeting add button-->

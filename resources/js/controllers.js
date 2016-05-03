@@ -452,7 +452,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     $scope.temp_event = [];
     $scope.temp_event_status = false;
 
-    $scope.statusChangeCheck = true;
+    $scope.statusChangeCheck = function () {
+        return true
+    };
 
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.temp_event = data;
@@ -462,16 +464,18 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             $scope.temp_event_status = false;
 
         if ($scope.temp_event.type == 'lesson')
-            $scope.statusChangeCheck = (
-                $scope.user_id == $scope.temp_event.owner_id
-                && ($scope.user_type + 's') == $scope.temp_event.owner_table
-            );
+            $scope.statusChangeCheck = function () {
+                return $scope.temp_event.status != 1
+                    && $scope.user_id == $scope.temp_event.owner_id
+                    && ($scope.user_type + 's') == $scope.temp_event.owner_table
+            };
         else if ($scope.temp_event.type == 'extra')
-            $scope.statusChangeCheck = (
-                $scope.user_id == $scope.temp_event.responsible_first_id
-                && ($scope.user_type + 's') == $scope.temp_event.responsible_first_table
-                && $scope.temp_event.status != null
-            );
+            $scope.statusChangeCheck = function () {
+                return $scope.temp_event.status != 1
+                    && $scope.user_id == $scope.temp_event.responsible_first_id
+                    && ($scope.user_type + 's') == $scope.temp_event.responsible_first_table
+                    && $scope.temp_event.status != null
+            };
     });
 
     $scope.onChange = function (cbState) {
@@ -859,7 +863,6 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 
 function notificationSelectDialogController($scope, $route, $http, $cookies, $mdDialog, $mdToast, Data) {
     $scope.notification_data = Data.NotificationData;
-    console.log($scope.notification_data);
 
     $scope.notificationType = $scope.notification_data.notification_type;
     $scope.notificationEventType = null;
@@ -908,10 +911,9 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     && $scope.notificationReceiverType == $scope.user_type
     && $scope.notificationReceiverId == $scope.user_id);
 
-    $scope.extra_respond_check = ( !$scope.editMode
-        && $scope.notificationStatus == null
-        && $scope.notificationOwnerType != 'teacher'
-    );
+    $scope.extra_respond_check = function () {
+        return !$scope.editMode && $scope.notificationStatus == null && $scope.notificationOwnerType != 'teacher'
+    };
 
     $scope.showStatus = function (check) {
         if (check == null)

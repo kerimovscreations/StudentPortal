@@ -32,7 +32,7 @@
                     <span ng-if="temp_event.group!=nul" class="md-subhead">Group: <% temp_event.group %></span>
                 </div>
                 <div layout="row" style="margin-top: 10px;color: #ce226d; font-size: 20px">
-                    <md-switch ng-disabled="!statusChangeCheck" aria-label="Event status"
+                    <md-switch ng-disabled="!statusChangeCheck()" aria-label="Event status"
                                ng-model="temp_event_status" ng-change="onChange(temp_event_status)">
                         <% showStatus(temp_event.status) %>
                     </md-switch>

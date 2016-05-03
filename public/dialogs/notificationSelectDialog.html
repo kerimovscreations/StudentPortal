@@ -81,11 +81,11 @@
                 Ok
             </md-button>
             <!--buttons for extra lesson -->
-            <md-button ng-if="extra_respond_check" class="md-primary"
+            <md-button ng-if="extra_respond_check()" class="md-primary"
                        ng-click="eventAccept(false)" style="margin-right:20px;">
                 Decline
             </md-button>
-            <md-button ng-if="extra_respond_check"
+            <md-button ng-if="extra_respond_check()"
                        class="md-raised md-primary" ng-click="eventAccept(true)" style="margin-right:20px;">
                 Accept
             </md-button>
