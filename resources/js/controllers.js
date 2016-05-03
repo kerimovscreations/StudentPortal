@@ -511,6 +511,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     $scope.dateExtended = function (date) {
         return moment(new Date(date)).format("dddd, MMMM DD YYYY");
     };
+
     $scope.edit = function () {
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
@@ -881,6 +882,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         $scope.notificationTitle = 'Extra lesson';
         $scope.notificationContent = $scope.notification_data.description;
         $scope.notificationOwner = $scope.notification_data.owner[0].name;
+        $scope.notificationAnotherResponsible = $scope.notification_data.responsible_another;
         $scope.notificationReceiverId = $scope.notification_data.receiver[0].id;
         $scope.notificationReceiverType = $scope.notification_data.receiver_type;
         $scope.notificationOwnerType = $scope.notification_data.owner_type;
@@ -915,7 +917,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         if (check == null)
             return 'Not decided yet';
         else if (check == 0)
-            return 'Accepted';
+            return 'Decided';
         else if (check == 2)
             return 'Rejected';
         else if (check == 1)
@@ -986,6 +988,9 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         return {selectedMinute: minute};
     });
 
+    $scope.dateExtended = function (date) {
+        return moment(new Date(date)).format("dddd, MMMM DD YYYY");
+    };
 
     $scope.update = function () {
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');

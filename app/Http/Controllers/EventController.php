@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Event;
 use App\Notification;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-        $event = \App\Event::create($request->all());
+        $event = Event::create($request->all());
 
         if ($event->type == 'lesson') {
             Notification::create([
@@ -31,7 +32,7 @@ class EventController extends Controller
                     'receiver_table' => 'mentors',
                     'source_id' => $event->id,
                     'source_table' => 'events']);
-            else
+            else {
                 Notification::create([
                     'text' => 'New extra lesson',
                     'status' => 0,
@@ -39,14 +40,23 @@ class EventController extends Controller
                     'receiver_table' => 'students',
                     'source_id' => $event->id,
                     'source_table' => 'events']);
+                Notification::create([
+                    'text' => 'New extra lesson',
+                    'status' => 0,
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => 'mentors',
+                    'source_id' => $event->id,
+                    'source_table' => 'events']);
+            }
         }
     }
 
     public function changeStatus(Request $request)
     {
-        $event = \App\Event::findOrFail($request['id']);
+        $event = Event::findOrFail($request['id']);
         $event->status = $request['status'];
         $event->save();
+        Notification::all()->where('source_id',$event->id,'source_table','events')->delete();
     }
 
     public function changeTime(Request $request)
@@ -76,13 +86,14 @@ class EventController extends Controller
 
     public function update(Request $request)
     {
-        $event = \App\Event::findOrFail($request['id']);
+        $event = Event::findOrFail($request['id']);
         $event->update($request->all());
     }
 
     public function delete(Request $request)
     {
-        $event = \App\Event::findOrFail($request['id']);
+        $event = Event::findOrFail($request['id']);
+        Notification::where('source_table','events')->where('source_id',$event->id)->delete();
         $event->delete();
     }
 }

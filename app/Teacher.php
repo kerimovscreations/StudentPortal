@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Carbon\Carbon;
 
 class Teacher extends Authenticatable
 {
@@ -23,4 +24,17 @@ class Teacher extends Authenticatable
     protected $hidden = [
         'password', 'remember_token','api_token'
     ];
+
+    public function setCreatedAtAttribute($value)
+    {
+        $this->attributes['created_at'] = Carbon::createFromTimestamp(strtotime($value))
+            ->timezone('Asia/Baku')
+            ->toDateTimeString();
+    }
+    public function setUpdatedAtAttribute($value)
+    {
+        $this->attributes['updated_at'] = Carbon::createFromTimestamp(strtotime($value->subHour()))
+            ->timezone('Asia/Baku')
+            ->toDateTimeString();
+    }
 }

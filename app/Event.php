@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Event extends Model
 {
@@ -17,5 +18,18 @@ class Event extends Model
 
     public function place(){
         return $this->belongsTo('App\Place');
+    }
+
+    public function setCreatedAtAttribute($value)
+    {
+        $this->attributes['created_at'] = Carbon::createFromTimestamp(strtotime($value))
+            ->timezone('Asia/Baku')
+            ->toDateTimeString();
+    }
+    public function setUpdatedAtAttribute($value)
+    {
+        $this->attributes['updated_at'] = Carbon::createFromTimestamp(strtotime($value->subHour()))
+            ->timezone('Asia/Baku')
+            ->toDateTimeString();
     }
 }
