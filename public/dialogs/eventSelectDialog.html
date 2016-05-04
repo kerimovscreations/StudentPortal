@@ -21,7 +21,7 @@
                 <span class="md-headline"
                       style="color: #d98084">(<% temp_event.start_time %>-<% temp_event.end_time %>)</span>
                 <span class="md-body-2" style="color: #94cac2;margin-top: 10px">Created by <% temp_event.owner %></span>
-                <span class="md-body-2" ng-if="temp_event.type=='lesson'" style="color: #94cac2">Responsible teacher: <% temp_event.responsible_first %></span>
+                <span class="md-body-2" ng-if="temp_event.type=='lesson' && temp_event.responsible_first!= null" style="color: #94cac2">Responsible teacher: <% temp_event.responsible_first %></span>
                 <span class="md-body-2" ng-if="temp_event.type=='extra'" style="color: #94cac2">Responsible student: <% temp_event.responsible_first %></span>
                 <span class="md-body-2" ng-if="temp_event.type=='extra'" style="color: #94cac2">Responsible mentor: <% temp_event.responsible_second %></span>
                 <span class="md-headline" style="margin-top: 10px">Content</span>

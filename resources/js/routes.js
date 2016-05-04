@@ -1,8 +1,8 @@
 teacherDashboardApp.config(['$routeProvider', function($routeProvider){
     $routeProvider
         .when('/',{
-            templateUrl: "sections/Announcement.html",
-            controller: 'AnnouncementController'
+            templateUrl: "sections/Schedule.html",
+            controller: 'ScheduleController'
         })
         .when('/announcement',{
             templateUrl: "sections/Announcement.html",
@@ -24,7 +24,7 @@ teacherDashboardApp.config(['$routeProvider', function($routeProvider){
             templateUrl: "sections/Schedule.html",
             controller: 'ScheduleController'
         })
-        .when('/assignments',{
+        .when('/assignment',{
             templateUrl: "sections/Assignments.html",
             controller: 'AssignmentsController'
         })

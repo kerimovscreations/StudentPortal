@@ -10,9 +10,8 @@
             </div>
         </md-toolbar>
         <md-dialog-content style="margin-bottom: 0">
-
             <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 650px">
-                <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%">
+                <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%" ng-show="eventType=='lesson'">
                     <label>Title of event</label>
                         <textarea class="md-headline" style="color: #6a72a2" ng-model="eventTitle"
                                   md-select-on-focus></textarea>
@@ -45,9 +44,9 @@
                     </md-input-container>
                     <div style="width: 10px"></div>
                 </div>
-                <div layout="row">
+                <div layout="row" ng-show="eventType=='extra'">
                     <div layout="column" layout-align="none center" style="color: #b0cf79" ng-show="user_type=='teacher'">
-                        <span style="margin-right: 10px">Responsible <% eventResponsible1Table.slice(0, -1); %></span>
+                        <span style="margin-right: 10px">Responsible student</span>
                         <md-autocomplete
                                 md-selected-item="selectedResponsible1"
                                 md-search-text="searchText1"
@@ -64,7 +63,7 @@
                         </md-autocomplete>
                     </div>
                     <div style="width: 30px"></div>
-                    <div layout="column" ng-show="eventType=='extra'" layout-align="none center" style="color: #b0cf79">
+                    <div layout="column" layout-align="none center" style="color: #b0cf79">
                         <span style="margin-right: 10px">Responsible mentor</span>
                         <md-autocomplete
                                 md-selected-item="selectedResponsible2"

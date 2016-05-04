@@ -13,7 +13,7 @@
                     <md-icon md-svg-icon="svg/ic_menu_white_36px.svg"></md-icon>
                 </md-button>
                 <h2>
-                    <span>Student Portal</span>
+                    <span><% current_section %></span>
                 </h2>
                 <span flex></span>
 

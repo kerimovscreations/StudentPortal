@@ -3687,17 +3687,21 @@
 
 }));
 var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies']);
-registerApp.config(function($mdThemingProvider){
+registerApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
-        .primaryPalette('customTheme')
+        .primaryPalette('customTheme');
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
 });
 
 var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngCookies']);
-loginApp.config(function($mdThemingProvider){
+loginApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
-        .primaryPalette('customTheme')
+        .primaryPalette('customTheme');
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
 });
 
 
@@ -3732,12 +3736,21 @@ var customTheme={
     'contrastLightColors': undefined    // could also specify this if default was 'dark'
 };
 teacherDashboardApp.factory('Data', function () {
+    var current_section = 'Schedule';
+
     return {
+        setSection: function (_section_) {
+            current_section = _section_;
+        },
+        getSection: function() {
+            return current_section;
+        },
         EventId: '',
         AddEventType: '',
         AnnouncementId: '', //not used yet
         NotificationData: '',
-        PostId: ''};
+        PostId: ''
+    };
 });
 
 teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
@@ -3752,10 +3765,10 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
         });
 
     })
+    .service('SectionService', function(){
+        this.current_section='Schedule';
+    })
     .service('PeopleService', function ($http) {
-        this.groups = ['16101', '16102', '16103'];
-        this.places = ['HTP', 'BBF'];
-
         var getPeople = function() {
             return $http({method:"GET", url:"php/getUsers.php"}).then(function(result){
                 return result.data;
@@ -3764,43 +3777,6 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
 
         return { getPeople: getPeople };
 
-    })
-    .service('SectionsService', function ($http) {
-        /*
-         this.sections = [
-         {name: 'Announcement'},
-         {name: 'Conversation'},
-         {name: 'Notification'},
-         {name: 'People'},
-         {name: 'Schedule'},
-         {name: 'Assignments'},
-         {name: 'Grading'}
-         ];
-         */
-    })
-    .service('AnnouncementService', function () {
-        this.announcements = [{
-            user: 'Karim Karimov',
-            date: '03-23-2016, 12:15',
-            text: 'Something',
-            groups: '16101',
-            id: 15
-        }
-        ];
-        this.groups = ['16102', '16101', '16201', '16202'];
-    })
-    .service('ScheduleService', function () {
-        this.eventTypes = ['lesson', 'extra', 'meeting'];
-    })
-    .service('NotificationService', function ($http,Data) {
-
-    })
-    .service('AssignmentService', function () {
-        this.assignments = [
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-20-2016, 23:59', endDate: '04-27-2016, 23:59', owner: 'Samir Karimov', doneCount: 20},
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-21-2016, 23:59', endDate: '04-28-2016, 23:59', owner: 'Karim Karimov', doneCount: 0},
-            {title: 'Test Assignment', rule: 'Complete 3rd, 5th and 8th sections from MySQL Udemy course', date: '04-18-2016, 14:20', startDate: '04-22-2016, 23:59', endDate: '04-29-2016, 23:59', owner: 'Eldar Alaskarov', doneCount: 12}
-        ];
     })
 teacherDashboardApp.filter('capitalize', function() {
     return function(input) {
@@ -3937,8 +3913,7 @@ loginApp.controller('LoginController', function ($scope) {
     }
 });
 
-teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $mdSidenav, ProfileService) {
-
+teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
 
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name = ProfileService.user_name;
@@ -3959,14 +3934,12 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
          * Show the image change pop-up menu
          */
         $scope.changeProfileImage = function () {
-
         };
 
         /**
          * Redirect to the edit profile page
          */
         $scope.editProfile = function () {
-
         };
 
         function debounce(func, wait, context) {
@@ -3998,20 +3971,19 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('SectionListController', function ($scope, $location, $http) {
+    .controller('SectionListController', function ($scope, $location, $http, $rootScope, Data) {
         $http.get('/getSections').success(function (data) {
             $scope.sections = data;
         });
 
-        $scope.current_section = '';
-
         $scope.selectSection = function (text) {
-            $scope.current_section = text;
+            $rootScope.current_section = text;
             $location.path('/' + text.toLowerCase());
         };
 
     })
-    .controller('AnnouncementController', function ($scope, $mdDialog, $mdMedia, $mdToast, $http, $cookies, $route, Data) {
+    .controller('AnnouncementController', function ($scope, $rootScope, $mdDialog, $mdMedia, $mdToast, $http, $cookies, $route, Data) {
+        $rootScope.current_section = 'Announcement';
         $scope.announcement_post = '';
         $scope.selected = [];
         $scope.user_type = $cookies.get('userType');
@@ -4091,7 +4063,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('PeopleController', function ($http, $scope, $mdDialog, $mdMedia) {
+    .controller('PeopleController', function ($http, $scope, $rootScope, $mdDialog, $mdMedia) {
+        $rootScope.current_section = 'People';
         $scope.students = [];
         $scope.teachers = [];
         $scope.mentors = [];
@@ -4111,7 +4084,6 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 
         $scope.showContact = function (id, table) {
-            console.log('hey');
             $http.get('/getDataUser/' + table + '/' + id).success(function (data) {
                 $scope.show_user_data = data;
 
@@ -4141,7 +4113,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         }
     })
-    .controller('ScheduleController', function ($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
+    .controller('ScheduleController', function ($scope, $rootScope, $http, $cookies, $mdDialog, $mdMedia, Data) {
+        $rootScope.current_section = 'Schedule';
         $scope.Data = Data;
         $scope.user_type = $cookies.get('userType');
         $scope.events = [];
@@ -4228,8 +4201,9 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('AssignmentsController', function ($scope, $mdDialog, $mdMedia, AssignmentService, Data) {
-        $scope.assignments = AssignmentService.assignments;
+    .controller('AssignmentsController', function ($scope, $rootScope, $mdDialog, $mdMedia, Data) {
+        $rootScope.current_section = 'Assignment';
+        $scope.assignments = [];
         $scope.status = false;
 
         $scope.showDeadlineFromNow = function (date) {
@@ -4264,11 +4238,14 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         }
     })
-    .controller('GradingController', function () {
+    .controller('GradingController', function ($rootScope) {
+        $rootScope.current_section = 'Grading';
     })
-    .controller('ConversationController', function () {
+    .controller('ConversationController', function ($rootScope) {
+        $rootScope.current_section = 'Conversation';
     })
-    .controller('NotificationController', function ($scope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
+    .controller('NotificationController', function ($scope, $rootScope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
+        $rootScope.current_section = 'Notification';
         $scope.notifications = [];
 
         $scope.user_type = $cookies.get('userType');
@@ -4411,7 +4388,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             url: '/changeStatusEvent',
             data: {
                 id: id,
-                status: $scope.temp_event.status
+                status: $scope.temp_event.status,
+                responsible_first_id: $scope.user_id,
+                responsible_first_table: $scope.user_type+'s'
             }
         }).success(function () {
             $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
@@ -4653,7 +4632,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     $scope.minDate = new Date();
     $scope.minDate.setDate((new Date()).getDate());
 
-    $scope.eventTitle = '';
+    $scope.eventTitle = null;
     $scope.eventDescription = '';
     $scope.eventPlace = '';
     $scope.eventGroup = null;
@@ -4680,13 +4659,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         $scope.groups = data;
     });
 
-    if (type == 'lesson') {
-        $scope.eventResponsible1Table = 'teachers';
-        $http.get('/getTeachers').success(function (data) {
-            $scope.searchResponsiblePeople1 = loadAll(data);
-        });
-    }
-    else {
+    if (type == 'extra') {
         $scope.eventResponsible1Table = 'students';
         $scope.eventResponsible2Table = 'mentors';
 
@@ -4769,6 +4742,8 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                 $mdDialog.hide();
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
                 $route.reload();
+            }).error(function(data){
+                console.log(data);
             })
         } else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));
@@ -4951,9 +4926,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
 
 // Assignment add dialog controller
 
-function assignmentAddDialogController($scope, $mdDialog, $mdToast, ProfileService, AssignmentService, ScheduleService, NotificationService) {
-
-
+function assignmentAddDialogController($scope, $mdDialog, $mdToast) {
     $scope.minDate = new Date();
     $scope.minDate.setDate((new Date()).getDate());
 
@@ -4994,10 +4967,6 @@ function assignmentAddDialogController($scope, $mdDialog, $mdToast, ProfileServi
             $scope.addedAssignment.owner = ProfileService.user_name;
             $scope.addedAssignment.doneCount = 0;
 
-            AssignmentService.assignments.push($scope.addedAssignment);
-
-            console.log(AssignmentService.assignments);
-
             $mdDialog.hide();
             $mdToast.show($mdToast.simple().textContent('Assignment Added'));
         } else {
@@ -5024,8 +4993,8 @@ function clone(obj) {
 teacherDashboardApp.config(['$routeProvider', function($routeProvider){
     $routeProvider
         .when('/',{
-            templateUrl: "sections/Announcement.html",
-            controller: 'AnnouncementController'
+            templateUrl: "sections/Schedule.html",
+            controller: 'ScheduleController'
         })
         .when('/announcement',{
             templateUrl: "sections/Announcement.html",
@@ -5047,7 +5016,7 @@ teacherDashboardApp.config(['$routeProvider', function($routeProvider){
             templateUrl: "sections/Schedule.html",
             controller: 'ScheduleController'
         })
-        .when('/assignments',{
+        .when('/assignment',{
             templateUrl: "sections/Assignments.html",
             controller: 'AssignmentsController'
         })

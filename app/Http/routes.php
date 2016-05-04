@@ -210,7 +210,9 @@ Route::group(['middleware' => ['web', 'api']], function () {
         $event->group = App\Group::where('id', $event->group_id)->value('name');
         $event->place = App\Place::where('id', $event->place_id)->value('name');
         $event->owner = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
-        $event->responsible_first = DB::table($event->responsible_first_table)->where('id', $event->responsible_first_id)->value('name');
+        if (!is_null($event->responsible_first_id)) {
+            $event->responsible_first = DB::table($event->responsible_first_table)->where('id', $event->responsible_first_id)->value('name');
+        }
         if (!is_null($event->responsible_second_id)) {
             $event->responsible_second = DB::table($event->responsible_second_table)->where('id', $event->responsible_second_id)->value('name');
         }

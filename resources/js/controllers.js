@@ -19,8 +19,7 @@ loginApp.controller('LoginController', function ($scope) {
     }
 });
 
-teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $mdSidenav, ProfileService) {
-
+teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
 
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name = ProfileService.user_name;
@@ -41,14 +40,12 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
          * Show the image change pop-up menu
          */
         $scope.changeProfileImage = function () {
-
         };
 
         /**
          * Redirect to the edit profile page
          */
         $scope.editProfile = function () {
-
         };
 
         function debounce(func, wait, context) {
@@ -80,20 +77,19 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('SectionListController', function ($scope, $location, $http) {
+    .controller('SectionListController', function ($scope, $location, $http, $rootScope, Data) {
         $http.get('/getSections').success(function (data) {
             $scope.sections = data;
         });
 
-        $scope.current_section = '';
-
         $scope.selectSection = function (text) {
-            $scope.current_section = text;
+            $rootScope.current_section = text;
             $location.path('/' + text.toLowerCase());
         };
 
     })
-    .controller('AnnouncementController', function ($scope, $mdDialog, $mdMedia, $mdToast, $http, $cookies, $route, Data) {
+    .controller('AnnouncementController', function ($scope, $rootScope, $mdDialog, $mdMedia, $mdToast, $http, $cookies, $route, Data) {
+        $rootScope.current_section = 'Announcement';
         $scope.announcement_post = '';
         $scope.selected = [];
         $scope.user_type = $cookies.get('userType');
@@ -173,7 +169,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         };
 
     })
-    .controller('PeopleController', function ($http, $scope, $mdDialog, $mdMedia) {
+    .controller('PeopleController', function ($http, $scope, $rootScope, $mdDialog, $mdMedia) {
+        $rootScope.current_section = 'People';
         $scope.students = [];
         $scope.teachers = [];
         $scope.mentors = [];
@@ -222,7 +219,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
 
         }
     })
-    .controller('ScheduleController', function ($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
+    .controller('ScheduleController', function ($scope, $rootScope, $http, $cookies, $mdDialog, $mdMedia, Data) {
+        $rootScope.current_section = 'Schedule';
         $scope.Data = Data;
         $scope.user_type = $cookies.get('userType');
         $scope.events = [];
@@ -309,8 +307,9 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
         }
 
     })
-    .controller('AssignmentsController', function ($scope, $mdDialog, $mdMedia, AssignmentService, Data) {
-        $scope.assignments = AssignmentService.assignments;
+    .controller('AssignmentsController', function ($scope, $rootScope, $mdDialog, $mdMedia, Data) {
+        $rootScope.current_section = 'Assignment';
+        $scope.assignments = [];
         $scope.status = false;
 
         $scope.showDeadlineFromNow = function (date) {
@@ -345,11 +344,14 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             });
         }
     })
-    .controller('GradingController', function () {
+    .controller('GradingController', function ($rootScope) {
+        $rootScope.current_section = 'Grading';
     })
-    .controller('ConversationController', function () {
+    .controller('ConversationController', function ($rootScope) {
+        $rootScope.current_section = 'Conversation';
     })
-    .controller('NotificationController', function ($scope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
+    .controller('NotificationController', function ($scope, $rootScope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
+        $rootScope.current_section = 'Notification';
         $scope.notifications = [];
 
         $scope.user_type = $cookies.get('userType');
@@ -492,7 +494,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             url: '/changeStatusEvent',
             data: {
                 id: id,
-                status: $scope.temp_event.status
+                status: $scope.temp_event.status,
+                responsible_first_id: $scope.user_id,
+                responsible_first_table: $scope.user_type+'s'
             }
         }).success(function () {
             $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
@@ -734,7 +738,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     $scope.minDate = new Date();
     $scope.minDate.setDate((new Date()).getDate());
 
-    $scope.eventTitle = '';
+    $scope.eventTitle = null;
     $scope.eventDescription = '';
     $scope.eventPlace = '';
     $scope.eventGroup = null;
@@ -761,13 +765,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         $scope.groups = data;
     });
 
-    if (type == 'lesson') {
-        $scope.eventResponsible1Table = 'teachers';
-        $http.get('/getTeachers').success(function (data) {
-            $scope.searchResponsiblePeople1 = loadAll(data);
-        });
-    }
-    else {
+    if (type == 'extra') {
         $scope.eventResponsible1Table = 'students';
         $scope.eventResponsible2Table = 'mentors';
 
@@ -850,6 +848,8 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                 $mdDialog.hide();
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
                 $route.reload();
+            }).error(function(data){
+                console.log(data);
             })
         } else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));
@@ -1032,9 +1032,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
 
 // Assignment add dialog controller
 
-function assignmentAddDialogController($scope, $mdDialog, $mdToast, ProfileService, AssignmentService, ScheduleService, NotificationService) {
-
-
+function assignmentAddDialogController($scope, $mdDialog, $mdToast) {
     $scope.minDate = new Date();
     $scope.minDate.setDate((new Date()).getDate());
 
@@ -1074,10 +1072,6 @@ function assignmentAddDialogController($scope, $mdDialog, $mdToast, ProfileServi
             $scope.addedAssignment.endDate = endDate.format('MM-DD-YYYY, HH:mm');
             $scope.addedAssignment.owner = ProfileService.user_name;
             $scope.addedAssignment.doneCount = 0;
-
-            AssignmentService.assignments.push($scope.addedAssignment);
-
-            console.log(AssignmentService.assignments);
 
             $mdDialog.hide();
             $mdToast.show($mdToast.simple().textContent('Assignment Added'));

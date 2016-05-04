@@ -25,8 +25,8 @@ class CreateEventsTable extends Migration
             $table->tinyInteger('status')->nullable();
             $table->integer('owner_id')->unsigned();
             $table->string('owner_table',255);
-            $table->integer('responsible_first_id')->unsigned();
-            $table->string('responsible_first_table',255);
+            $table->integer('responsible_first_id')->unsigned()->nullable();
+            $table->string('responsible_first_table',255)->nullable();
             $table->integer('responsible_second_id')->unsigned()->nullable();
             $table->string('responsible_second_table',255)->nullable();
 

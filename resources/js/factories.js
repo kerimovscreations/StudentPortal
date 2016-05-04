@@ -1,8 +1,9 @@
 teacherDashboardApp.factory('Data', function () {
-    return {
+        return {
         EventId: '',
         AddEventType: '',
         AnnouncementId: '', //not used yet
         NotificationData: '',
-        PostId: ''};
+        PostId: ''
+    };
 });

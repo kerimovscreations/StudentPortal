@@ -2,7 +2,7 @@
     <md-content>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3><% notificationTitle | capitalize %></h3>
+                <h3><% notificationTitle %></h3>
                 <span flex></span>
                 <md-button ng-if="edit_check" class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
@@ -14,10 +14,12 @@
         </md-toolbar>
         <md-dialog-content>
             <div class="md-dialog-content" layout="column" layout-align="center center">
-                <span class="md-display-1" style="color: #6a72a2"><% notificationTitle %></span>
-                <span class="md-headline" style="color: #d98084" ng-if="notificationEventType=='extra' && !editMode">(<% notificationStartTime %> - <% notificationEndTime %>)</span>
-                <span class="md-title" style="color: #d98084"><% dateExtended(notificationDate) %></span>
-                <div layout="row" style="margin-top: 15px" ng-show="editMode">
+                <span ng-if="!editMode" class="md-subhead" style="color: #94cac2; margin-top: 10px">By <% notificationOwner %></span>
+                <span ng-if="!editMode && notificationEventType=='extra'" class="md-body-2"
+                      style="color: #94cac2; margin-top: 10px">Your responsible person: <% notificationAnotherResponsible %></span>
+                <span class="md-headline" style="margin-top: 10px">Content</span>
+                <span class="md-title"><% notificationContent %></span>
+                <div layout="row" style="margin-top: 5px" ng-show="editMode">
                     <div layout="row" layout-align="center center" style="color: #88c8d0">
                         <h4 class="md-title">Start time: </h4>
                         <div style="width: 10px"></div>
@@ -64,10 +66,8 @@
                         </div>
                     </div>
                 </div>
-                <span ng-if="!editMode" class="md-body-2" style="color: #94cac2; margin-top: 10px">By <% notificationOwner %></span>
-                <span ng-if="!editMode && notificationEventType=='extra'" class="md-body-2" style="color: #94cac2; margin-top: 10px">Your responsible person: <% notificationAnotherResponsible %></span>
-                <span ng-if="!editMode" class="md-headline" style="margin-top: 10px">Content</span>
-                <span ng-if="!editMode" class="md-title"><% notificationContent %></span>
+                <span class="md-title" style="color: #d98084" ng-if="notificationEventType=='extra' && !editMode">(<% notificationStartTime %> - <% notificationEndTime %>)</span>
+                <span class="md-subhead" style="color: #d98084"><% dateExtended(notificationDate) %></span>
                 <span ng-if="notificationEventType=='extra'" aria-label="Event request"
                       style="color: #505050; font-size: 18px; margin-top: 20px">
                     <% showStatus(notificationStatus) %>
@@ -76,7 +76,8 @@
         </md-dialog-content>
         <md-dialog-actions layout="row" layout-align="none center">
             <!--buttons for announcement-->
-            <md-button ng-if="notificationType=='announcements' || !extra_respond_check" class="md-primary" ng-click="hide()"
+            <md-button ng-if="notificationType=='announcements' || !extra_respond_check" class="md-primary"
+                       ng-click="hide()"
                        style="margin-right:20px;">
                 Ok
             </md-button>

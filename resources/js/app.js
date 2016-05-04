@@ -1,15 +1,19 @@
 var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies']);
-registerApp.config(function($mdThemingProvider){
+registerApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
-        .primaryPalette('customTheme')
+        .primaryPalette('customTheme');
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
 });
 
 var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngCookies']);
-loginApp.config(function($mdThemingProvider){
+loginApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
-        .primaryPalette('customTheme')
+        .primaryPalette('customTheme');
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
 });
 
 

@@ -7,13 +7,18 @@ use App\Notification;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
 
     public function store(Request $request)
     {
-        $event = Event::create($request->all());
+        $data = $request;
+        if (is_null($data['title'])) {
+            $data['title'] = DB::table($data['responsible_first_table'])->where('id', $data['responsible_first_id'])->value('name');
+        }
+        $event = Event::create($data->all());
 
         if ($event->type == 'lesson') {
             Notification::create([
@@ -55,6 +60,10 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($request['id']);
         $event->status = $request['status'];
+        if ($event->type == 'lesson') {
+            $event->responsible_first_id = $request['responsible_first_id'];
+            $event->responsible_first_table = $request['responsible_first_table'];
+        }
         if ($request['status'] == 1)
             Notification::where('source_table', 'events')->where('source_id', $event->id)->delete();
         if ($event->type == 'extra' && $request['status'] == 0) {
@@ -84,7 +93,7 @@ class EventController extends Controller
     public function changeTime(Request $request)
     {
         $event = \App\Event::findOrFail($request['id']);
-        Notification::where('source_table','events')->where('source_id',$event->id)->delete();
+        Notification::where('source_table', 'events')->where('source_id', $event->id)->delete();
         $event->start_time = $request['startTime'];
         $event->end_time = $request['endTime'];
         if ($request['from'] == 'student') {
@@ -111,7 +120,7 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($request['id']);
         $event->update($request->all());
-        Notification::where('source_table','events')->where('source_id', $event->id)->touch();
+        Notification::where('source_table', 'events')->where('source_id', $event->id)->touch();
     }
 
     public function delete(Request $request)

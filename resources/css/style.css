@@ -13,7 +13,9 @@
     color:white !important;
 }
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
-
+.reduce-margin{
+    margin: 5px 0;
+}
 #dropDownProfile{
     display: none;
     padding: 0;
