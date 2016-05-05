@@ -3704,6 +3704,8 @@ loginApp.config(function($mdThemingProvider, $interpolateProvider){
     $interpolateProvider.endSymbol('%>');
 });
 
+var welcomeApp=angular.module('appWelcome',['ngMaterial','ngRoute','ngResource']);
+
 
 var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
 teacherDashboardApp.config(function($mdThemingProvider,$interpolateProvider){
@@ -3736,15 +3738,7 @@ var customTheme={
     'contrastLightColors': undefined    // could also specify this if default was 'dark'
 };
 teacherDashboardApp.factory('Data', function () {
-    var current_section = 'Schedule';
-
-    return {
-        setSection: function (_section_) {
-            current_section = _section_;
-        },
-        getSection: function() {
-            return current_section;
-        },
+        return {
         EventId: '',
         AddEventType: '',
         AnnouncementId: '', //not used yet
@@ -3764,9 +3758,6 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
             }
         });
 
-    })
-    .service('SectionService', function(){
-        this.current_section='Schedule';
     })
     .service('PeopleService', function ($http) {
         var getPeople = function() {
@@ -3893,24 +3884,21 @@ teacherDashboardApp.directive("dropzoneSyllabus", function(ProfileService) {
     });
 
 registerApp.controller('RegisterController', function ($scope) {
-    $scope.user = {
-        email: '',
-        firstName: '',
-        lastName: '',
-        password: '',
-        passwordConfirm: '',
-        number: '',
-        birthDate: ''
+    $scope.select_user_type = 'student';
+
+    $scope.changeUserType = function (text) {
+        $scope.select_user_type = text;
+        console.log($scope.select_user_type);
     };
 });
 
 loginApp.controller('LoginController', function ($scope) {
-    $scope.user_type = 'Student';
-    $scope.submit = function () {
-        console.log($scope.user_email);
-        console.log($scope.user_password);
-        console.log($scope.user_type);
-    }
+    $scope.select_user_type = 'student';
+
+    $scope.changeUserType = function (text) {
+        $scope.select_user_type = text;
+        console.log($scope.select_user_type);
+    };
 });
 
 teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
@@ -4390,7 +4378,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
                 id: id,
                 status: $scope.temp_event.status,
                 responsible_first_id: $scope.user_id,
-                responsible_first_table: $scope.user_type+'s'
+                responsible_first_table: $scope.user_type + 's'
             }
         }).success(function () {
             $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
@@ -4742,7 +4730,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                 $mdDialog.hide();
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
                 $route.reload();
-            }).error(function(data){
+            }).error(function (data) {
                 console.log(data);
             })
         } else {

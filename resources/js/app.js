@@ -16,6 +16,8 @@ loginApp.config(function($mdThemingProvider, $interpolateProvider){
     $interpolateProvider.endSymbol('%>');
 });
 
+var welcomeApp=angular.module('appWelcome',['ngMaterial','ngRoute','ngResource']);
+
 
 var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
 teacherDashboardApp.config(function($mdThemingProvider,$interpolateProvider){

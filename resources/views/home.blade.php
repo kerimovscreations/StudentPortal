@@ -20,13 +20,13 @@
                 <!--profile icon and drop down menu-->
 
                 <div style="position: relative">
-                    <img ng-click="toggleDropDownProfile()" class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
+                    <img ng-click="toggleDropDownProfile()" class="md-avatar" ng-src="images/profile_icon.png" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                     <div class="md-whiteframe-2dp" id="dropDownProfile">
                         <div class="drop-down-profile-triangle"></div>
                         <md-content>
                             <div layout="row" style="padding: 10px">
                                 <div ng-click="changeProfileImage()" style="width:100px; height: 100px; border-radius: 100%;position: relative; overflow: hidden; margin: 5px">
-                                    <img  class="md-avatar" ng-src="images/kr_profile_pic.JPG" style="width:100px; height: 100px;"/>
+                                    <img  class="md-avatar" ng-src="images/profile_icon.png" style="width:100px; height: 100px;"/>
                                     <div class="change-profile-image-text">Change</div>
                                 </div>
 

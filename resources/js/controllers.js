@@ -1,22 +1,19 @@
 registerApp.controller('RegisterController', function ($scope) {
-    $scope.user = {
-        email: '',
-        firstName: '',
-        lastName: '',
-        password: '',
-        passwordConfirm: '',
-        number: '',
-        birthDate: ''
+    $scope.select_user_type = 'student';
+
+    $scope.changeUserType = function (text) {
+        $scope.select_user_type = text;
+        console.log($scope.select_user_type);
     };
 });
 
 loginApp.controller('LoginController', function ($scope) {
-    $scope.user_type = 'Student';
-    $scope.submit = function () {
-        console.log($scope.user_email);
-        console.log($scope.user_password);
-        console.log($scope.user_type);
-    }
+    $scope.select_user_type = 'student';
+
+    $scope.changeUserType = function (text) {
+        $scope.select_user_type = text;
+        console.log($scope.select_user_type);
+    };
 });
 
 teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
@@ -496,7 +493,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
                 id: id,
                 status: $scope.temp_event.status,
                 responsible_first_id: $scope.user_id,
-                responsible_first_table: $scope.user_type+'s'
+                responsible_first_table: $scope.user_type + 's'
             }
         }).success(function () {
             $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
@@ -848,7 +845,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                 $mdDialog.hide();
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
                 $route.reload();
-            }).error(function(data){
+            }).error(function (data) {
                 console.log(data);
             })
         } else {
