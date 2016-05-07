@@ -4726,7 +4726,8 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                     responsible_second_table: $scope.eventResponsible2Table,
                     from: $scope.user_type
                 }
-            }).success(function () {
+            }).success(function (data) {
+                console.log(data);
                 $mdDialog.hide();
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
                 $route.reload();

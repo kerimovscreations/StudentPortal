@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => 'portal@code.edu.az', 'name' => 'Student Portal by CA'],
 
     /*
     |--------------------------------------------------------------------------

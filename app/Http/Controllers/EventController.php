@@ -29,7 +29,8 @@ class EventController extends Controller
                 'source_id' => $event->id,
                 'source_table' => 'events']);
         } else {
-            if ($request['from'] == 'student')
+            $result_mail = [];
+            if ($request['from'] == 'student') {
                 Notification::create([
                     'text' => 'New extra lesson',
                     'status' => 0,
@@ -37,7 +38,15 @@ class EventController extends Controller
                     'receiver_table' => 'mentors',
                     'source_id' => $event->id,
                     'source_table' => 'events']);
-            else {
+                $result_mail[0] = [
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => 'mentors',
+                    'subject' => 'New extra lesson',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'request_extra'
+                ];
+            } else {
                 Notification::create([
                     'text' => 'New extra lesson',
                     'status' => 0,
@@ -52,7 +61,25 @@ class EventController extends Controller
                     'receiver_table' => 'mentors',
                     'source_id' => $event->id,
                     'source_table' => 'events']);
+                $mail1 = [
+                    'receiver_id' => $event->responsible_first_id,
+                    'receiver_table' => 'students',
+                    'subject' => 'New extra lesson',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'decided_extra'
+                ];
+                $mail2 = [
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => 'mentors',
+                    'subject' => 'New extra lesson',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'decided_extra'
+                ];
+                array_push($result_mail, $mail1, $mail2);
             }
+            EmailController::send($result_mail);
         }
     }
 
