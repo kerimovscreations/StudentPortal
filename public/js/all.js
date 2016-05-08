@@ -4001,8 +4001,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
             }).success(function () {
                 $scope.announcement_post = '';
                 $scope.selected = [];
-                $mdToast.show($mdToast.simple().textContent('Posted'));
                 $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Posted'));
             })
         };
 
@@ -4017,8 +4017,8 @@ teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout,
                     url: '/deleteAnnouncement',
                     data: {id: $scope.announcements[index].id}
                 }).success(function () {
-                    $mdToast.show($mdToast.simple().textContent('Deleted'));
                     $route.reload();
+                    $mdToast.show($mdToast.simple().textContent('Deleted'));
                 })
             });
         };
@@ -4341,29 +4341,47 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     $scope.temp_event_status = false;
 
     $scope.statusChangeCheck = function () {
-        return true
+        return false
+    };
+    $scope.checkOwner = function () {
+        return false
     };
 
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.temp_event = data;
-        if ($scope.temp_event.status)
+        if ($scope.temp_event.status == 1)
             $scope.temp_event_status = true;
         else
             $scope.temp_event_status = false;
 
-        if ($scope.temp_event.type == 'lesson')
+        // to enable the switch to mark as 'done' if it's decided and user is the first responsible person
+        if ($scope.temp_event.type == 'lesson') {
             $scope.statusChangeCheck = function () {
                 return $scope.temp_event.status != 1
                     && $scope.user_id == $scope.temp_event.owner_id
                     && ($scope.user_type + 's') == $scope.temp_event.owner_table
             };
-        else if ($scope.temp_event.type == 'extra')
-            $scope.statusChangeCheck = function () {
-                return $scope.temp_event.status != 1
-                    && $scope.user_id == $scope.temp_event.responsible_first_id
-                    && ($scope.user_type + 's') == $scope.temp_event.responsible_first_table
-                    && $scope.temp_event.status != null
+            $scope.checkOwner = function () {
+                return $scope.user_type == 'teacher'
             };
+        }
+        else if ($scope.temp_event.type == 'extra') {
+            $scope.statusChangeCheck = function () {
+                if ($scope.temp_event.type == 'lesson')
+                    return ($scope.temp_event.status == 0
+                    && $scope.user_type == 'teacher');
+                else
+                    return ($scope.temp_event.status == 0
+                    && $scope.user_id == $scope.temp_event.responsible_first_id
+                    && ($scope.user_type + 's') == $scope.temp_event.responsible_first_table);
+            };
+            // to display the delete and edit icon if user has an access to do actions
+            $scope.checkOwner = function () {
+                return ($scope.temp_event.status != 1
+                    && $scope.temp_event.owner_table == ($scope.user_type + 's')
+                    && $scope.temp_event.owner_id == $scope.user_id);
+            };
+        }
     });
 
     $scope.onChange = function (cbState) {
@@ -4395,6 +4413,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
                 break;
             case 1:
                 return 'Done';
+                break;
+            case 2:
+                return 'Rejected';
                 break;
             default:
                 return 'Not Done';
@@ -4435,8 +4456,8 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
                 }
             }).success(function () {
                 $mdDialog.hide();
-                $mdToast.show($mdToast.simple().textContent('Event deleted'));
                 $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Event deleted'));
             });
         });
     };
@@ -4448,7 +4469,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     };
 }
 
-function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data, ScheduleService, PeopleService) {
+function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data) {
     var id = Data.EventId;
     var user_id = $cookies.get('userId');
     var user_type = $cookies.get('userType');
@@ -4456,6 +4477,10 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
 
     var startTime = [];
     var endTime = [];
+
+    $scope.checkStudent=function(){
+        return user_type=='student';
+    };
 
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.edit_event = data;
@@ -4572,6 +4597,10 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         if ($scope.selectedResponsible2 != null)
             $scope.event_responsible_second_id = $scope.selectedResponsible2.id;
 
+        if($scope.event_type=='extra' && user_type!='teacher'){
+            $scope.event_status=null;
+        }
+
         if (startTime.isBefore(endTime)) {
             $http({
                 method: 'POST',
@@ -4596,8 +4625,10 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
                 }
             }).success(function () {
                 $mdDialog.hide();
-                $mdToast.show($mdToast.simple().textContent('Event updated'));
                 $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Event updated'));
+            }).error(function (data) {
+                console.log(data);
             })
         } else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));
@@ -4726,11 +4757,10 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                     responsible_second_table: $scope.eventResponsible2Table,
                     from: $scope.user_type
                 }
-            }).success(function (data) {
-                console.log(data);
+            }).success(function () {
                 $mdDialog.hide();
-                $mdToast.show($mdToast.simple().textContent('Event Added'));
                 $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Event Added'));
             }).error(function (data) {
                 console.log(data);
             })
@@ -4824,8 +4854,8 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                     from: $scope.user_type
                 }
             }).success(function () {
-                $route.reload();
                 $mdDialog.hide();
+                $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Extra lesson request accepted'));
             });
         } else {
@@ -4838,8 +4868,8 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                     from: $scope.user_type
                 }
             }).success(function () {
-                $route.reload();
                 $mdDialog.hide();
+                $route.reload();
                 var toast = $mdToast.simple()
                     .textContent('Extra lesson request rejected')
                     .action('UNDO')
@@ -4855,14 +4885,13 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                                 from: $scope.user_type
                             }
                         }).success(function () {
-                            $route.reload();
                             $mdDialog.hide();
+                            $route.reload();
                             $mdToast.show($mdToast.simple().textContent('Your response rolled back'));
                         });
                     }
                 });
             });
-
         }
     };
 
@@ -4897,9 +4926,11 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                     from: $scope.user_type
                 }
             }).success(function () {
-                $route.reload();
                 $mdDialog.hide();
+                $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Extra lesson time changed changed'));
+            }).error(function (data) {
+                console.log(data);
             });
         } else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));

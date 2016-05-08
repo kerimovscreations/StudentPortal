@@ -4,10 +4,10 @@
             <div class="md-toolbar-tools">
                 <h3><% temp_event.type | capitalize %> at <% dateExtended(temp_event.date) %></h3>
                 <span flex></span>
-                <md-button ng-if="user_type=='teacher'" class="md-icon-button" ng-click="edit()">
+                <md-button ng-if="checkOwner()" class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
                 </md-button>
-                <md-button ng-if="user_type=='teacher'" class="md-icon-button" ng-click="delete()">
+                <md-button ng-if="checkOwner()" class="md-icon-button" ng-click="delete()">
                     <md-icon md-svg-src="svg/ic_delete_white_24px.svg" aria-label="Edit Event"></md-icon>
                 </md-button>
                 <md-button class="md-icon-button" ng-click="hide()">

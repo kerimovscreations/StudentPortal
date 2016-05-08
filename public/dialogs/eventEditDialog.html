@@ -11,7 +11,7 @@
         </md-toolbar>
         <md-dialog-content style="margin-bottom: 0">
             <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 650px">
-                <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%">
+                <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%" ng-show="!checkStudent() && event_type!='extra'">
                     <label>Title of event</label>
                         <textarea class="md-headline" style="color: #6a72a2" ng-model="event_title"
                                   md-select-on-focus></textarea>
@@ -45,9 +45,10 @@
                     <div style="width: 10px"></div>
                 </div>
                 <div layout="row">
-                    <div layout="column" layout-align="none center" style="color: #b0cf79">
+                    <div layout="column" layout-align="none center" style="color: #b0cf79" ng-show="!checkStudent()">
                         <span style="margin-right: 10px">Responsible <% event_responsible_first_table.slice(0, -1); %></span>
                         <md-autocomplete
+                                ng-disabled="true"
                                 md-selected-item="selectedResponsible1"
                                 md-search-text="searchText1"
                                 md-items="item1 in querySearch(searchText, searchResponsiblePeople1)"

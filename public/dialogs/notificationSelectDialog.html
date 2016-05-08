@@ -76,7 +76,7 @@
         </md-dialog-content>
         <md-dialog-actions layout="row" layout-align="none center">
             <!--buttons for announcement-->
-            <md-button ng-if="notificationType=='announcements' || !extra_respond_check" class="md-primary"
+            <md-button ng-if="notificationType=='announcements' || notificationStatus==0" class="md-primary"
                        ng-click="hide()"
                        style="margin-right:20px;">
                 Ok

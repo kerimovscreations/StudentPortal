@@ -41,7 +41,7 @@ class EventController extends Controller
                 $result_mail[0] = [
                     'receiver_id' => $event->responsible_second_id,
                     'receiver_table' => 'mentors',
-                    'subject' => 'New extra lesson',
+                    'subject' => 'New extra lesson request',
                     'source_id' => $event->id,
                     'source_table' => 'events',
                     'type' => 'request_extra'
@@ -85,40 +85,99 @@ class EventController extends Controller
 
     public function changeStatus(Request $request)
     {
+        $result_mail = [];
         $event = Event::findOrFail($request['id']);
         $event->status = $request['status'];
+
         if ($event->type == 'lesson') {
             $event->responsible_first_id = $request['responsible_first_id'];
             $event->responsible_first_table = $request['responsible_first_table'];
         }
-        if ($request['status'] == 1)
+
+        $event->save();
+
+        if ($event->status == 1)
             Notification::where('source_table', 'events')->where('source_id', $event->id)->delete();
-        if ($event->type == 'extra' && $request['status'] == 0) {
+
+        else if ($event->type == 'extra' && $event->status == 2) {
             Notification::where('source_table', 'events')->where('source_id', $event->id)->delete();
-            if ($request['from'] == 'student')
+            if ($request['from'] == 'student') {
                 Notification::create([
-                    'text' => 'Extra lesson decided',
+                    'text' => 'Extra lesson rejected',
                     'status' => 0,
                     'receiver_id' => $event->responsible_second_id,
                     'receiver_table' => 'mentors',
                     'source_id' => $event->id,
                     'source_table' => 'events']);
-            else
+                $result_mail[0] = [
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => 'mentors',
+                    'subject' => 'Extra lesson rejected',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'rejected_extra'
+                ];
+            } else {
                 Notification::create([
-                    'text' => 'Extra lesson decided',
+                    'text' => 'Extra lesson rejected',
                     'status' => 0,
                     'receiver_id' => $event->responsible_first_id,
                     'receiver_table' => 'students',
                     'source_id' => $event->id,
                     'source_table' => 'events']);
+                $result_mail[0] = [
+                    'receiver_id' => $event->responsible_first_id,
+                    'receiver_table' => 'students',
+                    'subject' => 'New extra lesson rejected',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'rejected_extra'
+                ];
+            }
         }
 
-        $event->save();
-
+        if ($event->type == 'extra' && $event->status == 0) {
+            Notification::where('source_table', 'events')->where('source_id', $event->id)->delete();
+            if ($request['from'] == 'student') {
+                Notification::create([
+                    'text' => 'Extra lesson accepted',
+                    'status' => 0,
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => 'mentors',
+                    'source_id' => $event->id,
+                    'source_table' => 'events']);
+                $result_mail[0] = [
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => 'mentors',
+                    'subject' => 'New extra lesson accepted',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'accepted_extra'
+                ];
+            } else {
+                Notification::create([
+                    'text' => 'Extra lesson accepted',
+                    'status' => 0,
+                    'receiver_id' => $event->responsible_first_id,
+                    'receiver_table' => 'students',
+                    'source_id' => $event->id,
+                    'source_table' => 'events']);
+                $result_mail[0] = [
+                    'receiver_id' => $event->responsible_first_id,
+                    'receiver_table' => 'students',
+                    'subject' => 'New extra lesson decided',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'accepted_extra'
+                ];
+            }
+        }
+        EmailController::send($result_mail);
     }
 
     public function changeTime(Request $request)
     {
+        $result_mail = [];
         $event = \App\Event::findOrFail($request['id']);
         Notification::where('source_table', 'events')->where('source_id', $event->id)->delete();
         $event->start_time = $request['startTime'];
@@ -127,10 +186,18 @@ class EventController extends Controller
             Notification::create([
                 'text' => 'Extra lesson time has changed',
                 'status' => 0,
-                'receiver_id' => $event->responsible_first_id,
+                'receiver_id' => $event->responsible_second_id,
                 'receiver_table' => 'mentors',
                 'source_id' => $event->id,
                 'source_table' => 'events']);
+            $result_mail[0] = [
+                'receiver_id' => $event->responsible_second_id,
+                'receiver_table' => 'mentors',
+                'subject' => 'Extra lesson time has changed',
+                'source_id' => $event->id,
+                'source_table' => 'events',
+                'type' => 'time_changed_extra'
+            ];
         } else {
             Notification::create([
                 'text' => 'Extra lesson time has changed',
@@ -139,21 +206,133 @@ class EventController extends Controller
                 'receiver_table' => 'students',
                 'source_id' => $event->id,
                 'source_table' => 'events']);
+            $result_mail[0] = [
+                'receiver_id' => $event->responsible_first_id,
+                'receiver_table' => 'students',
+                'subject' => 'Extra lesson time has changed',
+                'source_id' => $event->id,
+                'source_table' => 'events',
+                'type' => 'time_changed_extra'
+            ];
         }
         $event->save();
+        EmailController::send($result_mail);
     }
 
     public function update(Request $request)
     {
         $event = Event::findOrFail($request['id']);
-        $event->update($request->all());
-        Notification::where('source_table', 'events')->where('source_id', $event->id)->touch();
+        if ($event->type == 'extra') {
+            if ($event->responsible_second_id != $request['responsible_second_id']) {
+                $result_mail = [];
+                $result_mail[0] = [
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => $event->responsible_second_table,
+                    'subject' => 'Extra lesson cancelled',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'cancelled_extra'
+                ];
+                EmailController::send($result_mail);
+                Notification::create([
+                    'text' => 'New extra lesson',
+                    'status' => 0,
+                    'receiver_id' => $request['responsible_second_id'],
+                    'receiver_table' => $request['responsible_second_table'],
+                    'source_id' => $event->id,
+                    'source_table' => 'decided_extra']);
+
+            }
+
+            $event->update($request->all());
+            $notifications = Notification::where('source_table', 'events')->where('source_id', $event->id)->get();
+
+            $result_mail = [];
+
+            if ($event->owner_table == 'students') {
+                $mail = [
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => $event->responsible_second_table,
+                    'subject' => 'Event updated',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'updated_extra'
+                ];
+                array_push($result_mail, $mail);
+                foreach ($notifications as $notification) {
+                    $notification->receiver_id=$event->responsible_second_id;
+                    $notification->receiver_table=$event->responsible_second_table;
+                    $notification->text = 'Extra lesson updated';
+                    $notification->save();
+                }
+            } else if ($event->owner_table == 'teachers') {
+                foreach ($notifications as $notification) {
+                    $mail = [
+                        'receiver_id' => $notification->receiver_id,
+                        'receiver_table' => $notification->receiver_table,
+                        'subject' => 'Event updated',
+                        'source_id' => $event->id,
+                        'source_table' => 'events',
+                        'type' => 'updated_extra'
+                    ];
+                    array_push($result_mail, $mail);
+                    $notification->text = 'Extra lesson updated';
+                    $notification->save();
+                }
+            }
+            EmailController::send($result_mail);
+        } else if ($event->type == 'lesson') {
+            $event->update($request->all());
+            $notifications = Notification::where('source_table', 'events')->where('source_id', $event->id)->get();
+
+            foreach ($notifications as $notification) {
+                $notification->text = 'Lesson updated';
+                $notification->save();
+            }
+        }
     }
 
     public function delete(Request $request)
     {
         $event = Event::findOrFail($request['id']);
-        Notification::where('source_table', 'events')->where('source_id', $event->id)->delete();
+        $notifications = Notification::where('source_table', 'events')->where('source_id', $event->id)->get();
+        if ($event->type == 'extra') {
+            $result_mail = [];
+
+            if ($event->owner_table == 'students') {
+                $mail = [
+                    'receiver_id' => $event->responsible_second_id,
+                    'receiver_table' => $event->responsible_second_table,
+                    'subject' => 'Event deleted',
+                    'source_id' => $event->id,
+                    'source_table' => 'events',
+                    'type' => 'deleted_extra'
+                ];
+                array_push($result_mail, $mail);
+                foreach ($notifications as $notification) {
+                    $notification->delete();
+                }
+            } else if ($event->owner_table == 'teachers') {
+                foreach ($notifications as $notification) {
+                    $mail = [
+                        'receiver_id' => $notification->receiver_id,
+                        'receiver_table' => $notification->receiver_table,
+                        'subject' => 'Event deleted',
+                        'source_id' => $event->id,
+                        'source_table' => 'events',
+                        'type' => 'deleted_extra'
+                    ];
+                    array_push($result_mail, $mail);
+                    $notification->delete();
+                }
+            }
+            EmailController::send($result_mail);
+        } else if ($event->type == 'lesson') {
+            $event->delete();
+            foreach ($notifications as $notification) {
+                $notification->delete();
+            }
+        }
         $event->delete();
     }
 }

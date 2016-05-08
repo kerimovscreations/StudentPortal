@@ -25,7 +25,7 @@
         <span style="font-family:lucida sans unicode,lucida grande,sans-serif;"> </span>
     </span>
     <span style="color:#696969;">
-        <span style="font-family:lucida sans unicode,lucida grande,sans-serif;">{!! $action_post !!} on </span>
+        <span style="font-family:lucida sans unicode,lucida grande,sans-serif;">{!! $action_post !!}</span>
     </span>
     <span
             style="color:#1DA8BC;"><span
