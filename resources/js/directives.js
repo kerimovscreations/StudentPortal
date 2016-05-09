@@ -1,4 +1,4 @@
-teacherDashboardApp.directive("dropzoneSyllabus", function(ProfileService) {
+portalApp.directive("dropzoneSyllabus", function(ProfileService) {
         return {
             restrict : "A",
             link: function (scope, elem) {

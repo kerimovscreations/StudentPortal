@@ -1,4 +1,4 @@
-teacherDashboardApp.factory('Data', function () {
+portalApp.factory('Data', function () {
         return {
         EventId: '',
         AddEventType: '',

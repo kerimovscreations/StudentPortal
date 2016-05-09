@@ -1,4 +1,4 @@
-teacherDashboardApp.config(['$routeProvider', function($routeProvider){
+portalApp.config(['$routeProvider', function($routeProvider){
     $routeProvider
         .when('/',{
             templateUrl: "sections/Schedule.html",

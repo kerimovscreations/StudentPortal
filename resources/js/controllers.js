@@ -1,22 +1,14 @@
 registerApp.controller('RegisterController', function ($scope) {
     $scope.select_user_type = 'student';
-
-    $scope.changeUserType = function (text) {
-        $scope.select_user_type = text;
-        console.log($scope.select_user_type);
-    };
+    
+    $scope.types=['Student','Teacher','Mentor'];
 });
 
 loginApp.controller('LoginController', function ($scope) {
     $scope.select_user_type = 'student';
-
-    $scope.changeUserType = function (text) {
-        $scope.select_user_type = text;
-        console.log($scope.select_user_type);
-    };
 });
 
-teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
+portalApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
 
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name = ProfileService.user_name;

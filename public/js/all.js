@@ -3707,8 +3707,8 @@ loginApp.config(function($mdThemingProvider, $interpolateProvider){
 var welcomeApp=angular.module('appWelcome',['ngMaterial','ngRoute','ngResource']);
 
 
-var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
-teacherDashboardApp.config(function($mdThemingProvider,$interpolateProvider){
+var portalApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
+portalApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
         .primaryPalette('customTheme');
@@ -3737,7 +3737,7 @@ var customTheme={
         '200', '300', '400', 'A100'],
     'contrastLightColors': undefined    // could also specify this if default was 'dark'
 };
-teacherDashboardApp.factory('Data', function () {
+portalApp.factory('Data', function () {
         return {
         EventId: '',
         AddEventType: '',
@@ -3747,7 +3747,7 @@ teacherDashboardApp.factory('Data', function () {
     };
 });
 
-teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
+portalApp.service('ProfileService', function ($cookies, $http) {
         $http.get('/getUser').success(function(result) {
             $cookies.put('userId', result['id']);
             $cookies.put('userName', result['name']);
@@ -3769,7 +3769,7 @@ teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
         return { getPeople: getPeople };
 
     })
-teacherDashboardApp.filter('capitalize', function() {
+portalApp.filter('capitalize', function() {
     return function(input) {
         return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
     }
@@ -3792,7 +3792,7 @@ teacherDashboardApp.filter('capitalize', function() {
         }
     });
 
-teacherDashboardApp.directive("dropzoneSyllabus", function(ProfileService) {
+portalApp.directive("dropzoneSyllabus", function(ProfileService) {
         return {
             restrict : "A",
             link: function (scope, elem) {
@@ -3885,23 +3885,15 @@ teacherDashboardApp.directive("dropzoneSyllabus", function(ProfileService) {
 
 registerApp.controller('RegisterController', function ($scope) {
     $scope.select_user_type = 'student';
-
-    $scope.changeUserType = function (text) {
-        $scope.select_user_type = text;
-        console.log($scope.select_user_type);
-    };
+    
+    $scope.types=['Student','Teacher','Mentor'];
 });
 
 loginApp.controller('LoginController', function ($scope) {
     $scope.select_user_type = 'student';
-
-    $scope.changeUserType = function (text) {
-        $scope.select_user_type = text;
-        console.log($scope.select_user_type);
-    };
 });
 
-teacherDashboardApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
+portalApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
 
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name = ProfileService.user_name;
@@ -5010,7 +5002,7 @@ function clone(obj) {
     }
     return copy;
 }
-teacherDashboardApp.config(['$routeProvider', function($routeProvider){
+portalApp.config(['$routeProvider', function($routeProvider){
     $routeProvider
         .when('/',{
             templateUrl: "sections/Schedule.html",

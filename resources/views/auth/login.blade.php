@@ -3,18 +3,10 @@
 @section('appName', 'appLogin')
 
 @section('content')
-    <div layout='column' ng-controller="LoginController" layout-fill>
-        <div style="margin: 0 auto; text-align: center">
-            <h3>Select login type</h3>
-            <div layout="row" layout-align="center">
-                <md-button class="md-raised md-primary" ng-click="changeUserType('student')">Student</md-button>
-                <md-button class="md-raised md-primary" ng-click="changeUserType('teacher')">Teacher</md-button>
-                <md-button class="md-raised md-primary" ng-click="changeUserType('mentor')">Mentor</md-button>
-            </div>
-        </div>
-        <form name='userForm' role="form" method="POST" action="<%'/'+ select_user_type +'/login'%>">
-        {!! csrf_field() !!}
-            <md-card style="max-width: 350px; margin: 20px auto">
+    <div ng-controller="LoginController" layout="column" layout-align="center center" layout-fill>
+        <md-card style="max-width: 350px;">
+            <form name='userForm' role="form" method="POST" action="<%'/'+ select_user_type +'/login'%>">
+                {!! csrf_field() !!}
                 <img src="{{ URL::to('/') }}/images/login_background.jpg" class="md-card-image" alt="Washed Out"
                      style="width: 100%">
                 <md-card-title>
@@ -41,13 +33,20 @@
                                     </span>
                         @endif
                     </md-input-container>
+                    <md-radio-group ng-model="select_user_type" layout="row" layout-align="center">
+                        <md-radio-button value="student">Student</md-radio-button>
+                        <md-radio-button value="teacher"> Teacher</md-radio-button>
+                        <md-radio-button value="mentor">Mentor</md-radio-button>
+                    </md-radio-group>
                 </md-card-content>
                 <md-card-actions layout="row" layout-align="center none" style="padding: 5px;">
+                    <!--
                     <a class="md-button" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
+                    -->
                     <div flex></div>
                     <input type="submit" class="md-button md-raised md-primary" value="Login">
                 </md-card-actions>
-            </md-card>
-        </form>
+            </form>
+        </md-card>
     </div>
 @endsection

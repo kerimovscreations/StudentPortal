@@ -1,4 +1,4 @@
-teacherDashboardApp.service('ProfileService', function ($cookies,$http) {
+portalApp.service('ProfileService', function ($cookies, $http) {
         $http.get('/getUser').success(function(result) {
             $cookies.put('userId', result['id']);
             $cookies.put('userName', result['name']);

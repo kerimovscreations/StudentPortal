@@ -19,8 +19,8 @@ loginApp.config(function($mdThemingProvider, $interpolateProvider){
 var welcomeApp=angular.module('appWelcome',['ngMaterial','ngRoute','ngResource']);
 
 
-var teacherDashboardApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
-teacherDashboardApp.config(function($mdThemingProvider,$interpolateProvider){
+var portalApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
+portalApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
         .primaryPalette('customTheme');
