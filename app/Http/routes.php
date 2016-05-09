@@ -117,6 +117,18 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         });
 
         /**
+         * Get the count of the notifications due to tables(group or personal notification)
+         */
+        Route::get('/getNotificationsCount/{table}/{id}', function ($table, $id) {
+            $count = DB::table('notifications')->where([
+                ['receiver_id', intval($id)],
+                ['receiver_table', $table],
+                ['status', 0],
+            ])->count();
+            return json_encode($count);
+        });
+
+        /**
          * Get data of selected notification
          */
         Route::get('/getNotification/{id}', function ($id) {

@@ -16,6 +16,10 @@
                     <span><% current_section %></span>
                 </h2>
                 <span flex></span>
+                <div layout="row" ng-click="openNotification()" style="position: relative">
+                    <md-icon md-svg-src="svg/ic_notifications_none_white_48px.svg" aria-label="Notification" style="position: relative;left: 0; width:35px; height: 35px;"></md-icon>
+                    <div class="notification-circle" style="position: relative;right: 15px"><% notification_count %></div>
+                </div>
 
                 <!--profile icon and drop down menu-->
 

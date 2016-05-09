@@ -1,19 +1,37 @@
 registerApp.controller('RegisterController', function ($scope) {
     $scope.select_user_type = 'student';
-    
-    $scope.types=['Student','Teacher','Mentor'];
 });
 
 loginApp.controller('LoginController', function ($scope) {
     $scope.select_user_type = 'student';
 });
 
-portalApp.controller('MainMenuController', function ($scope, $timeout, $rootScope, $mdSidenav, ProfileService, Data) {
+portalApp.controller('MainMenuController', function ($scope,$rootScope, $timeout, $rootScope, $mdSidenav, $http, $cookies, $location, Data) {
 
         $scope.toggleNavBar = buildDelayedToggler('left');
-        $scope.user_name = ProfileService.user_name;
-        $scope.user_email = ProfileService.user_email;
-        $scope.user_type = ProfileService.user_type;
+        $scope.user_name = $cookies.get('userName');
+        $scope.user_email = $cookies.get('userEmail');
+        $scope.user_type = $cookies.get('userType');
+        $scope.user_id = $cookies.get('userId');
+
+        $rootScope.notification_count = 0;
+
+        if ($scope.user_type == 'student') {
+            var user_group_id = $cookies.get('userGroupId');
+            $http.get('/getNotificationsCount/groups/' + user_group_id).success(function (data) {
+                $rootScope.notification_count += parseInt(data);
+            });
+            $http.get('/getNotificationsCount/students/' + $scope.user_id).success(function (data) {
+                $rootScope.notification_count += parseInt(data);
+            }).error(function (data) {
+                console.log(data);
+            });
+        }
+        else {
+            $http.get('/getNotifications/mentors/' + $scope.user_id).success(function (data) {
+                $rootScope.notification_count += parseInt(data);
+            });
+        }
 
         var dropDownMenu = document.getElementById('dropDownProfile');
 
@@ -65,6 +83,9 @@ portalApp.controller('MainMenuController', function ($scope, $timeout, $rootScop
             }, 100);
         }
 
+        $scope.openNotification = function () {
+            $location.path('/notification');
+        }
     })
     .controller('SectionListController', function ($scope, $location, $http, $rootScope, Data) {
         $http.get('/getSections').success(function (data) {
@@ -371,6 +392,7 @@ portalApp.controller('MainMenuController', function ($scope, $timeout, $rootScop
                     url: '/changeStatusNotification',
                     data: {id: id}
                 }).success(function () {
+                    $rootScope.notification_count-=1;
                     $scope.notifications[type][index].status = 1;
                     showSelectNotificationDialog(id);
                 });
@@ -485,8 +507,8 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             // to display the delete and edit icon if user has an access to do actions
             $scope.checkOwner = function () {
                 return ($scope.temp_event.status != 1
-                    && $scope.temp_event.owner_table == ($scope.user_type + 's')
-                    && $scope.temp_event.owner_id == $scope.user_id);
+                && $scope.temp_event.owner_table == ($scope.user_type + 's')
+                && $scope.temp_event.owner_id == $scope.user_id);
             };
         }
     });
@@ -585,8 +607,8 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
     var startTime = [];
     var endTime = [];
 
-    $scope.checkStudent=function(){
-        return user_type=='student';
+    $scope.checkStudent = function () {
+        return user_type == 'student';
     };
 
     $http.get('/getEvent/' + id).success(function (data) {
@@ -704,8 +726,8 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         if ($scope.selectedResponsible2 != null)
             $scope.event_responsible_second_id = $scope.selectedResponsible2.id;
 
-        if($scope.event_type=='extra' && user_type!='teacher'){
-            $scope.event_status=null;
+        if ($scope.event_type == 'extra' && user_type != 'teacher') {
+            $scope.event_status = null;
         }
 
         if (startTime.isBefore(endTime)) {

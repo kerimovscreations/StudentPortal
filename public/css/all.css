@@ -128,4 +128,13 @@ body{
 .unread {
     background: lightgray;
 }
+.notification-circle{
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+    background: #FF5350;
+    border-radius: 100%;
+    color: white;
+    text-align: center;
+}
 /*# sourceMappingURL=all.css.map */
