@@ -5,7 +5,7 @@
 @section('content')
     <div ng-controller="LoginController" layout="column" layout-align="center center" layout-fill>
         <md-card style="max-width: 350px;">
-
+            <md-content>
                 <form name='userForm' role="form" method="POST" action="<%'/'+ select_user_type +'/login'%>">
                     {!! csrf_field() !!}
                     <img src="{{ URL::to('/') }}/images/login_background.jpg" class="md-card-image" alt="Washed Out"

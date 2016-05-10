@@ -16,9 +16,9 @@
                     <span><% current_section %></span>
                 </h2>
                 <span flex></span>
-                <div layout="row" ng-click="openNotification()" style="position: relative">
-                    <md-icon md-svg-src="svg/ic_notifications_none_white_48px.svg" aria-label="Notification" style="position: relative;left: 0; width:35px; height: 35px;"></md-icon>
-                    <div class="notification-circle" style="position: relative;right: 15px"><% notification_count %></div>
+                <div layout="row" ng-click="openNotification()" style="width: 60px;position: relative; margin-right: 15px">
+                    <md-icon md-svg-src="svg/ic_notifications_none_white_48px.svg" aria-label="Notification" style="position: relative;left: 0px; width:35px; height: 35px;"></md-icon>
+                    <div ng-show="notification_count!=0" class="notification-circle" style="position: relative;right: 20px"><% notification_count %></div>
                 </div>
 
                 <!--profile icon and drop down menu-->
@@ -35,15 +35,15 @@
                                 </div>
 
                                 <div layout="column" style="margin: 10px 15px;" layout-align="start start" >
-                                    <h4 style="margin: 0">{{ Auth::guard(session('userType'))->user()->name }}</h4>
-                                    <span style="margin-top: 0px; font-size: 12px; color:#909090">{{ Auth::guard(session('userType'))->user()->email }}</span>
-                                    <span style="margin-top: 0px; font-size: 16px; color: #299af5; font-weight: bold">{{ session('userType') }}</span>
+                                    <h4 style="margin: 0"><% user_name %></h4>
+                                    <span style="margin-top: 0px; font-size: 12px; color:#909090"><% user_email %></span>
+                                    <span style="margin-top: 0px; font-size: 16px; color: #299af5; font-weight: bold"><% user_type %></span>
                                     <md-button class="md-raised md-primary" ng-click="editProfile()" style="margin: 0; margin-top: 10px">Edit Profile</md-button>
                                 </div>
                             </div>
                             <md-divider></md-divider>
                             <div layout="row" style=" padding: 5px; background-color: #F0F0F0" layout-align="end">
-                                <md-button style="color: #A6A6A6"><a href="{{ url('/'.session('userType').'/logout') }}">Sign Out</a></md-button>
+                                <md-button style="color: #A6A6A6"><a href="/<% user_type %>/logout">Sign Out</a></md-button>
                             </div>
                         </md-content>
                     </div>

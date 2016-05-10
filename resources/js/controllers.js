@@ -6,7 +6,7 @@ loginApp.controller('LoginController', function ($scope) {
     $scope.select_user_type = 'student';
 });
 
-portalApp.controller('MainMenuController', function ($scope,$rootScope, $timeout, $rootScope, $mdSidenav, $http, $cookies, $location, Data) {
+portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies, $timeout, $mdSidenav, $http, $location, ProfileService, Data) {
 
         $scope.toggleNavBar = buildDelayedToggler('left');
         $scope.user_name = $cookies.get('userName');
@@ -27,8 +27,8 @@ portalApp.controller('MainMenuController', function ($scope,$rootScope, $timeout
                 console.log(data);
             });
         }
-        else {
-            $http.get('/getNotifications/mentors/' + $scope.user_id).success(function (data) {
+        else if ($scope.user_type == 'mentor'){
+            $http.get('/getNotificationsCount/mentors/' + $scope.user_id).success(function (data) {
                 $rootScope.notification_count += parseInt(data);
             });
         }
