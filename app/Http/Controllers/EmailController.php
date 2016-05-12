@@ -67,7 +67,7 @@ class EmailController extends Controller
                     'person' => $person_name,
                     'action_pre' => $action_pre,
                     'action_post' => $action_post,
-                    'date' => $event->date,
+                    'date' => date("Y M d", strtotime($event->date)),
                     'start_time' => $event->start_time,
                     'end_time' => $event->end_time,
                     'description' => $event->description

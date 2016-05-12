@@ -159,10 +159,10 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         Route::post('/changeStatusNotification', 'NotificationController@changeStatus');
 
         /**
-         * Get the list of events
+         * Get weekly list of events
          */
-        Route::get('/getEvents', function () {
-            $events = App\Event::all();
+        Route::get('/getWeekEvents/{data1}/{data2}', function ($data1,$data2) {
+            $events = App\Event::where('date','>=',$data1)->where('date','<=',$data2)->get();
             return json_encode($events);
         });
 

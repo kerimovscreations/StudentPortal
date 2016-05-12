@@ -87,10 +87,13 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             $location.path('/notification');
         }
     })
-    .controller('SectionListController', function ($scope, $location, $http, $rootScope, Data) {
+    .controller('SectionListController', function ($scope, $location, $http, $rootScope, Data, SectionService) {
+        /*
         $http.get('/getSections').success(function (data) {
             $scope.sections = data;
         });
+        */
+        $scope.sections=SectionService.sections;
 
         $scope.selectSection = function (text) {
             $rootScope.current_section = text;
@@ -235,18 +238,21 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.user_type = $cookies.get('userType');
         $scope.events = [];
 
-        $http.get('/getEvents').success(function (data) {
-            $scope.events = data;
-        });
-
         $scope.dt = new Date();
 
         $scope.today = function () {
             $scope.dt = new Date();
         };
 
+        $http.get('/getWeekEvents/'+moment($scope.dt).format('YYYYMMDD')+'/'+moment($scope.dt).add(6, 'd')).success(function (data) {
+            $scope.events = data;
+        });
+        
         //To add next 6 days to week schedule
         $scope.$watch('dt', function () {
+            $http.get('/getWeekEvents/'+moment($scope.dt).format('YYYYMMDD')+'/'+moment($scope.dt).add(6, 'd').format('YYYYMMDD')).success(function (data) {
+                $scope.events = data;
+            });
             $scope.temp1 = moment($scope.dt).add(1, 'd');
             $scope.temp2 = moment($scope.dt).add(2, 'd');
             $scope.temp3 = moment($scope.dt).add(3, 'd');
@@ -257,7 +263,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         //FAB button to add new event
         $scope.isOpen = false;
-        $scope.demo = {
+        $scope.fab_btn = {
             isOpen: false,
             count: 0
         };
@@ -362,7 +368,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     })
     .controller('NotificationController', function ($scope, $rootScope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
         $rootScope.current_section = 'Notification';
-        $scope.notifications = [];
+        $scope.notifications=[[],[]];
 
         $scope.user_type = $cookies.get('userType');
         var user_id = $cookies.get('userId');
@@ -553,7 +559,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     };
 
     $scope.dateExtended = function (date) {
-        return moment(new Date(date)).format("dddd, MMMM DD YYYY");
+        return moment(date,'YYYYMMDD').format("dddd, MMMM DD YYYY");
     };
 
     $scope.edit = function () {
@@ -617,7 +623,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         $scope.event_title = $scope.edit_event.title;
         $scope.event_description = $scope.edit_event.description;
         $scope.event_type = $scope.edit_event.type;
-        $scope.event_date = new Date($scope.edit_event.date);
+        $scope.event_date = new Date(moment($scope.edit_event.date,'YYYYMMDD'));
         $scope.event_start_time = $scope.edit_event.start_time;
         $scope.event_end_time = $scope.edit_event.end_time;
         $scope.event_group_id = $scope.edit_event.group_id;
@@ -739,7 +745,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
                     title: $scope.event_title,
                     description: $scope.event_description,
                     type: $scope.event_type,
-                    date: moment($scope.event_date).format("MM-DD-YYYY"),
+                    date: moment($scope.event_date).format("YYYYMMDD"),
                     start_time: startTime.format('HH:mm'),
                     end_time: endTime.format('HH:mm'),
                     group_id: $scope.event_group_id,
@@ -872,7 +878,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                     title: $scope.eventTitle,
                     description: $scope.eventDescription,
                     type: $scope.eventType,
-                    date: moment($scope.eventDate).format("MM-DD-YYYY"),
+                    date: moment($scope.eventDate).format("YYYYMMDD"),
                     start_time: startTime.format('HH:mm'),
                     end_time: endTime.format('HH:mm'),
                     group_id: $scope.eventGroup,
@@ -1036,7 +1042,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     });
 
     $scope.dateExtended = function (date) {
-        return moment(new Date(date)).format("dddd, MMMM DD YYYY");
+        return moment(date,'YYYYMMDD').format("dddd, MMMM DD YYYY");
     };
 
     $scope.update = function () {

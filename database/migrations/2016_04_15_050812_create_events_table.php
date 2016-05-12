@@ -17,7 +17,7 @@ class CreateEventsTable extends Migration
             $table->string('title',255);
             $table->text('description');
             $table->string('type',255);
-            $table->string('date',255);
+            $table->integer('date');
             $table->string('start_time',255);
             $table->string('end_time',255);
             $table->integer('group_id')->unsigned()->nullable();

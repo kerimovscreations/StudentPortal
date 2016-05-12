@@ -64,8 +64,9 @@
 
                             <!--list of sections-->
 
-                            <md-list-item class="secondary-button-padding" ng-repeat="section in sections" ng-click="selectSection(section.name)" >
-                                <p> <% section.name %> </p>
+                            <md-list-item class="secondary-button-padding" ng-repeat="section in sections" ng-click="selectSection(section.name)">
+                                <md-icon md-svg-src="<% section.url %>" style="margin-right: 15px; margin-left: 0"></md-icon>
+                                <span> <% section.name %> </span>
                             </md-list-item>
                         </md-list>
                     </md-content>
