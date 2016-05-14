@@ -81,14 +81,18 @@ Route::group(['middleware' => ['web'], ['api']], function () {
          */
         Route::get('/getDataUser/{table}/{id}', function ($table, $id) {
             if ($table == 'students') {
-                $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate')->get();
+                $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate','bio')->get();
                 $user[0]->group = \App\Group::find($user[0]->group_id)->name;
             } else {
-                $user = DB::table($table)->where('id', intval($id))->select('name', 'email')->get();
+                $user = DB::table($table)->where('id', intval($id))->select('name', 'email','bio','work_days','work_start_time','work_end_time')->get();
             }
             return json_encode($user[0]);
         });
 
+        /**
+         * Update the data of user
+         */
+        Route::post('/updateUser','UserController@update');
         /**
          * Get the list of teachers
          */
@@ -161,8 +165,8 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         /**
          * Get weekly list of events
          */
-        Route::get('/getWeekEvents/{data1}/{data2}', function ($data1,$data2) {
-            $events = App\Event::where('date','>=',$data1)->where('date','<=',$data2)->get();
+        Route::get('/getWeekEvents/{data1}', function ($data1) {
+            $events = App\Event::where('date','>=',$data1)->where('date','<=',($data1+6))->get();
             return json_encode($events);
         });
 

@@ -1,9 +1,10 @@
 portalApp.factory('Data', function () {
-        return {
-        EventId: '',
-        AddEventType: '',
-        AnnouncementId: '', //not used yet
-        NotificationData: '',
-        PostId: ''
+    return {
+        EventId: null,
+        AddEventType: null,
+        NotificationData: null,
+        PostId: null,
+        PersonId: null,
+        PersonTable: null
     };
 });

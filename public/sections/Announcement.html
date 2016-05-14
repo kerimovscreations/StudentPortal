@@ -1,7 +1,7 @@
 <md-content style="max-width: 1000px; margin: 0 auto;">
-    <div ng-show="user_type=='teacher'">
+    <md-content ng-show="user_type=='teacher'">
         <form>
-            <md-input-container class="md-block" style="margin-bottom: 0">
+            <md-input-container class="md-block" style="margin-bottom: 0; margin-top: 25px">
                 <label>Enter new announcement</label>
                 <textarea ng-model="announcement_post" md-maxlength="300" md-select-on-focus
                           ng-model-options="{ debounce: 100 }"></textarea>
@@ -24,7 +24,7 @@
             </div>
         </form>
         <md-divider></md-divider>
-    </div>
+    </md-content>
     <div style="width: 100%; height: 20px"></div>
     <md-card ng-repeat="announcement in announcements track by $index" class="md-whiteframe-2dp">
         <md-card-header>

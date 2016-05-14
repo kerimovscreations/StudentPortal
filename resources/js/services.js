@@ -14,8 +14,8 @@ portalApp.service('ProfileService', function ($cookies, $http) {
         this.sections=[
             {name:'Announcement', url: 'svg/ic_announcement_white_48px.svg'},
             {name:'Notification', url: 'svg/ic_notifications_white_48px.svg'},
-            {name:'Notification', url: 'svg/ic_event_white_48px.svg'},
-            {name:'Notification', url: 'svg/ic_people_white_48px.svg'}
+            {name:'Schedule', url: 'svg/ic_event_white_48px.svg'},
+            {name:'People', url: 'svg/ic_people_white_48px.svg'}
         ];
     })
     .service('PeopleService', function ($http) {

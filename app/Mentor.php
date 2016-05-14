@@ -13,7 +13,7 @@ class Mentor extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','api_token'
+        'name', 'email', 'password', 'api_token', 'work_days', 'work_start_time', 'work_end_time', 'bio'
     ];
 
     /**
@@ -22,7 +22,7 @@ class Mentor extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','api_token'
+        'password', 'remember_token', 'api_token'
     ];
 
     public function setCreatedAtAttribute($value)
@@ -31,6 +31,7 @@ class Mentor extends Authenticatable
             ->timezone('Asia/Baku')
             ->toDateTimeString();
     }
+
     public function setUpdatedAtAttribute($value)
     {
         $this->attributes['updated_at'] = Carbon::createFromTimestamp(strtotime($value->subHour()))

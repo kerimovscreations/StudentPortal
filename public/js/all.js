@@ -3695,7 +3695,7 @@ registerApp.config(function($mdThemingProvider, $interpolateProvider){
     $interpolateProvider.endSymbol('%>');
 });
 
-var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngCookies']);
+var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies']);
 loginApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
@@ -3707,7 +3707,7 @@ loginApp.config(function($mdThemingProvider, $interpolateProvider){
 var welcomeApp=angular.module('appWelcome',['ngMaterial','ngRoute','ngResource']);
 
 
-var portalApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
+var portalApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngMessages', 'ngCookies']);
 portalApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
@@ -3738,12 +3738,13 @@ var customTheme={
     'contrastLightColors': undefined    // could also specify this if default was 'dark'
 };
 portalApp.factory('Data', function () {
-        return {
-        EventId: '',
-        AddEventType: '',
-        AnnouncementId: '', //not used yet
-        NotificationData: '',
-        PostId: ''
+    return {
+        EventId: null,
+        AddEventType: null,
+        NotificationData: null,
+        PostId: null,
+        PersonId: null,
+        PersonTable: null
     };
 });
 
@@ -3763,8 +3764,8 @@ portalApp.service('ProfileService', function ($cookies, $http) {
         this.sections=[
             {name:'Announcement', url: 'svg/ic_announcement_white_48px.svg'},
             {name:'Notification', url: 'svg/ic_notifications_white_48px.svg'},
-            {name:'Notification', url: 'svg/ic_event_white_48px.svg'},
-            {name:'Notification', url: 'svg/ic_people_white_48px.svg'}
+            {name:'Schedule', url: 'svg/ic_event_white_48px.svg'},
+            {name:'People', url: 'svg/ic_people_white_48px.svg'}
         ];
     })
     .service('PeopleService', function ($http) {
@@ -3897,94 +3898,114 @@ loginApp.controller('LoginController', function ($scope) {
     $scope.select_user_type = 'student';
 });
 
-portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies, $timeout, $mdSidenav, $http, $location, ProfileService, Data) {
+portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies,  $mdDialog, $mdMedia, $timeout, $mdSidenav, $http, $location, ProfileService, Data) {
 
-        $scope.toggleNavBar = buildDelayedToggler('left');
-        $scope.user_name = $cookies.get('userName');
-        $scope.user_email = $cookies.get('userEmail');
-        $scope.user_type = $cookies.get('userType');
-        $scope.user_id = $cookies.get('userId');
+    $scope.toggleNavBar = buildDelayedToggler('left');
+    $scope.user_name = $cookies.get('userName');
+    $scope.user_email = $cookies.get('userEmail');
+    $scope.user_type = $cookies.get('userType');
+    $scope.user_id = $cookies.get('userId');
 
-        $rootScope.notification_count = 0;
+    $rootScope.notification_count = 0;
 
-        if ($scope.user_type == 'student') {
-            var user_group_id = $cookies.get('userGroupId');
-            $http.get('/getNotificationsCount/groups/' + user_group_id).success(function (data) {
-                $rootScope.notification_count += parseInt(data);
-            });
-            $http.get('/getNotificationsCount/students/' + $scope.user_id).success(function (data) {
-                $rootScope.notification_count += parseInt(data);
-            }).error(function (data) {
-                console.log(data);
-            });
+    if ($scope.user_type == 'student') {
+        var user_group_id = $cookies.get('userGroupId');
+        $http.get('/getNotificationsCount/groups/' + user_group_id).success(function (data) {
+            $rootScope.notification_count += parseInt(data);
+        });
+        $http.get('/getNotificationsCount/students/' + $scope.user_id).success(function (data) {
+            $rootScope.notification_count += parseInt(data);
+        }).error(function (data) {
+            console.log(data);
+        });
+    }
+    else if ($scope.user_type == 'mentor') {
+        $http.get('/getNotificationsCount/mentors/' + $scope.user_id).success(function (data) {
+            $rootScope.notification_count += parseInt(data);
+        });
+    }
+
+    var dropDownMenu = document.getElementById('dropDownProfile');
+
+    $scope.toggleDropDownProfile = function () {
+        if (dropDownMenu.style.display == 'none') {
+            dropDownMenu.style.display = 'block';
+        } else {
+            dropDownMenu.style.display = 'none';
         }
-        else if ($scope.user_type == 'mentor'){
-            $http.get('/getNotificationsCount/mentors/' + $scope.user_id).success(function (data) {
-                $rootScope.notification_count += parseInt(data);
-            });
-        }
+    };
 
-        var dropDownMenu = document.getElementById('dropDownProfile');
+    /**
+     * Show the image change pop-up menu
+     */
+    $scope.changeProfileImage = function () {
+    };
 
-        $scope.toggleDropDownProfile = function () {
-            if (dropDownMenu.style.display == 'none') {
-                dropDownMenu.style.display = 'block';
+    /**
+     * Open the edit profile dialog
+     */
+
+    $scope.editProfile = function () {
+        Data.PersonTable=$scope.user_type+'s';
+        Data.PersonId=$scope.user_id;
+
+        //initializing the display to show dialog in full screnn mode
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+        $mdDialog.show({
+            controller: personEditDialogController,
+            templateUrl: 'dialogs/personEditDialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen
+        });
+        $scope.$watch(function () {
+            return $mdMedia('xs') || $mdMedia('sm');
+        }, function (wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+        });
+
+    };
+
+    function debounce(func, wait, context) {
+        var timer;
+        return function debounced() {
+            var context = $scope,
+                args = Array.prototype.slice.call(arguments);
+            $timeout.cancel(timer);
+            timer = $timeout(function () {
+                timer = undefined;
+                func.apply(context, args);
+            }, wait || 10);
+        };
+    }
+
+    /**
+     * Build handler to open/close a SideNav
+     */
+    function buildDelayedToggler(navID) {
+        return debounce(function () {
+            if ($mdSidenav(navID).isOpen()) {
+                $mdSidenav(navID)
+                    .close()
             } else {
-                dropDownMenu.style.display = 'none';
+                $mdSidenav(navID)
+                    .open()
             }
-        };
+        }, 100);
+    }
 
-        /**
-         * Show the image change pop-up menu
-         */
-        $scope.changeProfileImage = function () {
-        };
-
-        /**
-         * Redirect to the edit profile page
-         */
-        $scope.editProfile = function () {
-        };
-
-        function debounce(func, wait, context) {
-            var timer;
-            return function debounced() {
-                var context = $scope,
-                    args = Array.prototype.slice.call(arguments);
-                $timeout.cancel(timer);
-                timer = $timeout(function () {
-                    timer = undefined;
-                    func.apply(context, args);
-                }, wait || 10);
-            };
-        }
-
-        /**
-         * Build handler to open/close a SideNav
-         */
-        function buildDelayedToggler(navID) {
-            return debounce(function () {
-                if ($mdSidenav(navID).isOpen()) {
-                    $mdSidenav(navID)
-                        .close()
-                } else {
-                    $mdSidenav(navID)
-                        .open()
-                }
-            }, 100);
-        }
-
-        $scope.openNotification = function () {
-            $location.path('/notification');
-        }
-    })
+    $scope.openNotification = function () {
+        $location.path('/notification');
+    }
+})
     .controller('SectionListController', function ($scope, $location, $http, $rootScope, Data, SectionService) {
         /*
-        $http.get('/getSections').success(function (data) {
-            $scope.sections = data;
-        });
-        */
-        $scope.sections=SectionService.sections;
+         $http.get('/getSections').success(function (data) {
+         $scope.sections = data;
+         });
+         */
+        $scope.sections = SectionService.sections;
 
         $scope.selectSection = function (text) {
             $rootScope.current_section = text;
@@ -4073,7 +4094,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         };
 
     })
-    .controller('PeopleController', function ($http, $scope, $rootScope, $mdDialog, $mdMedia) {
+    .controller('PeopleController', function ($http, $scope, $rootScope, $mdDialog, $mdMedia, Data) {
         $rootScope.current_section = 'People';
         $scope.students = [];
         $scope.teachers = [];
@@ -4093,31 +4114,26 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 
-        $scope.showContact = function (id, table) {
-            $http.get('/getDataUser/' + table + '/' + id).success(function (data) {
-                $scope.show_user_data = data;
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
 
-                if (table == 'students')
-                    $mdDialog.show(
-                        $mdDialog.alert()
-                            .clickOutsideToClose(true)
-                            .title($scope.show_user_data.name)
-                            .textContent('Email: ' + $scope.show_user_data.email +
-                                '\nGroup: ' + $scope.show_user_data.group +
-                                '\nPhone: ' + $scope.show_user_data.phone +
-                                '\nBirth date: ' + $scope.show_user_data.birthDate)
-                            .ok('OK')
-                    );
-                else
-                    $mdDialog.show(
-                        $mdDialog.alert()
-                            .clickOutsideToClose(true)
-                            .title($scope.show_user_data.name)
-                            .textContent('Email: ' + $scope.show_user_data.email)
-                            .ok('OK')
-                    )
-            })
+        $scope.showContact = function (id, table) {
+            Data.PersonId = id;
+            Data.PersonTable = table;
+
+            $mdDialog.show({
+                controller: personSelectDialogController,
+                templateUrl: 'dialogs/personSelectDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                fullscreen: useFullScreen
+            });
+            $scope.$watch(function () {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function (wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
+            });
         };
+
 
         $scope.sendEmail = function (id) {
 
@@ -4135,13 +4151,9 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             $scope.dt = new Date();
         };
 
-        $http.get('/getWeekEvents/'+moment($scope.dt).format('YYYYMMDD')+'/'+moment($scope.dt).add(6, 'd')).success(function (data) {
-            $scope.events = data;
-        });
-        
-        //To add next 6 days to week schedule
+        //Watch the selected date variable and fill out the remaining 6 days' events
         $scope.$watch('dt', function () {
-            $http.get('/getWeekEvents/'+moment($scope.dt).format('YYYYMMDD')+'/'+moment($scope.dt).add(6, 'd').format('YYYYMMDD')).success(function (data) {
+            $http.get('/getWeekEvents/' + moment($scope.dt).format('YYYYMMDD')).success(function (data) {
                 $scope.events = data;
             });
             $scope.temp1 = moment($scope.dt).add(1, 'd');
@@ -4259,7 +4271,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     })
     .controller('NotificationController', function ($scope, $rootScope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
         $rootScope.current_section = 'Notification';
-        $scope.notifications=[[],[]];
+        $scope.notifications = [[], []];
 
         $scope.user_type = $cookies.get('userType');
         var user_id = $cookies.get('userId');
@@ -4289,7 +4301,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                     url: '/changeStatusNotification',
                     data: {id: id}
                 }).success(function () {
-                    $rootScope.notification_count-=1;
+                    $rootScope.notification_count -= 1;
                     $scope.notifications[type][index].status = 1;
                     showSelectNotificationDialog(id);
                 });
@@ -4450,7 +4462,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     };
 
     $scope.dateExtended = function (date) {
-        return moment(date,'YYYYMMDD').format("dddd, MMMM DD YYYY");
+        return moment(date, 'YYYYMMDD').format("dddd, MMMM DD YYYY");
     };
 
     $scope.edit = function () {
@@ -4514,7 +4526,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         $scope.event_title = $scope.edit_event.title;
         $scope.event_description = $scope.edit_event.description;
         $scope.event_type = $scope.edit_event.type;
-        $scope.event_date = new Date(moment($scope.edit_event.date,'YYYYMMDD'));
+        $scope.event_date = new Date(moment($scope.edit_event.date, 'YYYYMMDD'));
         $scope.event_start_time = $scope.edit_event.start_time;
         $scope.event_end_time = $scope.edit_event.end_time;
         $scope.event_group_id = $scope.edit_event.group_id;
@@ -4933,7 +4945,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     });
 
     $scope.dateExtended = function (date) {
-        return moment(date,'YYYYMMDD').format("dddd, MMMM DD YYYY");
+        return moment(date, 'YYYYMMDD').format("dddd, MMMM DD YYYY");
     };
 
     $scope.update = function () {
@@ -4970,6 +4982,162 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     };
 }
 
+//Person select dialog controller
+
+function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
+    //initializing variables
+    $scope.person_data = [];
+    //get the selected person data from factory
+    $scope.person_table = Data.PersonTable;
+    $scope.person_id = Data.PersonId;
+    //get the user's data from cookie
+    var user_type = $cookies.get('userType');
+    var user_id = $cookies.get('userId');
+
+    //get the data of selected person from server
+    $http.get('/getDataUser/' + $scope.person_table + '/' + $scope.person_id).success(function (data) {
+        $scope.person_data = data;
+    });
+
+    //check the user has access to edit personal data
+    $scope.checkOwner = function () {
+        return ($scope.person_table == 'students' && user_type == 'teacher') || (user_id == $scope.person_id && (user_type + 's') == $scope.person_table)
+    };
+
+    //convert the birth date to readable format
+    $scope.displayBirthDate = function () {
+        return moment($scope.person_data.birthDate, 'MM-DD-YYYY').format('D MMMM YYYY')
+    };
+
+    //initializing the display to show dialog in full screnn mode
+    $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+
+    //call the edit personal data dialog
+    $scope.edit = function () {
+        $mdDialog.show({
+            controller: personEditDialogController,
+            templateUrl: 'dialogs/personEditDialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen
+        });
+        $scope.$watch(function () {
+            return $mdMedia('xs') || $mdMedia('sm');
+        }, function (wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+        });
+    };
+
+    //help functions
+    $scope.hide = function () {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function () {
+        $mdDialog.cancel();
+    };
+}
+
+function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast, $route, Data) {
+    //get the edited person data from factory
+    $scope.edited_person_id = Data.PersonId;
+    $scope.edited_person_table = Data.PersonTable;
+    //get the type of user to access some actions
+    $scope.user_type = $cookies.get('userType');
+    //get the work days and hours for teachers and mentors
+    $scope.selected_days = [];
+    $scope.startHour = null;
+    $scope.startMinute = null;
+    $scope.endHour = null;
+    $scope.endMinute = null;
+
+    //model for week days list
+    $scope.week_days = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+
+    //options to selectors
+    $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {
+        return {selectedHour: hour};
+    });
+    $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) {
+        return {selectedMinute: minute};
+    });
+
+    //get the list of groups
+    $scope.groups = [];
+    $http.get('/getGroups').success(function (data) {
+        $scope.groups = data;
+    });
+
+    //get the edited person's data from server
+    $http.get('/getDataUser/' + $scope.edited_person_table + '/' + $scope.edited_person_id).success(function (data) {
+        $scope.edited_person_data = data;
+        if ($scope.edited_person_data.work_days) {
+            $scope.selected_days = $scope.edited_person_data.work_days.split(',');
+
+            var startTime = $scope.edited_person_data.work_start_time.split(':');
+            var endTime = $scope.edited_person_data.work_end_time.split(':');
+
+            $scope.startHour = startTime[0];
+            $scope.startMinute = startTime[1];
+            $scope.endHour = endTime[0];
+            $scope.endMinute = endTime[1];
+        }
+    });
+
+    //convert the birth date to readable format
+    $scope.displayBirthDate = function (date) {
+        return moment(date, 'MM-DD-YYYY').format('D MMMM YYYY')
+    };
+
+    //update the personal info
+    $scope.update = function () {
+        var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
+        var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
+
+        if ($scope.edited_person_table != 'students') {
+            if (startTime.isBefore(endTime)) {
+                postData();
+            } else {
+                $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+            }
+        } else
+            postData();
+
+        function postData() {
+            $http({
+                method: 'POST',
+                url: '/updateUser',
+                data: {
+                    table: $scope.edited_person_table,
+                    id: $scope.edited_person_id,
+                    name: $scope.edited_person_data.name,
+                    email: $scope.edited_person_data.email,
+                    birthDate: $scope.edited_person_data.birthDate,
+                    group_id: $scope.edited_person_data.group_id,
+                    work_days: $scope.selected_days.join(','),
+                    work_start_time: startTime.format('HH:mm'),
+                    work_end_time: endTime.format('HH:mm'),
+                    bio: $scope.edited_person_data.bio
+                }
+            }).success(function () {
+                $mdDialog.hide();
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Personal data updated'));
+            }).error(function (data) {
+                console.log(data);
+            })
+        }
+    };
+
+    //help functions
+    $scope.hide = function () {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function () {
+        $mdDialog.cancel();
+    };
+
+}
 // Assignment add dialog controller
 
 function assignmentAddDialogController($scope, $mdDialog, $mdToast) {
@@ -5027,6 +5195,7 @@ function assignmentAddDialogController($scope, $mdDialog, $mdToast) {
         $mdDialog.cancel();
     };
 }
+
 //useful functions
 function clone(obj) {
     if (null == obj || "object" != typeof obj) return obj;

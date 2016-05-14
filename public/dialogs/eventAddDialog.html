@@ -33,7 +33,6 @@
                             </md-option>
                         </md-select>
                     </md-input-container>
-                    <div style="width: 10px"></div>
                     <md-input-container ng-show="eventType!='extra'" required>
                         <label>Group</label>
                         <md-select ng-model="eventGroup" class="md-subhead">
@@ -130,7 +129,7 @@
                 </div>
             </div>
         </md-dialog-content>
-        <md-dialog-actions layout="row" layout-align="none center" style="margin-top:0">
+        <md-dialog-actions layout="row" style="margin-top:0">
             <md-button class="md-primary" ng-click="cancel()" style="margin-right:20px;">
                 Cancel
             </md-button>

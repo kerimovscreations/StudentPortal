@@ -19,6 +19,10 @@ class CreateTeachersTable extends Migration
             $table->string('name',255);
             $table->string('email',255)->unique();
             $table->string('password',60);
+            $table->string('work_days',255)->nullable();
+            $table->string('work_start_time',255)->nullable();
+            $table->string('work_end_time',255)->nullable();
+            $table->text('bio')->nullable();
             $table->rememberToken();
             $table->string('api_token',60)->unique();
             $table->timestamps();

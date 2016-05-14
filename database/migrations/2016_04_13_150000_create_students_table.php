@@ -22,6 +22,7 @@ class CreateStudentsTable extends Migration
             $table->integer('group_id')->unsigned();
             $table->string('phone',13);
             $table->string('birthDate',10);
+            $table->text('bio')->nullable();
             $table->rememberToken();
             $table->string('api_token',60)->unique();
             $table->timestamps();

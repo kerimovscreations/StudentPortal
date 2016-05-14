@@ -7,7 +7,7 @@ registerApp.config(function($mdThemingProvider, $interpolateProvider){
     $interpolateProvider.endSymbol('%>');
 });
 
-var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngCookies']);
+var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies']);
 loginApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
@@ -19,7 +19,7 @@ loginApp.config(function($mdThemingProvider, $interpolateProvider){
 var welcomeApp=angular.module('appWelcome',['ngMaterial','ngRoute','ngResource']);
 
 
-var portalApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngCookies']);
+var portalApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngMessages', 'ngCookies']);
 portalApp.config(function($mdThemingProvider, $interpolateProvider){
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
