@@ -495,10 +495,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
 
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.temp_event = data;
-        if ($scope.temp_event.status == 1)
-            $scope.temp_event_status = true;
-        else
-            $scope.temp_event_status = false;
+        $scope.temp_event_status = $scope.temp_event.status == 1;
 
         // to enable the switch to mark as 'done' if it's decided and user is the first responsible person
         if ($scope.temp_event.type == 'lesson') {
@@ -1211,6 +1208,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
         } else
             postData();
 
+        //data posting function
         function postData() {
             $http({
                 method: 'POST',

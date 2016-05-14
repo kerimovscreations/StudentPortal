@@ -93,6 +93,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
          * Update the data of user
          */
         Route::post('/updateUser','UserController@update');
+        
         /**
          * Get the list of teachers
          */

@@ -9,122 +9,126 @@
                 </md-button>
             </div>
         </md-toolbar>
-        <md-dialog-content style="margin-bottom: 0">
-            <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 650px">
-                <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%" ng-show="eventType=='lesson'">
-                    <label>Title of event</label>
+        <md-dialog-content layout="column" layout-align="center center"
+                           style="width: 650px; margin-bottom: 0; padding: 24px 15px 0;">
+            <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%"
+                                ng-show="eventType=='lesson'">
+                <label>Title of event</label>
                         <textarea class="md-headline" style="color: #6a72a2" ng-model="eventTitle"
                                   md-select-on-focus></textarea>
+            </md-input-container>
+            <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%;color: #3d3d45">
+                <label>Description</label>
+                <textarea class="md-subhead" ng-model="eventDescription" md-select-on-focus></textarea>
+            </md-input-container>
+            <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
+                <span class="md-body-1">Event date: </span>
+                <md-datepicker class="md-body-1" ng-model="eventDate" md-placeholder="Enter date"
+                               md-min-date="minDate"></md-datepicker>
+                <div style="width: 20px"></div>
+                <md-input-container required>
+                    <label>Place</label>
+                    <md-select ng-model="eventPlace" class="md-subhead">
+                        <md-option ng-repeat="place in places" value="<% place.id %>">
+                            <% place.name %>
+                        </md-option>
+                    </md-select>
                 </md-input-container>
-                <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%;color: #3d3d45">
-                    <label>Description</label>
-                    <textarea class="md-subhead" ng-model="eventDescription" md-select-on-focus></textarea>
+                <md-input-container ng-show="eventType!='extra'" required>
+                    <label>Group</label>
+                    <md-select ng-model="eventGroup" class="md-subhead">
+                        <md-option ng-repeat="group in groups" value="<% group.id %>">
+                            <% group.name %>
+                        </md-option>
+                    </md-select>
                 </md-input-container>
-                <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
-                    <span class="md-body-1">Event date: </span>
-                    <md-datepicker class="md-body-1" ng-model="eventDate" md-placeholder="Enter date"
-                                   md-min-date="minDate"></md-datepicker>
-                    <div style="width: 20px"></div>
-                    <md-input-container required>
-                        <label>Place</label>
-                        <md-select ng-model="eventPlace" class="md-subhead">
-                            <md-option ng-repeat="place in places" value="<% place.id %>">
-                                <% place.name %>
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
-                    <md-input-container ng-show="eventType!='extra'" required>
-                        <label>Group</label>
-                        <md-select ng-model="eventGroup" class="md-subhead">
-                            <md-option ng-repeat="group in groups" value="<% group.id %>">
-                                <% group.name %>
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
+                <div style="width: 10px"></div>
+            </div>
+            <div layout="row" ng-show="eventType=='extra'">
+                <div layout="column" layout-align="none center" style="color: #b0cf79"
+                     ng-show="user_type=='teacher'">
+                    <span style="margin-right: 10px">Responsible student</span>
+                    <md-autocomplete
+                            md-selected-item="selectedResponsible1"
+                            md-search-text="searchText1"
+                            md-items="item1 in querySearch(searchText1, searchResponsiblePeople1)"
+                            md-item-text="item1.name"
+                            md-min-length="0"
+                            placeholder="Who is responsible?" required>
+                        <md-item-template>
+                            <% item1.name %>
+                        </md-item-template>
+                        <md-not-found>
+                            No person matching "<% searchText1 %>" was found.
+                        </md-not-found>
+                    </md-autocomplete>
+                </div>
+                <div layout="column" layout-align="none center" style="color: #b0cf79">
+                    <span style="margin-right: 10px">Responsible mentor</span>
+                    <md-autocomplete
+                            md-selected-item="selectedResponsible2"
+                            md-search-text="searchText2"
+                            md-items="item2 in querySearch(searchText2, searchResponsiblePeople2)"
+                            md-item-text="item2.name"
+                            md-min-length="0"
+                            placeholder="Who is responsible?" required>
+                        <md-item-template>
+                            <% item2.name %>
+                        </md-item-template>
+                        <md-not-found>
+                            No person matching "<% searchText2 %>" was found.
+                        </md-not-found>
+                    </md-autocomplete>
+                    <div ng-if="selectedResponsible2.work_days!=null" style="margin-top: 5px; text-align: center">
+                        <p><% selectedResponsible2.work_days %></p>
+                        <p>(<% selectedResponsible2.work_start_time %> - <% selectedResponsible2.work_end_time %>)</p>
+                    </div>
+                </div>
+            </div>
+            <div layout="row">
+                <div layout="row" layout-align="center center" style="color: #88c8d0">
+                    <h4 class="md-title">Start time: </h4>
                     <div style="width: 10px"></div>
-                </div>
-                <div layout="row" ng-show="eventType=='extra'">
-                    <div layout="column" layout-align="none center" style="color: #b0cf79" ng-show="user_type=='teacher'">
-                        <span style="margin-right: 10px">Responsible student</span>
-                        <md-autocomplete
-                                md-selected-item="selectedResponsible1"
-                                md-search-text="searchText1"
-                                md-items="item1 in querySearch(searchText1, searchResponsiblePeople1)"
-                                md-item-text="item1.name"
-                                md-min-length="0"
-                                placeholder="Who is responsible?" required>
-                            <md-item-template>
-                                <% item1.name %>
-                            </md-item-template>
-                            <md-not-found>
-                                No person matching "<% searchText1 %>" was found.
-                            </md-not-found>
-                        </md-autocomplete>
-                    </div>
-                    <div style="width: 30px"></div>
-                    <div layout="column" layout-align="none center" style="color: #b0cf79">
-                        <span style="margin-right: 10px">Responsible mentor</span>
-                        <md-autocomplete
-                                md-selected-item="selectedResponsible2"
-                                md-search-text="searchText2"
-                                md-items="item2 in querySearch(searchText2, searchResponsiblePeople2)"
-                                md-item-text="item2.name"
-                                md-min-length="0"
-                                placeholder="Who is responsible?" required>
-                            <md-item-template>
-                                <% item2.name %>
-                            </md-item-template>
-                            <md-not-found>
-                                No person matching "<% searchText2 %>" was found.
-                            </md-not-found>
-                        </md-autocomplete>
+                    <div layout="row" layout-align="center">
+                        <md-input-container required>
+                            <label>hour</label>
+                            <md-select ng-model="startHour" class="md-subhead">
+                                <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                    <% hour.selectedHour %>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container require>
+                            <label>minute</label>
+                            <md-select ng-model="startMinute" class="md-subhead">
+                                <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                    <% minute.selectedMinute %>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
                     </div>
                 </div>
-                <div layout="row" style="margin-top: 15px">
-                    <div layout="row" layout-align="center center" style="color: #88c8d0">
-                        <h4 class="md-title">Start time: </h4>
-                        <div style="width: 10px"></div>
-                        <div layout="row" layout-align="center">
-                            <md-input-container required>
-                                <label>hour</label>
-                                <md-select ng-model="startHour" class="md-subhead">
-                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
-                                        <% hour.selectedHour %>
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                            <md-input-container require>
-                                <label>minute</label>
-                                <md-select ng-model="startMinute" class="md-subhead">
-                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
-                                        <% minute.selectedMinute %>
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div>
-                    </div>
-                    <div style="width: 20px"></div>
-                    <div layout="row" layout-align="center center" style="color: #d98084">
-                        <h4 class="md-title">End time: </h4>
-                        <div style="width: 10px"></div>
-                        <div layout="row" layout-align="center">
-                            <md-input-container required>
-                                <label>hour</label>
-                                <md-select ng-model="endHour" class="md-subhead">
-                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
-                                        <% hour.selectedHour %>
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                            <md-input-container required>
-                                <label>minute</label>
-                                <md-select ng-model="endMinute" class="md-subhead">
-                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
-                                        <% minute.selectedMinute %>
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div>
+                <div style="width: 20px"></div>
+                <div layout="row" layout-align="center center" style="color: #d98084">
+                    <h4 class="md-title">End time: </h4>
+                    <div style="width: 10px"></div>
+                    <div layout="row" layout-align="center">
+                        <md-input-container required>
+                            <label>hour</label>
+                            <md-select ng-model="endHour" class="md-subhead">
+                                <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                    <% hour.selectedHour %>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container required>
+                            <label>minute</label>
+                            <md-select ng-model="endMinute" class="md-subhead">
+                                <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                    <% minute.selectedMinute %>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
                     </div>
                 </div>
             </div>
