@@ -31,7 +31,7 @@ class EmailController extends Controller
 
                 switch ($elem['type']) {
                     case 'request_extra':
-                        $action_post = 'is requested to you for an extra lesson on ';
+                        $action_post = 'has requested to you for an extra lesson on ';
                         break;
                     case 'decided_extra':
                         $action_pre = 'You have an extra lesson with ';
