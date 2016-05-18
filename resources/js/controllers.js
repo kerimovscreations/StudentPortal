@@ -10,6 +10,11 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
     $scope.toggleNavBar = buildDelayedToggler('left');
 
+    $scope.user_name = '';
+    $scope.user_email = '';
+    $scope.user_type = '';
+    $scope.user_id = '';
+
     $http.get('/getUser').success(function (result) {
         $cookies.put('userId', result['id']);
         $cookies.put('userName', result['name']);

@@ -3749,15 +3749,7 @@ portalApp.factory('Data', function () {
 });
 
 portalApp.service('ProfileService', function ($cookies, $http) {
-        $http.get('/getUser').success(function(result) {
-            $cookies.put('userId', result['id']);
-            $cookies.put('userName', result['name']);
-            $cookies.put('userEmail', result['email']);
-            $cookies.put('userType', result['type']);
-            if(result['type']=='student'){
-                $cookies.put('userGroupId', result['group_id']);
-            }
-        });
+        
 
     })
     .service('SectionService', function(){
@@ -3896,15 +3888,32 @@ registerApp.controller('RegisterController', function ($scope) {
 
 loginApp.controller('LoginController', function ($scope) {
     $scope.select_user_type = 'student';
+
 });
 
-portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies,  $mdDialog, $mdMedia, $timeout, $mdSidenav, $http, $location, ProfileService, Data) {
+portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies, $mdDialog, $mdMedia, $timeout, $mdSidenav, $http, $location, Data) {
 
     $scope.toggleNavBar = buildDelayedToggler('left');
-    $scope.user_name = $cookies.get('userName');
-    $scope.user_email = $cookies.get('userEmail');
-    $scope.user_type = $cookies.get('userType');
-    $scope.user_id = $cookies.get('userId');
+
+    $scope.user_name = '';
+    $scope.user_email = '';
+    $scope.user_type = '';
+    $scope.user_id = '';
+
+    $http.get('/getUser').success(function (result) {
+        $cookies.put('userId', result['id']);
+        $cookies.put('userName', result['name']);
+        $cookies.put('userEmail', result['email']);
+        $cookies.put('userType', result['type']);
+        if (result['type'] == 'student') {
+            $cookies.put('userGroupId', result['group_id']);
+        }
+
+        $scope.user_name = $cookies.get('userName');
+        $scope.user_email = $cookies.get('userEmail');
+        $scope.user_type = $cookies.get('userType');
+        $scope.user_id = $cookies.get('userId');
+    });
 
     $rootScope.notification_count = 0;
 
@@ -3946,8 +3955,8 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
      */
 
     $scope.editProfile = function () {
-        Data.PersonTable=$scope.user_type+'s';
-        Data.PersonId=$scope.user_id;
+        Data.PersonTable = $scope.user_type + 's';
+        Data.PersonId = $scope.user_id;
 
         //initializing the display to show dialog in full screnn mode
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
@@ -5103,16 +5112,16 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
         //data posting function
         function postData() {
             console.log(
-                $scope.edited_person_table+' '+
-                $scope.edited_person_id+' '+
-                $scope.edited_person_data.name+' '+
-                $scope.edited_person_data.email+' '+
-                $scope.edited_person_data.phone+' '+
-                $scope.edited_person_data.birthDate+' '+
-                $scope.edited_person_data.group_id+' '+
-                $scope.selected_days.join(',')+' '+
-                startTime.format('HH:mm')+' '+
-                endTime.format('HH:mm')+' '+
+                $scope.edited_person_table + ' ' +
+                $scope.edited_person_id + ' ' +
+                $scope.edited_person_data.name + ' ' +
+                $scope.edited_person_data.email + ' ' +
+                $scope.edited_person_data.phone + ' ' +
+                $scope.edited_person_data.birthDate + ' ' +
+                $scope.edited_person_data.group_id + ' ' +
+                $scope.selected_days.join(',') + ' ' +
+                startTime.format('HH:mm') + ' ' +
+                endTime.format('HH:mm') + ' ' +
                 $scope.edited_person_data.bio
             );
             $http({
@@ -5153,6 +5162,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
 // Assignment add dialog controller
 
 function assignmentAddDialogController($scope, $mdDialog, $mdToast) {
+    /*
     $scope.minDate = new Date();
     $scope.minDate.setDate((new Date()).getDate());
 
@@ -5206,6 +5216,7 @@ function assignmentAddDialogController($scope, $mdDialog, $mdToast) {
     $scope.cancel = function () {
         $mdDialog.cancel();
     };
+    */
 }
 
 //useful functions
