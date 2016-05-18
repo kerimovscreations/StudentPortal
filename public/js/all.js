@@ -4387,10 +4387,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
 
     $http.get('/getEvent/' + id).success(function (data) {
         $scope.temp_event = data;
-        if ($scope.temp_event.status == 1)
-            $scope.temp_event_status = true;
-        else
-            $scope.temp_event_status = false;
+        $scope.temp_event_status = $scope.temp_event.status == 1;
 
         // to enable the switch to mark as 'done' if it's decided and user is the first responsible person
         if ($scope.temp_event.type == 'lesson') {
@@ -5103,7 +5100,21 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
         } else
             postData();
 
+        //data posting function
         function postData() {
+            console.log(
+                $scope.edited_person_table+' '+
+                $scope.edited_person_id+' '+
+                $scope.edited_person_data.name+' '+
+                $scope.edited_person_data.email+' '+
+                $scope.edited_person_data.phone+' '+
+                $scope.edited_person_data.birthDate+' '+
+                $scope.edited_person_data.group_id+' '+
+                $scope.selected_days.join(',')+' '+
+                startTime.format('HH:mm')+' '+
+                endTime.format('HH:mm')+' '+
+                $scope.edited_person_data.bio
+            );
             $http({
                 method: 'POST',
                 url: '/updateUser',
@@ -5112,6 +5123,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
                     id: $scope.edited_person_id,
                     name: $scope.edited_person_data.name,
                     email: $scope.edited_person_data.email,
+                    phone: $scope.edited_person_data.phone,
                     birthDate: $scope.edited_person_data.birthDate,
                     group_id: $scope.edited_person_data.group_id,
                     work_days: $scope.selected_days.join(','),

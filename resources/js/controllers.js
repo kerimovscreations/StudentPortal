@@ -1210,6 +1210,19 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
 
         //data posting function
         function postData() {
+            console.log(
+                $scope.edited_person_table+' '+
+                $scope.edited_person_id+' '+
+                $scope.edited_person_data.name+' '+
+                $scope.edited_person_data.email+' '+
+                $scope.edited_person_data.phone+' '+
+                $scope.edited_person_data.birthDate+' '+
+                $scope.edited_person_data.group_id+' '+
+                $scope.selected_days.join(',')+' '+
+                startTime.format('HH:mm')+' '+
+                endTime.format('HH:mm')+' '+
+                $scope.edited_person_data.bio
+            );
             $http({
                 method: 'POST',
                 url: '/updateUser',
@@ -1218,6 +1231,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
                     id: $scope.edited_person_id,
                     name: $scope.edited_person_data.name,
                     email: $scope.edited_person_data.email,
+                    phone: $scope.edited_person_data.phone,
                     birthDate: $scope.edited_person_data.birthDate,
                     group_id: $scope.edited_person_data.group_id,
                     work_days: $scope.selected_days.join(','),

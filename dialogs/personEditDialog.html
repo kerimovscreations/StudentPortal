@@ -37,7 +37,7 @@
                             </div>
                         </div>
                     </md-input-container>
-                    <div ng-show="edited_person_table=='students'" layout="row">
+                    <div ng-if="edited_person_table=='students'" layout="row">
                         <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
                             <label>Phone Number</label>
                             <input type="text" name="edited_person_phone" ng-model="edited_person_data.phone"

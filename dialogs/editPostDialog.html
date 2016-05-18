@@ -1,0 +1,44 @@
+<md-dialog aria-label="Edit Post" ng-cloak>
+    <md-content>
+        <form>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Edit Announcement</h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="cancel()">
+                        <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+            <md-dialog-content>
+                <div class="md-dialog-content" layout="column" layout-align="center center" >
+                    <form>
+                        <md-input-container class="md-block" style="margin-bottom: 0; width: 100%">
+                            <label>Edit announcement</label>
+                            <textarea ng-model="::edited_post" md-maxlength="300" md-select-on-focus></textarea>
+                        </md-input-container>
+                        <div layout="row" layout-align="end center">
+                            <div>
+                                <p style="font-size: 16px; color: #585858;">Edit groups to notify</p>
+                                <div layout="row" layout-wrap>
+                                    <md-checkbox ng-repeat="group in groups" ng-checked="exists(group, selected)" ng-click="toggle(group, selected)">
+                                        <% group %>
+                                    </md-checkbox>
+                                </div>
+                            </div>
+                            <div flex></div>
+                        </div>
+                    </form>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row">
+                <md-button ng-click="cancel()" >
+                    Cancel
+                </md-button>
+                <md-button class="md-primary" ng-click="update()" style="margin-right:20px;">
+                    Update
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-content>
+</md-dialog>

@@ -1,0 +1,85 @@
+<md-dialog aria-label="Add Assignment" ng-cloak>
+    <md-content>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h3>Add assignment</h3>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="hide()">
+                    <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="margin-bottom: 0">
+            <form>
+                <div class="md-dialog-content" layout="column" layout-align="center center" style="width: 650px">
+                    <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%">
+                        <label>Title of assignment</label>
+                        <textarea class="md-headline" style="color: #6a72a2" ng-model="assignmentTitle" md-select-on-focus></textarea>
+                    </md-input-container>
+                    <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%;color: #3d3d45">
+                        <label>Rules</label>
+                        <textarea class="md-subhead" ng-model="assignmentRule" md-select-on-focus></textarea>
+                    </md-input-container>
+                    <div layout="row" layout-align="center center" style="margin-top: 0; color:#1C9FFF">
+                        <span class="md-body-1">Assignment start time: </span>
+                        <md-datepicker class="md-body-1" ng-model="assignmentStartDate" md-placeholder="Enter date" md-min-date="minDate"></md-datepicker>
+                        <div style="width: 10px"></div>
+                        <div layout="row" layout-align="center">
+                            <md-input-container>
+                                <label>hour</label>
+                                <md-select ng-model="startHour" class="md-subhead">
+                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                        <% hour.selectedHour %>
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>minute</label>
+                                <md-select ng-model="startMinute" class="md-subhead">
+                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                        <% minute.selectedMinute %>
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div>
+
+                    </div>
+                    <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
+                        <span class="md-body-1">Assignment end time: </span>
+                        <md-datepicker class="md-body-1" ng-model="assignmentEndDate" md-placeholder="Enter date" md-min-date="minDate"></md-datepicker>
+                        <div style="width: 10px"></div>
+                        <div layout="row" layout-align="center">
+                            <md-input-container>
+                                <label>hour</label>
+                                <md-select ng-model="endHour" class="md-subhead">
+                                    <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                        <% hour.selectedHour %>
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>minute</label>
+                                <md-select ng-model="endMinute" class="md-subhead">
+                                    <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                        <% minute.selectedMinute %>
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </md-dialog-content>
+        <md-dialog-actions layout="row" layout-align="none center" >
+            <md-button class="md-primary" ng-click="cancel()" style="margin-right:20px;">
+                Cancel
+            </md-button>
+            <md-button class="md-raised md-primary" ng-click="submit()" style="margin-right:20px;">
+                Submit
+            </md-button>
+        </md-dialog-actions>
+    </md-content>
+</md-dialog>

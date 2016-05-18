@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mentor;
 use App\Student;
 use App\Teacher;
 use Illuminate\Http\Request;
@@ -15,7 +16,10 @@ class UserController extends Controller
         $user = null;
         if ($request['table'] == 'teachers') {
             $user = Teacher::findOrFail($request['id']);
-        } else if ($request['table'] == 'students') {
+        }else if ($request['table'] == 'mentors') {
+            $user = Mentor::findOrFail($request['id']);
+        }
+        else if ($request['table'] == 'students') {
             $user = Student::findOrFail($request['id']);
         }
         $user->update($request->all());
