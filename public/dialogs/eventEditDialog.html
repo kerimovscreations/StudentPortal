@@ -2,7 +2,7 @@
     <md-content>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3>Edit <% event_type %></h3>
+                <h3>Edit <% displayEventTitle(eventType) %></h3>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="hide()">
                     <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
@@ -82,8 +82,8 @@
                         </md-not-found>
                     </md-autocomplete>
                     <div ng-if="selectedResponsible2.work_days!=null" style="margin-top: 5px; text-align: center">
-                        <p><% selectedResponsible2.work_days %></p>
-                        <p>(<% selectedResponsible2.work_start_time %> - <% selectedResponsible2.work_end_time %>)</p>
+                        <p>Work days (hours):</p>
+                        <p><% selectedResponsible2.work_days %> (<% selectedResponsible2.work_start_time %> - <% selectedResponsible2.work_end_time %>)</p>
                     </div>
                 </div>
             </div>

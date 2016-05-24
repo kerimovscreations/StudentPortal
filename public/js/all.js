@@ -3888,7 +3888,6 @@ registerApp.controller('RegisterController', function ($scope) {
 
 loginApp.controller('LoginController', function ($scope) {
     $scope.select_user_type = 'student';
-
 });
 
 portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies, $mdDialog, $mdMedia, $timeout, $mdSidenav, $http, $location, Data) {
@@ -3899,6 +3898,8 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     $scope.user_email = '';
     $scope.user_type = '';
     $scope.user_id = '';
+
+    $rootScope.notification_count = 0;
 
     $http.get('/getUser').success(function (result) {
         $cookies.put('userId', result['id']);
@@ -3913,26 +3914,25 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.user_email = $cookies.get('userEmail');
         $scope.user_type = $cookies.get('userType');
         $scope.user_id = $cookies.get('userId');
+
+
+        if ($scope.user_type == 'student') {
+            var user_group_id = $cookies.get('userGroupId');
+            $http.get('/getNotificationsCount/groups/' + user_group_id).success(function (data) {
+                $rootScope.notification_count += parseInt(data);
+            });
+            $http.get('/getNotificationsCount/students/' + $scope.user_id).success(function (data) {
+                $rootScope.notification_count += parseInt(data);
+            }).error(function (data) {
+                console.log(data);
+            });
+        }
+        else if ($scope.user_type == 'mentor') {
+            $http.get('/getNotificationsCount/mentors/' + $scope.user_id).success(function (data) {
+                $rootScope.notification_count += parseInt(data);
+            });
+        }
     });
-
-    $rootScope.notification_count = 0;
-
-    if ($scope.user_type == 'student') {
-        var user_group_id = $cookies.get('userGroupId');
-        $http.get('/getNotificationsCount/groups/' + user_group_id).success(function (data) {
-            $rootScope.notification_count += parseInt(data);
-        });
-        $http.get('/getNotificationsCount/students/' + $scope.user_id).success(function (data) {
-            $rootScope.notification_count += parseInt(data);
-        }).error(function (data) {
-            console.log(data);
-        });
-    }
-    else if ($scope.user_type == 'mentor') {
-        $http.get('/getNotificationsCount/mentors/' + $scope.user_id).success(function (data) {
-            $rootScope.notification_count += parseInt(data);
-        });
-    }
 
     var dropDownMenu = document.getElementById('dropDownProfile');
 
@@ -3958,7 +3958,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         Data.PersonTable = $scope.user_type + 's';
         Data.PersonId = $scope.user_id;
 
-        //initializing the display to show dialog in full screnn mode
+        //initializing the display to show dialog in full screen mode
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
@@ -4470,6 +4470,13 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     $scope.dateExtended = function (date) {
         return moment(date, 'YYYYMMDD').format("dddd, MMMM DD YYYY");
     };
+    
+    $scope.displayEventTitle = function (type) {
+        if (type == 'lesson')
+            return "Lesson";
+        else if (type == 'extra')
+            return "Mentor reservation";
+    };
 
     $scope.edit = function () {
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
@@ -4632,6 +4639,13 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         return people;
     }
 
+    $scope.displayEventTitle = function (type) {
+        if (type == 'lesson')
+            return "lesson";
+        else if (type == 'extra')
+            return "mentor reservation";
+    };
+    
     $scope.submit = function () {
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
@@ -4768,6 +4782,14 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         }
         return people;
     }
+
+    $scope.displayEventTitle = function (type) {
+        if (type == 'lesson')
+            return "lesson";
+        else if (type == 'extra')
+            return "mentor reservation";
+    };
+
 
     $scope.submit = function () {
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
@@ -5163,60 +5185,60 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
 
 function assignmentAddDialogController($scope, $mdDialog, $mdToast) {
     /*
-    $scope.minDate = new Date();
-    $scope.minDate.setDate((new Date()).getDate());
+     $scope.minDate = new Date();
+     $scope.minDate.setDate((new Date()).getDate());
 
-    $scope.assignmentTitle = '';
-    $scope.assignmentRule = '';
-    $scope.assignmentGroup = '';
-
-
-    $scope.assignmentStartDate = '';
-    $scope.assignmentEndDate = '';
-
-    $scope.startHour = '';
-    $scope.startMinute = '';
-    $scope.endHour = '';
-    $scope.endMinute = '';
-
-    //options to selectors
-    $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {
-        return {selectedHour: hour};
-    });
-    $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) {
-        return {selectedMinute: minute};
-    });
+     $scope.assignmentTitle = '';
+     $scope.assignmentRule = '';
+     $scope.assignmentGroup = '';
 
 
-    $scope.submit = function () {
-        $scope.addedAssignment = {};
+     $scope.assignmentStartDate = '';
+     $scope.assignmentEndDate = '';
 
-        var startDate = moment(moment($scope.assignmentStartDate).format('MM-DD-YYYY') + ',' + $scope.startHour + ':' + $scope.startMinute, 'MM-DD-YYYY,HH:mm');
-        var endDate = moment(moment($scope.assignmentEndDate).format('MM-DD-YYYY') + ',' + $scope.endHour + ':' + $scope.endMinute, 'MM-DD-YYYY,HH:mm');
+     $scope.startHour = '';
+     $scope.startMinute = '';
+     $scope.endHour = '';
+     $scope.endMinute = '';
 
-        if (startDate.isBefore(endDate)) {
-            $scope.addedAssignment.title = $scope.assignmentTitle;
-            $scope.addedAssignment.rule = $scope.assignmentRule;
-            $scope.addedAssignment.date = moment(new Date).format("MM-DD-YYYY, HH:mm");
-            $scope.addedAssignment.startDate = startDate.format('MM-DD-YYYY, HH:mm');
-            $scope.addedAssignment.endDate = endDate.format('MM-DD-YYYY, HH:mm');
-            $scope.addedAssignment.owner = ProfileService.user_name;
-            $scope.addedAssignment.doneCount = 0;
+     //options to selectors
+     $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {
+     return {selectedHour: hour};
+     });
+     $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) {
+     return {selectedMinute: minute};
+     });
 
-            $mdDialog.hide();
-            $mdToast.show($mdToast.simple().textContent('Assignment Added'));
-        } else {
-            $mdToast.show($mdToast.simple().textContent('Invalid time input'));
-        }
 
-    };
-    $scope.hide = function () {
-        $mdDialog.hide();
-    };
-    $scope.cancel = function () {
-        $mdDialog.cancel();
-    };
-    */
+     $scope.submit = function () {
+     $scope.addedAssignment = {};
+
+     var startDate = moment(moment($scope.assignmentStartDate).format('MM-DD-YYYY') + ',' + $scope.startHour + ':' + $scope.startMinute, 'MM-DD-YYYY,HH:mm');
+     var endDate = moment(moment($scope.assignmentEndDate).format('MM-DD-YYYY') + ',' + $scope.endHour + ':' + $scope.endMinute, 'MM-DD-YYYY,HH:mm');
+
+     if (startDate.isBefore(endDate)) {
+     $scope.addedAssignment.title = $scope.assignmentTitle;
+     $scope.addedAssignment.rule = $scope.assignmentRule;
+     $scope.addedAssignment.date = moment(new Date).format("MM-DD-YYYY, HH:mm");
+     $scope.addedAssignment.startDate = startDate.format('MM-DD-YYYY, HH:mm');
+     $scope.addedAssignment.endDate = endDate.format('MM-DD-YYYY, HH:mm');
+     $scope.addedAssignment.owner = ProfileService.user_name;
+     $scope.addedAssignment.doneCount = 0;
+
+     $mdDialog.hide();
+     $mdToast.show($mdToast.simple().textContent('Assignment Added'));
+     } else {
+     $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+     }
+
+     };
+     $scope.hide = function () {
+     $mdDialog.hide();
+     };
+     $scope.cancel = function () {
+     $mdDialog.cancel();
+     };
+     */
 }
 
 //useful functions
