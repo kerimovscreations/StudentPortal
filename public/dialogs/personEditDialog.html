@@ -10,124 +10,127 @@
             </div>
         </md-toolbar>
         <md-dialog-content>
-            <div class="md-dialog-content" layout="row" layout-align="center none" style="padding-bottom: 0">
-                <div>
-                    <img class="md-avatar" ng-src="images/profile_icon.png"
-                         style="width: 150px;height: 150px;border-radius: 100%"/>
-                </div>
-                <div style="width: 30px"></div>
-                <div layout="column">
-                    <md-input-container class="reduce-margin">
-                        <label>Name</label>
+            <div class="md-dialog-content" style="min-height: 100px;">
+                <md-progress-circular ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
+                <div ng-hide="loader.loading" layout="row" layout-align="center none" style="padding-bottom: 0">
+                    <div>
+                        <img class="md-avatar" ng-src="images/profile_icon.png"
+                             style="width: 150px;height: 150px;border-radius: 100%"/>
+                    </div>
+                    <div style="width: 30px"></div>
+                    <div layout="column">
+                        <md-input-container class="reduce-margin">
+                            <label>Name</label>
                         <textarea required class="md-title" ng-model="edited_person_data.name"
                                   minlength="10" maxlength="100" name="edited_person_name"></textarea>
-                        <div ng-messages="edit_personal_info_form.edited_person_name.$error" role="alert">
-                            <div ng-message-exp="['required', 'minlength', 'maxlength']">
-                                Please fill out your full name
-                            </div>
-                        </div>
-                    </md-input-container>
-                    <md-input-container class="reduce-margin">
-                        <label>Email</label>
-                        <input required type="email" ng-model="edited_person_data.email"
-                               minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" name="edited_person_email"/>
-                        <div ng-messages="edit_personal_info_form.edited_person_email.$error" role="alert">
-                            <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
-                                Invalid email
-                            </div>
-                        </div>
-                    </md-input-container>
-                    <div ng-show="edited_person_table=='students'" layout="row">
-                        <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
-                            <label>Phone Number</label>
-                            <input type="text" name="edited_person_phone" ng-model="edited_person_data.phone"
-                                   placeholder="+994123456789" required maxlength="13">
-                            <div ng-messages="edit_personal_info_form.edited_person_phone" role="alert" multiple>
-                                <div ng-message="required">Required field!</div>
-                                <div ng-message="maxlength">No more than 13 character!</div>
+                            <div ng-messages="edit_personal_info_form.edited_person_name.$error" role="alert">
+                                <div ng-message-exp="['required', 'minlength', 'maxlength']">
+                                    Please fill out your full name
+                                </div>
                             </div>
                         </md-input-container>
-                        <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
-                            <label>Birth Date</label>
-                            <input type="text" name="edited_person_birth" ng-model="edited_person_data.birthDate"
-                                   placeholder="MM-DD-YYYY" required maxlength="10">
-                            <div ng-messages="edit_personal_info_form.edited_person_birth" role="alert">
-                                <div ng-message="required">Required field!</div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container style="margin-top: 10px">
-                            <label>Group</label>
-                            <md-select ng-model="edited_person_data.group_id" ng-disabled="user_type!='teacher'">
-                                <md-option ng-repeat="group in groups" value="<% group.id %>">
-                                    <% group.name %>
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                    </div>
-                    <div ng-show="edited_person_table!='students'" layout="row">
-                        <div layout="row" layout-align="center center" style="color: #81D18F">
-                            <h4 class="md-title">Start time: </h4>
-                            <div style="width: 10px"></div>
-                            <div layout="row" layout-align="center">
-                                <md-input-container required>
-                                    <label>hour</label>
-                                    <md-select ng-model="startHour" class="md-subhead">
-                                        <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
-                                            <% hour.selectedHour %>
-                                        </md-option>
-                                    </md-select>
-                                </md-input-container>
-                                <md-input-container require>
-                                    <label>minute</label>
-                                    <md-select ng-model="startMinute" class="md-subhead">
-                                        <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
-                                            <% minute.selectedMinute %>
-                                        </md-option>
-                                    </md-select>
-                                </md-input-container>
-                            </div>
-                        </div>
-                        <div style="width: 20px"></div>
-                        <div layout="row" layout-align="center center" style="color: #d98084">
-                            <h4 class="md-title">End time: </h4>
-                            <div style="width: 10px"></div>
-                            <div layout="row" layout-align="center">
-                                <md-input-container required>
-                                    <label>hour</label>
-                                    <md-select ng-model="endHour" class="md-subhead">
-                                        <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
-                                            <% hour.selectedHour %>
-                                        </md-option>
-                                    </md-select>
-                                </md-input-container>
-                                <md-input-container required>
-                                    <label>minute</label>
-                                    <md-select ng-model="endMinute" class="md-subhead">
-                                        <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
-                                            <% minute.selectedMinute %>
-                                        </md-option>
-                                    </md-select>
-                                </md-input-container>
-                            </div>
-                        </div>
-                        <div style="width: 20px"></div>
                         <md-input-container class="reduce-margin">
-                            <label>Work days</label>
-                            <md-select ng-model="selected_days" multiple>
-                                <md-optgroup label="Week Days">
-                                    <md-option ng-value="day" ng-repeat="day in week_days"><% day %></md-option>
-                                </md-optgroup>
-                            </md-select>
+                            <label>Email</label>
+                            <input required type="email" ng-model="edited_person_data.email"
+                                   minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" name="edited_person_email"/>
+                            <div ng-messages="edit_personal_info_form.edited_person_email.$error" role="alert">
+                                <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                                    Invalid email
+                                </div>
+                            </div>
+                        </md-input-container>
+                        <div ng-show="edited_person_table=='students'" layout="row">
+                            <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
+                                <label>Phone Number</label>
+                                <input type="text" name="edited_person_phone" ng-model="edited_person_data.phone"
+                                       placeholder="+994123456789" required maxlength="13">
+                                <div ng-messages="edit_personal_info_form.edited_person_phone" role="alert" multiple>
+                                    <div ng-message="required">Required field!</div>
+                                    <div ng-message="maxlength">No more than 13 character!</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
+                                <label>Birth Date</label>
+                                <input type="text" name="edited_person_birth" ng-model="edited_person_data.birthDate"
+                                       placeholder="MM-DD-YYYY" required maxlength="10">
+                                <div ng-messages="edit_personal_info_form.edited_person_birth" role="alert">
+                                    <div ng-message="required">Required field!</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container style="margin-top: 10px">
+                                <label>Group</label>
+                                <md-select ng-model="edited_person_data.group_id" ng-disabled="user_type!='teacher'">
+                                    <md-option ng-repeat="group in groups" value="<% group.id %>">
+                                        <% group.name %>
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                        <div ng-show="edited_person_table!='students'" layout="row">
+                            <div layout="row" layout-align="center center" style="color: #81D18F">
+                                <h4 class="md-title">Start time: </h4>
+                                <div style="width: 10px"></div>
+                                <div layout="row" layout-align="center">
+                                    <md-input-container required>
+                                        <label>hour</label>
+                                        <md-select ng-model="startHour" class="md-subhead">
+                                            <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                                <% hour.selectedHour %>
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container require>
+                                        <label>minute</label>
+                                        <md-select ng-model="startMinute" class="md-subhead">
+                                            <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                                <% minute.selectedMinute %>
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                            </div>
+                            <div style="width: 20px"></div>
+                            <div layout="row" layout-align="center center" style="color: #d98084">
+                                <h4 class="md-title">End time: </h4>
+                                <div style="width: 10px"></div>
+                                <div layout="row" layout-align="center">
+                                    <md-input-container required>
+                                        <label>hour</label>
+                                        <md-select ng-model="endHour" class="md-subhead">
+                                            <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                                <% hour.selectedHour %>
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container required>
+                                        <label>minute</label>
+                                        <md-select ng-model="endMinute" class="md-subhead">
+                                            <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                                <% minute.selectedMinute %>
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                            </div>
+                            <div style="width: 20px"></div>
+                            <md-input-container class="reduce-margin">
+                                <label>Work days</label>
+                                <md-select ng-model="selected_days" multiple>
+                                    <md-optgroup label="Week Days">
+                                        <md-option ng-value="day" ng-repeat="day in week_days"><% day %></md-option>
+                                    </md-optgroup>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                        <md-input-container>
+                            <label>Bio</label>
+                            <textarea ng-model="edited_person_data.bio"></textarea>
                         </md-input-container>
                     </div>
-                    <md-input-container>
-                        <label>Bio</label>
-                        <textarea ng-model="edited_person_data.bio"></textarea>
-                    </md-input-container>
                 </div>
             </div>
         </md-dialog-content>
-        <md-dialog-actions layout="row">
+        <md-dialog-actions ng-hide="loader.loading" layout="row">
             <md-button ng-click="hide()">
                 Cancel
             </md-button>

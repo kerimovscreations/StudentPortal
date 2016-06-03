@@ -13,25 +13,32 @@
             </div>
         </md-toolbar>
         <md-dialog-content>
-            <div class="md-dialog-content" layout="row" layout-align="center none">
-                <div>
-                    <img class="md-avatar" ng-src="images/profile_icon.png" style="width: 150px;height: 150px;border-radius: 100%"/>
-                </div>
-                <div style="width: 30px"></div>
-                <div layout="column">
-                    <span class="md-display-1"><% person_data.name %></span>
-                    <span class="md-subhead"><% person_data.email %></span>
-                    <div style="height: 15px;"></div>
-                    <div ng-if="person_table=='students'">
-                        <p class="md-title personal-info-text">Phone: <% person_data.phone %></p>
-                        <p class="md-title personal-info-text">Birthdate: <% displayBirthDate() %></p>
-                        <p class="md-title personal-info-text">Group: <% person_data.group %></p>
+            <div class="md-dialog-content" style="min-height: 100px;">
+                <md-progress-circular ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
+                <div ng-hide="loader.loading" layout="row" layout-align="center none">
+                    <div>
+                        <img class="md-avatar" ng-src="images/profile_icon.png"
+                             style="width: 150px;height: 150px;border-radius: 100%"/>
                     </div>
-                    <div ng-if="person_table!='students'">
-                        <p ng-if="person_data.work_days!=null" class="md-title personal-info-text">Work days: <% person_data.work_days %></p>
-                        <p ng-if="person_data.work_start_time!=null" class="md-title personal-info-text">Work hours: (<% person_data.work_start_time %> - <% person_data.work_end_time %>)</p>
+                    <div style="width: 30px"></div>
+                    <div layout="column">
+                        <span class="md-display-1"><% person_data.name %></span>
+                        <span class="md-subhead"><% person_data.email %></span>
+                        <div style="height: 15px;"></div>
+                        <div ng-if="person_table=='students'">
+                            <p class="md-title personal-info-text">Phone: <% person_data.phone %></p>
+                            <p class="md-title personal-info-text">Birthdate: <% displayBirthDate() %></p>
+                            <p class="md-title personal-info-text">Group: <% person_data.group %></p>
+                        </div>
+                        <div ng-if="person_table!='students'">
+                            <p ng-if="person_data.work_days!=null" class="md-title personal-info-text">Work days: <%
+                                person_data.work_days %></p>
+                            <p ng-if="person_data.work_start_time!=null" class="md-title personal-info-text">Work hours:
+                                (<% person_data.work_start_time %> - <% person_data.work_end_time %>)</p>
+                        </div>
+                        <p ng-if="person_data.bio!=null" class="md-title personal-info-text">Bio: <% person_data.bio
+                            %></p>
                     </div>
-                    <p ng-if="person_data.bio!=null" class="md-title personal-info-text">Bio: <% person_data.bio %></p>
                 </div>
             </div>
         </md-dialog-content>

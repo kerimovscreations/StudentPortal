@@ -15,27 +15,33 @@
                 </md-button>
             </div>
         </md-toolbar>
-        <md-dialog-content layout="column" layout-align="center center">
-            <span class="md-display-1" style="color: #6a72a2"><% temp_event.title %></span>
+        <md-dialog-content>
+            <div class="md-dialog-content" style="min-height: 100px">
+                <md-progress-circular ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
+                <div ng-hide="loader.loading" layout="column" layout-align="center center">
+                    <span class="md-display-1" style="color: #6a72a2"><% temp_event.title %></span>
                 <span class="md-headline"
                       style="color: #d98084">(<% temp_event.start_time %>-<% temp_event.end_time %>)</span>
-            <span class="md-body-2" style="color: #94cac2;margin-top: 10px">Created by <% temp_event.owner %></span>
+                    <span class="md-body-2"
+                          style="color: #94cac2;margin-top: 10px">Created by <% temp_event.owner %></span>
             <span class="md-body-2" ng-if="temp_event.type=='lesson' && temp_event.responsible_first!= null"
                   style="color: #94cac2">Responsible teacher: <% temp_event.responsible_first %></span>
-            <span class="md-body-2" ng-if="temp_event.type=='extra'" style="color: #94cac2">Responsible student: <% temp_event.responsible_first %></span>
-            <span class="md-body-2" ng-if="temp_event.type=='extra'" style="color: #94cac2">Responsible mentor: <% temp_event.responsible_second %></span>
-            <span class="md-headline" style="margin-top: 10px">Content</span>
-            <span class="md-title"><% temp_event.description %></span>
-            <div layout="row" style="margin-top: 15px; color: #a47f90;">
-                <span class="md-subhead">Place: <% temp_event.place %></span>
-                <span ng-if="temp_event.group!=null" style="width: 80px"></span>
-                <span ng-if="temp_event.group!=nul" class="md-subhead">Group: <% temp_event.group %></span>
-            </div>
-            <div layout="row" style="margin-top: 10px;color: #ce226d; font-size: 20px">
-                <md-switch ng-disabled="!statusChangeCheck()" aria-label="Event status"
-                           ng-model="temp_event_status" ng-change="onChange(temp_event_status)">
-                    <% showStatus(temp_event.status) %>
-                </md-switch>
+                    <span class="md-body-2" ng-if="temp_event.type=='extra'" style="color: #94cac2">Responsible student: <% temp_event.responsible_first %></span>
+                    <span class="md-body-2" ng-if="temp_event.type=='extra'" style="color: #94cac2">Responsible mentor: <% temp_event.responsible_second %></span>
+                    <span class="md-headline" style="margin-top: 10px">Content</span>
+                    <span class="md-title"><% temp_event.description %></span>
+                    <div layout="row" style="margin-top: 15px; color: #a47f90;">
+                        <span class="md-subhead">Place: <% temp_event.place %></span>
+                        <span ng-if="temp_event.group!=null" style="width: 80px"></span>
+                        <span ng-if="temp_event.group!=nul" class="md-subhead">Group: <% temp_event.group %></span>
+                    </div>
+                    <div layout="row" style="margin-top: 10px;color: #ce226d; font-size: 20px">
+                        <md-switch ng-disabled="!statusChangeCheck()" aria-label="Event status"
+                                   ng-model="temp_event_status" ng-change="onChange(temp_event_status)">
+                            <% showStatus(temp_event.status) %>
+                        </md-switch>
+                    </div>
+                </div>
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row">

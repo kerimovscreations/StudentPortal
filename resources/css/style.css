@@ -137,3 +137,7 @@ body{
 .personal-info-text{
     font-size: 18px;
 }
+
+md-progress-circular svg{
+    left: 75px;
+}

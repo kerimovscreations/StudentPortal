@@ -495,6 +495,10 @@ function postEditDialogController($scope, $mdDialog, AnnouncementService, $mdToa
 // Schedule dialog controllers
 
 function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
+    //initialize loading
+    $scope.loader={
+        loading: true
+    };
     var id = Data.EventId;
     $scope.user_name = $cookies.get('userName');
     $scope.user_id = $cookies.get('userId');
@@ -511,9 +515,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     };
 
     $http.get('/getEvent/' + id).success(function (data) {
+        $scope.loader.loading=false;        
         $scope.temp_event = data;
         $scope.temp_event_status = $scope.temp_event.status == 1;
-
         // to enable the switch to mark as 'done' if it's decided and user is the first responsible person
         if ($scope.temp_event.type == 'lesson') {
             $scope.statusChangeCheck = function () {
@@ -637,6 +641,10 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
 }
 
 function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data) {
+    //initializing progress loading
+    $scope.loader={
+        loading: true
+    };
     var id = Data.EventId;
     var user_id = $cookies.get('userId');
     var user_type = $cookies.get('userType');
@@ -711,6 +719,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
                 }
             });
         }
+        $scope.loader.loading=false;
     });
 
     $scope.places = [];
@@ -776,6 +785,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         }
 
         if (startTime.isBefore(endTime)) {
+            $scope.loader.loading=true;
             $http({
                 method: 'POST',
                 url: '/updateEvent',
@@ -807,7 +817,6 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         } else {
             $mdToast.show($mdToast.simple().textContent('Invalid time input'));
         }
-
     };
     $scope.hide = function () {
         $mdDialog.hide();
@@ -818,6 +827,9 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
 }
 
 function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $timeout, $q, $mdToast, Data) {
+    $scope.loader={
+        loading: false
+    };
     var type = Data.AddEventType;
     var user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
@@ -918,6 +930,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         }
 
         if (startTime.isBefore(endTime)) {
+            $scope.loader.loading=true;
             $http({
                 method: 'POST',
                 url: '/postEvent',
@@ -961,17 +974,19 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 // Notification dialog controllers
 
 function notificationSelectDialogController($scope, $route, $http, $cookies, $mdDialog, $mdToast, Data) {
+    $scope.loader={
+        loading: false
+    };
     $scope.notification_data = Data.NotificationData;
 
-    $scope.notificationType = $scope.notification_data.notification_type;
-    $scope.notificationEventType = null;
+    $scope.notificationType = $scope.notification_data.type;
 
     $scope.user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
 
     $scope.editMode = false;
 
-    if ($scope.notificationType == 'announcements') {
+    if ($scope.notificationType == 'announcement') {
         $scope.notificationDate = $scope.notification_data.updated_at;
         $scope.notificationTitle = 'Announcement';
         $scope.notificationContent = $scope.notification_data.body;
@@ -980,8 +995,12 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         $scope.notificationOwnerType = $scope.notification_data.owner_type;
     }
     else {
+        if($scope.notificationType == 'lesson')
+            $scope.notificationTitle = 'Lesson';
+        else
+            $scope.notificationTitle = 'Mentor reservation';
+        
         $scope.notificationDate = $scope.notification_data.date;
-        $scope.notificationTitle = 'Extra lesson';
         $scope.notificationContent = $scope.notification_data.description;
         $scope.notificationOwner = $scope.notification_data.owner[0].name;
         $scope.notificationAnotherResponsible = $scope.notification_data.responsible_another;
@@ -1011,7 +1030,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     && $scope.notificationReceiverId == $scope.user_id);
 
     $scope.extra_respond_check = function () {
-        return !$scope.editMode && $scope.notificationStatus == null && $scope.notificationOwnerType != 'teacher'
+        return !$scope.editMode && $scope.notificationStatus == null && $scope.notificationOwnerType != 'teacher' && $scope.notificationType=='extra'
     };
 
     $scope.showStatus = function (check) {
@@ -1026,6 +1045,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     };
 
     $scope.eventAccept = function (bool) {
+        $scope.loader.loading=true;
         if (bool) {
             $http({
                 method: 'POST',
@@ -1097,7 +1117,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
         if (startTime.isBefore(endTime)) {
-
+            $scope.loader.loading=true;
             $http({
                 method: 'POST',
                 url: '/changeTimeEvent',
@@ -1131,6 +1151,9 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
 function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
     //initializing variables
     $scope.person_data = [];
+    $scope.loader={
+        loading: true
+    };
     //get the selected person data from factory
     $scope.person_table = Data.PersonTable;
     $scope.person_id = Data.PersonId;
@@ -1141,6 +1164,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
     //get the data of selected person from server
     $http.get('/getDataUser/' + $scope.person_table + '/' + $scope.person_id).success(function (data) {
         $scope.person_data = data;
+        $scope.loader.loading=false;
     });
 
     //check the user has access to edit personal data
@@ -1183,6 +1207,10 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
 }
 
 function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast, $route, Data) {
+    //progress circular initialization
+    $scope.loader={
+        loading: true
+    };
     //get the edited person data from factory
     $scope.edited_person_id = Data.PersonId;
     $scope.edited_person_table = Data.PersonTable;
@@ -1226,6 +1254,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
             $scope.endHour = endTime[0];
             $scope.endMinute = endTime[1];
         }
+        $scope.loader.loading=false;
     });
 
     //convert the birth date to readable format
@@ -1249,19 +1278,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
 
         //data posting function
         function postData() {
-            console.log(
-                $scope.edited_person_table + ' ' +
-                $scope.edited_person_id + ' ' +
-                $scope.edited_person_data.name + ' ' +
-                $scope.edited_person_data.email + ' ' +
-                $scope.edited_person_data.phone + ' ' +
-                $scope.edited_person_data.birthDate + ' ' +
-                $scope.edited_person_data.group_id + ' ' +
-                $scope.selected_days.join(',') + ' ' +
-                startTime.format('HH:mm') + ' ' +
-                endTime.format('HH:mm') + ' ' +
-                $scope.edited_person_data.bio
-            );
+            $scope.loader.loading=true;
             $http({
                 method: 'POST',
                 url: '/updateUser',
