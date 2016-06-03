@@ -4055,6 +4055,9 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 $scope.selected = [];
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Posted'));
+            }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                console.log(data);
             })
         };
 
@@ -4071,6 +4074,9 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 }).success(function () {
                     $route.reload();
                     $mdToast.show($mdToast.simple().textContent('Deleted'));
+                }).error(function (data) {
+                    $mdToast.show($mdToast.simple().textContent('Error occured'));
+                    console.log(data);
                 })
             });
         };
@@ -4313,6 +4319,9 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                     $rootScope.notification_count -= 1;
                     $scope.notifications[type][index].status = 1;
                     showSelectNotificationDialog(id);
+                }).error(function (data) {
+                    $mdToast.show($mdToast.simple().textContent('Error occured'));
+                    console.log(data);
                 });
             else
                 showSelectNotificationDialog(id);
@@ -4448,6 +4457,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             }
         }).success(function () {
             $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
+        }).error(function (data) {
+            $mdToast.show($mdToast.simple().textContent('Error occured'));
+            console.log(data);
         });
     };
 
@@ -4456,13 +4468,22 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             case null:
                 return 'Not decided';
                 break;
+            case '0':
+                return 'Not Done';
+                break;
             case 0:
                 return 'Not Done';
+                break;
+            case '1':
+                return 'Done';
                 break;
             case 1:
                 return 'Done';
                 break;
             case 2:
+                return 'Rejected';
+                break;
+            case '2':
                 return 'Rejected';
                 break;
             default:
@@ -4513,6 +4534,9 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
                 $mdDialog.hide();
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Event deleted'));
+            }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                console.log(data);
             });
         });
     };
@@ -4696,6 +4720,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Event updated'));
             }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
         } else {
@@ -4841,6 +4866,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
             }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
         } else {
@@ -4943,6 +4969,9 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                 $mdDialog.hide();
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Extra lesson request accepted'));
+            }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
             });
         } else {
             $http({
@@ -4977,6 +5006,9 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                         });
                     }
                 });
+            }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                console.log(data);
             });
         }
     };
@@ -5016,6 +5048,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Extra lesson time changed changed'));
             }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             });
         } else {
@@ -5184,6 +5217,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Personal data updated'));
             }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
         }
