@@ -1,5 +1,12 @@
-registerApp.controller('RegisterController', function ($scope) {
+registerApp.controller('RegisterController', function ($scope, $mdpDatePicker) {
     $scope.select_user_type = 'student';
+    $scope.user={};
+    var today=new Date();
+    var today1=moment(today);
+    $scope.maxDate=today1.format('YYYY-MM-DD');
+    console.log($scope.maxDate);
+    
+    $scope.birthDateFormatted=moment($scope.user.birthDate).format('MM-DD-YYYY')
 });
 
 loginApp.controller('LoginController', function ($scope) {

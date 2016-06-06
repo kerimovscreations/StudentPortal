@@ -64,22 +64,21 @@
                         </md-input-container>
                     </div>
                     <div layout-gt-sm="row" ng-if="select_user_type=='student'">
-                        <md-input-container class="md-block" flex-gt-sm style="margin: 10px 0">
+                        <md-input-container class="md-block" flex-gt-sm style="margin: 30px 0">
                             <label>Phone Number</label>
                             <input type="text" name="phone" ng-model="user.number"
-                                   placeholder="+994123456789" required maxlength="13">
-                            <div ng-messages="userForm.number.$error" role="alert" multiple>
+                                   placeholder="+994123456789" required>
+                            <div ng-messages="userForm.phone.$error" role="alert">
                                 <div ng-message="required">Required field!</div>
-                                <div ng-message="maxlength">No more than 13 character!</div>
                             </div>
                         </md-input-container>
                         <md-input-container class="md-block" flex-gt-sm style="margin: 10px 0">
-                            <label>Birth Date</label>
-                            <input type="text" name="birthDate" ng-model="user.birthDate"
-                                   placeholder="MM-DD-YYYY" required maxlength="10">
-                            <div ng-messages="userForm.number.$error" role="alert">
-                                <div ng-message="required">Required field!</div>
-                            </div>
+                            <mdp-date-picker mdp-open-on-click required mdp-placeholder="Birth Date" mdp-format="MM-DD-YYYY" ng-model="user.birthDate" mdp-max-date="maxDate">
+                                <div ng-messages="userForm.birthDate.$error">
+                                    <div ng-message="required">This is required</div>
+                                </div>
+                            </mdp-date-picker>
+                            <input type="hidden" name="birthDate" ng-value="birthDateFormatted">
                         </md-input-container>
                     </div>
                     <md-radio-group ng-model="select_user_type" layout="row" layout-align="center">
@@ -87,7 +86,6 @@
                         <md-radio-button value="teacher"> Teacher</md-radio-button>
                         <md-radio-button value="mentor">Mentor</md-radio-button>
                     </md-radio-group>
-                    @include('errors.list')
                 </md-card-content>
                 <md-card-actions layout="row" layout-align="center none" style="padding: 5px;">
                     <md-button class="md-raised md-primary" type="submit">Submit</md-button>

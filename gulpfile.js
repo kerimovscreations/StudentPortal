@@ -16,11 +16,13 @@ elixir(function(mix) {
 
     mix.styles([
         '/app.css',
-        '../../css/style.css'
+        '../../css/style.css',
+        '../../css/mdPickers.css'
     ]);
 
     mix.scripts([
         "../../js/moment.js",
+        "../../js/mdPickers.min.js",
         "../../js/app.js",
         "../../js/factories.js",
         "../../js/services.js",
