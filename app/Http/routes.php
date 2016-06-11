@@ -255,8 +255,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
      * Login/Register routes generation
      */
     Route::auth();
-
-
+    
 });
 
 

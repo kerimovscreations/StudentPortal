@@ -16,7 +16,7 @@
                     <span><% current_section %></span>
                 </h2>
                 <span flex></span>
-                <div layout="row" ng-click="openNotification()"
+                <div layout="row" class="no-outline" ng-click="openNotification()"
                      style="width: 60px;position: relative; margin-right: 15px" ng-cloak>
                     <md-icon md-svg-src="svg/ic_notifications_none_white_48px.svg" aria-label="Notification"
                              style="position: relative;left: 0px; width:35px; height: 35px;"></md-icon>
@@ -28,14 +28,15 @@
                 <!--profile icon and drop down menu-->
 
                 <div style="position: relative">
-                    <img ng-click="toggleDropDownProfile()" class="md-avatar" ng-src="images/profile_icon.png"
-                         style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
-                    <div class="md-whiteframe-2dp" id="dropDownProfile">
+                    <div id="toggleDropDown" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%; overflow: hidden">
+                        <img ng-src="images/profile_icon.png" style="width:100%; height: 100%;"/>
+                    </div>
+                    <div tabindex="-1" id="dropDown" class="md-whiteframe-2dp" ng-blur="hideDropDown()">
                         <div class="drop-down-profile-triangle"></div>
                         <div layout="row" style="padding: 10px">
                             <div ng-click="changeProfileImage()"
-                                 style="width:100px; height: 100px; border-radius: 100%;position: relative; overflow: hidden; margin: 5px">
-                                <img class="md-avatar" ng-src="images/profile_icon.png"
+                                 style="width:100%; height: 100px; border-radius: 100%;position: relative; overflow: hidden; margin: 5px">
+                                <img ng-src="images/profile_icon.png"
                                      style="width:100px; height: 100px;"/>
                                 <div class="change-profile-image-text">Change</div>
                             </div>

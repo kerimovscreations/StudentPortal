@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Announcement;
 use App\Event;
+use App\Group;
 use App\Student;
 use Illuminate\Http\Request;
 
@@ -80,6 +81,20 @@ class EmailController extends Controller
 
             else if($elem['source_table']=='announcements'){
                 $announcement = Announcement::find($elem['source_id']);
+                $receiver=Group::find($elem['receiver_id']);
+                $person_name = DB::table('teachers')->where('id', $announcement->owner_id)->value('name');
+                $action_post=' has made a new announcement:';
+
+                $data = [
+                    'receiver' => $receiver->name,
+                    'person' => $person_name,
+                    'action_post' => $action_post,
+                    'description' => $announcement->body
+                ];
+
+                Mail::send('emails.notification_group_announcement', $data, function ($message) use ($receiver, $elem) {
+                    $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
+                });
             }
         }
     }

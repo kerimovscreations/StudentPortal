@@ -31,9 +31,8 @@ body {
     margin: 5px 0;
 }
 
-#dropDownProfile {
+#dropDown {
     display: none;
-    padding: 0;
     background-color: white;
     color: black;
     border-radius: 4px;
@@ -148,8 +147,20 @@ body {
 md-progress-circular svg {
     left: 75px;
 }
-md-input-container:not(.md-input-has-value) input:not(:focus){
+
+md-input-container:not(.md-input-has-value) input:not(:focus) {
     color: black;
+}
+
+.no-outline:focus {
+    outline: none;
+}
+
+.small-progress svg {
+    left: 0;
+    width: 30px !important;
+    height: 30px !important;
+    margin: 10px;
 }
 .mdp-animate-next {
   opacity: 0;

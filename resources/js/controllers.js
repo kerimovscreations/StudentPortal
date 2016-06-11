@@ -1,12 +1,12 @@
-registerApp.controller('RegisterController', function ($scope, $mdpDatePicker) {
+registerApp.controller('RegisterController', function ($scope) {
     $scope.select_user_type = 'student';
-    $scope.user={};
-    var today=new Date();
-    var today1=moment(today);
-    $scope.maxDate=today1.format('YYYY-MM-DD');
+    $scope.user = {};
+    var today = new Date();
+    var today1 = moment(today);
+    $scope.maxDate = today1.format('YYYY-MM-DD');
     console.log($scope.maxDate);
-    
-    $scope.birthDateFormatted=moment($scope.user.birthDate).format('MM-DD-YYYY')
+
+    $scope.birthDateFormatted = moment($scope.user.birthDate).format('MM-DD-YYYY')
 });
 
 loginApp.controller('LoginController', function ($scope) {
@@ -14,7 +14,6 @@ loginApp.controller('LoginController', function ($scope) {
 });
 
 portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies, $mdDialog, $mdMedia, $timeout, $mdSidenav, $http, $location, Data) {
-
     $scope.toggleNavBar = buildDelayedToggler('left');
 
     $scope.user_name = '';
@@ -56,16 +55,27 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             });
         }
     });
-
-    var dropDownMenu = document.getElementById('dropDownProfile');
-
-    $scope.toggleDropDownProfile = function () {
-        if (dropDownMenu.style.display == 'none') {
-            dropDownMenu.style.display = 'block';
-        } else {
-            dropDownMenu.style.display = 'none';
-        }
+    
+    //get the css property of element
+    function getStyle(elementId, property) {
+        return document.defaultView.getComputedStyle(document.getElementById(elementId), '').getPropertyValue(property);
+    }
+    
+    //hide drop down profile menu when lost focus
+    $scope.hideDropDown = function () {
+        setTimeout(function () {
+            $('#dropDown').hide()
+        }, 500);
     };
+
+    //toggle drop down profile menu when profile image pressed
+    $('#toggleDropDown').click(function () {
+        var temp = $('#dropDown');
+        temp.toggle();
+        console.log(getStyle('dropDown', 'display'));
+        if (getStyle('dropDown', 'display') == 'block')
+            temp.focus();
+    });
 
     /**
      * Show the image change pop-up menu
@@ -151,12 +161,18 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.selected = [];
         $scope.user_type = $cookies.get('userType');
 
+        //initialize loading
+        $scope.loader = {
+            loading: true
+        };
+        
         $http.get('/getAnnouncements').success(function (data) {
             $scope.announcements = data[0];
             for (var i = 0; i < $scope.announcements.length; i++) {
                 $scope.announcements[i].groups = data[1][i];
                 $scope.announcements[i].owner = data[2][i];
             }
+            $scope.loader.loading=false;
         });
 
         $http.get('/getGroups').success(function (data) {
@@ -165,6 +181,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.post = function () {
             $scope.user_id = $cookies.get('userId');
+            $scope.loader.loading=true;
             $http({
                 method: 'POST',
                 url: '/postAnnouncement',
@@ -177,8 +194,10 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 $scope.announcement_post = '';
                 $scope.selected = [];
                 $route.reload();
+                $scope.loader.loading=false;
                 $mdToast.show($mdToast.simple().textContent('Posted'));
             }).error(function (data) {
+                $scope.loader.loading=false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
@@ -440,6 +459,9 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                     data: {id: id}
                 }).success(function () {
                     $rootScope.notification_count -= 1;
+                    if ($rootScope < 0) {
+                        $rootScope = 0;
+                    }
                     $scope.notifications[type][index].status = 1;
                     showSelectNotificationDialog(id);
                 }).error(function (data) {
@@ -512,7 +534,7 @@ function postEditDialogController($scope, $mdDialog, AnnouncementService, $mdToa
 
 function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
     //initialize loading
-    $scope.loader={
+    $scope.loader = {
         loading: true
     };
     var id = Data.EventId;
@@ -531,7 +553,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     };
 
     $http.get('/getEvent/' + id).success(function (data) {
-        $scope.loader.loading=false;        
+        $scope.loader.loading = false;
         $scope.temp_event = data;
         $scope.temp_event_status = $scope.temp_event.status == 1;
         // to enable the switch to mark as 'done' if it's decided and user is the first responsible person
@@ -618,7 +640,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     $scope.dateExtended = function (date) {
         return moment(date, 'YYYYMMDD').format("dddd, MMMM DD YYYY");
     };
-    
+
     $scope.displayEventTitle = function (type) {
         if (type == 'lesson')
             return "Lesson";
@@ -673,7 +695,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
 
 function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data) {
     //initializing progress loading
-    $scope.loader={
+    $scope.loader = {
         loading: true
     };
     var id = Data.EventId;
@@ -750,7 +772,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
                 }
             });
         }
-        $scope.loader.loading=false;
+        $scope.loader.loading = false;
     });
 
     $scope.places = [];
@@ -801,7 +823,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         else if (type == 'extra')
             return "mentor reservation";
     };
-    
+
     $scope.submit = function () {
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
@@ -816,7 +838,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         }
 
         if (startTime.isBefore(endTime)) {
-            $scope.loader.loading=true;
+            $scope.loader.loading = true;
             $http({
                 method: 'POST',
                 url: '/updateEvent',
@@ -859,7 +881,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
 }
 
 function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $timeout, $q, $mdToast, Data) {
-    $scope.loader={
+    $scope.loader = {
         loading: false
     };
     var type = Data.AddEventType;
@@ -962,7 +984,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         }
 
         if (startTime.isBefore(endTime)) {
-            $scope.loader.loading=true;
+            $scope.loader.loading = true;
             $http({
                 method: 'POST',
                 url: '/postEvent',
@@ -1007,7 +1029,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 // Notification dialog controllers
 
 function notificationSelectDialogController($scope, $route, $http, $cookies, $mdDialog, $mdToast, Data) {
-    $scope.loader={
+    $scope.loader = {
         loading: false
     };
     $scope.notification_data = Data.NotificationData;
@@ -1028,11 +1050,11 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         $scope.notificationOwnerType = $scope.notification_data.owner_type;
     }
     else {
-        if($scope.notificationType == 'lesson')
+        if ($scope.notificationType == 'lesson')
             $scope.notificationTitle = 'Lesson';
         else
             $scope.notificationTitle = 'Mentor reservation';
-        
+
         $scope.notificationDate = $scope.notification_data.date;
         $scope.notificationContent = $scope.notification_data.description;
         $scope.notificationOwner = $scope.notification_data.owner[0].name;
@@ -1063,7 +1085,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     && $scope.notificationReceiverId == $scope.user_id);
 
     $scope.extra_respond_check = function () {
-        return !$scope.editMode && $scope.notificationStatus == null && $scope.notificationOwnerType != 'teacher' && $scope.notificationType=='extra'
+        return !$scope.editMode && $scope.notificationStatus == null && $scope.notificationOwnerType != 'teacher' && $scope.notificationType == 'extra'
     };
 
     $scope.showStatus = function (check) {
@@ -1078,7 +1100,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     };
 
     $scope.eventAccept = function (bool) {
-        $scope.loader.loading=true;
+        $scope.loader.loading = true;
         if (bool) {
             $http({
                 method: 'POST',
@@ -1156,7 +1178,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
         if (startTime.isBefore(endTime)) {
-            $scope.loader.loading=true;
+            $scope.loader.loading = true;
             $http({
                 method: 'POST',
                 url: '/changeTimeEvent',
@@ -1191,7 +1213,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
 function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMedia, Data) {
     //initializing variables
     $scope.person_data = [];
-    $scope.loader={
+    $scope.loader = {
         loading: true
     };
     //get the selected person data from factory
@@ -1204,7 +1226,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
     //get the data of selected person from server
     $http.get('/getDataUser/' + $scope.person_table + '/' + $scope.person_id).success(function (data) {
         $scope.person_data = data;
-        $scope.loader.loading=false;
+        $scope.loader.loading = false;
     });
 
     //check the user has access to edit personal data
@@ -1248,7 +1270,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
 
 function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast, $route, Data) {
     //progress circular initialization
-    $scope.loader={
+    $scope.loader = {
         loading: true
     };
     //get the edited person data from factory
@@ -1294,7 +1316,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
             $scope.endHour = endTime[0];
             $scope.endMinute = endTime[1];
         }
-        $scope.loader.loading=false;
+        $scope.loader.loading = false;
     });
 
     //convert the birth date to readable format
@@ -1318,7 +1340,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
 
         //data posting function
         function postData() {
-            $scope.loader.loading=true;
+            $scope.loader.loading = true;
             $http({
                 method: 'POST',
                 url: '/updateUser',

@@ -18,8 +18,9 @@
                     </div>
                 </div>
                 <div flex></div>
+                <md-progress-circular class="small-progress" ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
                 <input type="submit" class="md-button md-raised md-primary"
-                       ng-disabled="announcement_post.length==0"
+                       ng-disabled="announcement_post.length==0 || loader.loading"
                        value="POST" style="color: white" ng-click="post()"/>
             </div>
         </form>
