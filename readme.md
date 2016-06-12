@@ -1,27 +1,21 @@
-# Laravel PHP Framework
+# Student Portal
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+Student Portal is a web application with managed, easy to use, material designed interface. This service will make works easy for education centers.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+Student Portal provides relation among students, mentors and teachers. Students will be get in touch with their teachers and mentors. In the portal they will be notified by recent announcements and events. Student has an access to reserve mentor for help, or this event can be decided by teacher.
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+## Usage
 
-## Official Documentation
+Thank you for use the Student Portal! The user guide can be found in the [Student Portal User Guide](https://drive.google.com/file/d/0B7zdFw2jJZjuTnBLTkFFc09oYms/view?usp=sharing).
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+## Used frameworks, libraries and services
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+Laravel PHP framework, Angular JS library, Angular Material library,  jQuery library, Moments JS library, SendGrid mail service
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Student Portal, please send an e-mail to Karim Karimov at kerimovscreations@gmail.com.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+The Student Portal is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
