@@ -6,7 +6,7 @@ Student Portal provides relation among students, mentors and teachers. Students 
 
 ## Usage
 
-Thank you for use the Student Portal! The user guide can be found in the [Student Portal User Guide](https://drive.google.com/file/d/0B7zdFw2jJZjuTnBLTkFFc09oYms/view?usp=sharing).
+Thank you for use the Student Portal! The user guide can be found in the [Student Portal User Guide](https://drive.google.com/file/d/0B7zdFw2jJZjueXFVY0syekd1bjQ/view?usp=sharing).
 
 ## Used frameworks, libraries and services
 
