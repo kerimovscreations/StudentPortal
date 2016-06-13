@@ -4,7 +4,7 @@
             <div class="md-toolbar-tools">
                 <h3><% displayEventTitle(temp_event.type)%> at <% dateExtended(temp_event.date) %></h3>
                 <span flex></span>
-                <md-button ng-if="checkOwner()" class="md-icon-button" ng-click="edit()">
+                <md-button ng-if="checkOwner() && temp_event.status != 1" class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
                 </md-button>
                 <md-button ng-if="checkOwner()" class="md-icon-button" ng-click="delete()">

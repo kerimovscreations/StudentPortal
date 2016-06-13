@@ -55,12 +55,12 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             });
         }
     });
-    
+
     //get the css property of element
     function getStyle(elementId, property) {
         return document.defaultView.getComputedStyle(document.getElementById(elementId), '').getPropertyValue(property);
     }
-    
+
     //hide drop down profile menu when lost focus
     $scope.hideDropDown = function () {
         setTimeout(function () {
@@ -72,7 +72,6 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     $('#toggleDropDown').click(function () {
         var temp = $('#dropDown');
         temp.toggle();
-        console.log(getStyle('dropDown', 'display'));
         if (getStyle('dropDown', 'display') == 'block')
             temp.focus();
     });
@@ -165,14 +164,14 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.loader = {
             loading: true
         };
-        
+
         $http.get('/getAnnouncements').success(function (data) {
             $scope.announcements = data[0];
             for (var i = 0; i < $scope.announcements.length; i++) {
                 $scope.announcements[i].groups = data[1][i];
                 $scope.announcements[i].owner = data[2][i];
             }
-            $scope.loader.loading=false;
+            $scope.loader.loading = false;
         });
 
         $http.get('/getGroups').success(function (data) {
@@ -181,7 +180,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.post = function () {
             $scope.user_id = $cookies.get('userId');
-            $scope.loader.loading=true;
+            $scope.loader.loading = true;
             $http({
                 method: 'POST',
                 url: '/postAnnouncement',
@@ -194,10 +193,10 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 $scope.announcement_post = '';
                 $scope.selected = [];
                 $route.reload();
-                $scope.loader.loading=false;
+                $scope.loader.loading = false;
                 $mdToast.show($mdToast.simple().textContent('Posted'));
             }).error(function (data) {
-                $scope.loader.loading=false;
+                $scope.loader.loading = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
@@ -442,9 +441,15 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 $scope.notifications[1] = data;
             });
         }
-        else {
+        else if ($scope.user_type == 'mentor') {
             $scope.notifications[0] = [];
             $http.get('/getNotifications/mentors/' + user_id).success(function (data) {
+                $scope.notifications[1] = data;
+            });
+        }
+        else {
+            $scope.notifications[0] = [];
+            $http.get('/getNotifications/teachers/' + 0).success(function (data) {
                 $scope.notifications[1] = data;
             });
         }
@@ -560,8 +565,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
         if ($scope.temp_event.type == 'lesson') {
             $scope.statusChangeCheck = function () {
                 return $scope.temp_event.status != 1
-                    && $scope.user_id == $scope.temp_event.owner_id
-                    && ($scope.user_type + 's') == $scope.temp_event.owner_table
+                    && $scope.user_type == 'teacher'
             };
             $scope.checkOwner = function () {
                 return $scope.user_type == 'teacher'
@@ -579,9 +583,8 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
             };
             // to display the delete and edit icon if user has an access to do actions
             $scope.checkOwner = function () {
-                return ($scope.temp_event.status != 1
-                && $scope.temp_event.owner_table == ($scope.user_type + 's')
-                && $scope.temp_event.owner_id == $scope.user_id);
+                return ($scope.temp_event.owner_table == ($scope.user_type + 's')
+                    && $scope.temp_event.owner_id == $scope.user_id) || $scope.user_type == 'teacher';
             };
         }
     });
@@ -1059,7 +1062,11 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         $scope.notificationContent = $scope.notification_data.description;
         $scope.notificationOwner = $scope.notification_data.owner[0].name;
         $scope.notificationAnotherResponsible = $scope.notification_data.responsible_another;
-        $scope.notificationReceiverId = $scope.notification_data.receiver[0].id;
+        //for teacher case
+        if ($scope.notification_data.receiver.length == 0)
+            $scope.notificationReceiverId = 0;
+        else
+            $scope.notificationReceiverId = $scope.notification_data.receiver[0].id;
         $scope.notificationReceiverType = $scope.notification_data.receiver_type;
         $scope.notificationOwnerType = $scope.notification_data.owner_type;
         $scope.notificationStatus = $scope.notification_data.status;
@@ -1085,7 +1092,11 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     && $scope.notificationReceiverId == $scope.user_id);
 
     $scope.extra_respond_check = function () {
-        return !$scope.editMode && $scope.notificationStatus == null && $scope.notificationOwnerType != 'teacher' && $scope.notificationType == 'extra'
+        return !$scope.editMode 
+            && $scope.notificationStatus == null 
+            && $scope.notificationOwnerType != 'teacher' 
+            && $scope.notificationType == 'extra' 
+            && $scope.user_type != 'teacher'
     };
 
     $scope.showStatus = function (check) {
@@ -1231,7 +1242,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
 
     //check the user has access to edit personal data
     $scope.checkOwner = function () {
-        return ($scope.person_table == 'students' && user_type == 'teacher') || (user_id == $scope.person_id && (user_type + 's') == $scope.person_table)
+        return (user_type == 'teacher') || (user_id == $scope.person_id && (user_type + 's') == $scope.person_table)
     };
 
     //convert the birth date to readable format
