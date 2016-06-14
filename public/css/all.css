@@ -144,8 +144,8 @@ body {
     font-size: 18px;
 }
 
-md-progress-circular svg {
-    left: 75px;
+.center-with-margin{
+    margin: 0 auto;
 }
 
 md-input-container:not(.md-input-has-value) input:not(:focus) {

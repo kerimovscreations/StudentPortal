@@ -2,7 +2,7 @@ portalApp.factory('Data', function () {
     return {
         EventId: null,
         AddEventType: null,
-        NotificationData: null,
+        NotificationId: null,
         PostId: null,
         PersonId: null,
         PersonTable: null

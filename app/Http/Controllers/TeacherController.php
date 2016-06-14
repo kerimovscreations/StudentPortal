@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Teacher;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
 class TeacherController extends Controller
 {
-    public function __construct(){
-        $this->middleware('teacher');
+
+    public function getAll()
+    {
+        $teachers = Teacher::all();
+        return json_encode($teachers);
     }
-    public function index(){
-        return 'Teacher have logged in!';
-    }
+    
 }

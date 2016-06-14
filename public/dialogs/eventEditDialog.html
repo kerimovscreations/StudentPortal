@@ -10,29 +10,29 @@
             </div>
         </md-toolbar>
         <md-dialog-content>
-            <div class="md-dialog-content" style="min-height: 100px">
-                <md-progress-circular ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
+            <div class="md-dialog-content" layout="column" layout-align="center none" style="min-height: 100px">
+                <md-progress-circular class="center-with-margin" ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
                 <div ng-hide="loader.loading" layout="column" layout-align="center center"
                      style="width: 650px; margin-bottom: 0; padding: 24px 15px 0;">
                     <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%"
                                         ng-show="!checkStudent() && event_type!='extra'">
                         <label>Title of event</label>
-                        <textarea class="md-headline" style="color: #6a72a2" ng-model="event_title"
+                        <textarea ng-disabled="loader.posting" class="md-headline" style="color: #6a72a2" ng-model="event_title"
                                   md-select-on-focus></textarea>
                     </md-input-container>
                     <md-input-container class="md-block"
                                         style="margin-top: 0;margin-bottom: 0; width: 100%;color: #3d3d45">
                         <label>Description</label>
-                        <textarea class="md-subhead" ng-model="event_description" md-select-on-focus></textarea>
+                        <textarea ng-disabled="loader.posting" class="md-subhead" ng-model="event_description" md-select-on-focus></textarea>
                     </md-input-container>
                     <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
                         <span class="md-body-1">Event date: </span>
-                        <md-datepicker class="md-body-1" ng-model="event_date" md-placeholder="Enter date"
+                        <md-datepicker ng-disabled="loader.posting" class="md-body-1" ng-model="event_date" md-placeholder="Enter date"
                                        md-min-date="minDate"></md-datepicker>
                         <div style="width: 20px"></div>
                         <md-input-container required>
                             <label>Place</label>
-                            <md-select ng-model="event_place_id" class="md-subhead">
+                            <md-select ng-disabled="loader.posting" ng-model="event_place_id" class="md-subhead">
                                 <md-option ng-repeat="place in places" value="<% place.id %>">
                                     <% place.name %>
                                 </md-option>
@@ -41,7 +41,7 @@
                         <div style="width: 10px"></div>
                         <md-input-container ng-show="event_type!='extra'" required>
                             <label>Group</label>
-                            <md-select ng-model="event_group_id" class="md-subhead">
+                            <md-select ng-disabled="loader.posting" ng-model="event_group_id" class="md-subhead">
                                 <md-option ng-repeat="group in groups" value="<% group.id %>">
                                     <% group.name %>
                                 </md-option>
@@ -54,7 +54,7 @@
                              ng-show="!checkStudent()">
                             <span style="margin-right: 10px">Responsible <% event_responsible_first_table.slice(0, -1); %></span>
                             <md-autocomplete
-                                    ng-disabled="true"
+                                    ng-disabled="true || loader.posting"
                                     md-selected-item="selectedResponsible1"
                                     md-search-text="searchText1"
                                     md-items="item1 in querySearch(searchText1, searchResponsiblePeople1)"
@@ -74,6 +74,7 @@
                              style="color: #b0cf79">
                             <span style="margin-right: 10px">Responsible mentor</span>
                             <md-autocomplete
+                                    ng-disabled="loader.posting"
                                     md-selected-item="selectedResponsible2"
                                     md-search-text="searchText2"
                                     md-items="item2 in querySearch(searchText2, searchResponsiblePeople2)"
@@ -102,7 +103,7 @@
                             <div layout="row" layout-align="center">
                                 <md-input-container required>
                                     <label>hour</label>
-                                    <md-select ng-model="startHour" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="startHour" class="md-subhead">
                                         <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
                                             <% hour.selectedHour %>
                                         </md-option>
@@ -110,7 +111,7 @@
                                 </md-input-container>
                                 <md-input-container require>
                                     <label>minute</label>
-                                    <md-select ng-model="startMinute" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="startMinute" class="md-subhead">
                                         <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
                                             <% minute.selectedMinute %>
                                         </md-option>
@@ -125,7 +126,7 @@
                             <div layout="row" layout-align="center">
                                 <md-input-container required>
                                     <label>hour</label>
-                                    <md-select ng-model="endHour" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="endHour" class="md-subhead">
                                         <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
                                             <% hour.selectedHour %>
                                         </md-option>
@@ -133,7 +134,7 @@
                                 </md-input-container>
                                 <md-input-container required>
                                     <label>minute</label>
-                                    <md-select ng-model="endMinute" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="endMinute" class="md-subhead">
                                         <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
                                             <% minute.selectedMinute %>
                                         </md-option>
@@ -146,10 +147,11 @@
             </div>
         </md-dialog-content>
         <md-dialog-actions ng-hide="loader.loading" layout="row" style="margin-top:0">
-            <md-button class="md-primary" ng-click="cancel()" style="margin-right:20px;">
+            <md-progress-circular class="small-progress" ng-show="loader.posting" md-mode="indeterminate"></md-progress-circular>
+            <md-button class="md-primary" ng-disabled="loader.posting" ng-click="cancel()" style="margin-right:20px;">
                 Cancel
             </md-button>
-            <md-button class="md-raised md-primary" ng-click="submit()" style="margin-right:20px;">
+            <md-button class="md-raised md-primary" ng-disabled="loader.posting" ng-click="submit()" style="margin-right:20px;">
                 Submit
             </md-button>
         </md-dialog-actions>

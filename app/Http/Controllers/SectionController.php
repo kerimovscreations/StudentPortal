@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Mentor;
+use App\Section;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-class MentorController extends Controller
+class SectionController extends Controller
 {
-
     public function getAll()
     {
-        $mentors = Mentor::all();
-        return json_encode($mentors);
+        $sections = Section::all();
+        return json_encode($sections);
     }
-    
 }

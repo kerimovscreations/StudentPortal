@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Event;
+use App\Group;
 use App\Mentor;
 use App\Notification;
+use App\Place;
 use App\Student;
 use Illuminate\Http\Request;
 
@@ -13,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
-
     public function store(Request $request)
     {
         $data = $request;
@@ -412,5 +413,24 @@ class EventController extends Controller
             }
         }
         $event->delete();
+    }
+
+    public function getWeekly($data1) {
+        $events = Event::where('date', '>=', $data1)->where('date', '<=', ($data1 + 6))->get();
+        return json_encode($events);
+    }
+    
+    public function getById($id) {
+        $event = Event::all()->find($id);
+        $event->group = Group::where('id', $event->group_id)->value('name');
+        $event->place = Place::where('id', $event->place_id)->value('name');
+        $event->owner = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
+        if (!is_null($event->responsible_first_id)) {
+            $event->responsible_first = DB::table($event->responsible_first_table)->where('id', $event->responsible_first_id)->value('name');
+        }
+        if (!is_null($event->responsible_second_id)) {
+            $event->responsible_second = DB::table($event->responsible_second_table)->where('id', $event->responsible_second_id)->value('name');
+        }
+        return json_encode($event);
     }
 }

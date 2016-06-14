@@ -3744,7 +3744,7 @@ portalApp.factory('Data', function () {
     return {
         EventId: null,
         AddEventType: null,
-        NotificationData: null,
+        NotificationId: null,
         PostId: null,
         PersonId: null,
         PersonTable: null
@@ -4046,10 +4046,12 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.announcement_post = '';
         $scope.selected = [];
         $scope.user_type = $cookies.get('userType');
+        $scope.user_id = $cookies.get('userId');
 
         //initialize loading
         $scope.loader = {
-            loading: true
+            loading: true,
+            posting: false
         };
 
         $http.get('/getAnnouncements').success(function (data) {
@@ -4067,7 +4069,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.post = function () {
             $scope.user_id = $cookies.get('userId');
-            $scope.loader.loading = true;
+            $scope.loader.posting = true;
             $http({
                 method: 'POST',
                 url: '/postAnnouncement',
@@ -4080,10 +4082,9 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 $scope.announcement_post = '';
                 $scope.selected = [];
                 $route.reload();
-                $scope.loader.loading = false;
                 $mdToast.show($mdToast.simple().textContent('Posted'));
             }).error(function (data) {
-                $scope.loader.loading = false;
+                $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
@@ -4110,7 +4111,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         };
 
         $scope.editPost = function (index) {
-            Data.PostId = index;
+            Data.PostId = $scope.announcements[index].id;
             var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
             $mdDialog.show({
                 controller: postEditDialogController,
@@ -4365,22 +4366,20 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         };
 
         function showSelectNotificationDialog(id) {
-            $http.get('/getNotification/' + id).success(function (data) {
-                Data.NotificationData = data;
+            Data.NotificationId = id;
 
-                $mdDialog.show({
-                    controller: notificationSelectDialogController,
-                    templateUrl: 'dialogs/notificationSelectDialog.html',
-                    parent: angular.element(document.body),
-                    clickOutsideToClose: true,
-                    fullscreen: useFullScreen
-                });
+            $mdDialog.show({
+                controller: notificationSelectDialogController,
+                templateUrl: 'dialogs/notificationSelectDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                fullscreen: useFullScreen
+            });
 
-                $scope.$watch(function () {
-                    return $mdMedia('xs') || $mdMedia('sm');
-                }, function (wantsFullScreen) {
-                    $scope.customFullscreen = (wantsFullScreen === true);
-                });
+            $scope.$watch(function () {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function (wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
             });
         }
 
@@ -4392,12 +4391,30 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
 // Announcement edit dialog controller
 
-function postEditDialogController($scope, $mdDialog, AnnouncementService, $mdToast, Data) {
-    var index = Data.PostId;
-    $scope.tempAnnouncement = AnnouncementService.announcements[index];
-    $scope.selected = $scope.tempAnnouncement.groups.slice();
-    $scope.edited_post = $scope.tempAnnouncement.text;
-    $scope.groups = AnnouncementService.groups;
+function postEditDialogController($scope, $mdDialog, $http, $cookies, $mdToast, Data, $route) {
+    var announcement_id = Data.PostId;
+    $scope.loader = {
+        loading: true,
+        posting: false
+    };
+
+    var user_id = $cookies.get('userId');
+
+    $scope.selected = [];
+
+    $http.get('/getAnnouncement/' + announcement_id).success(function (data) {
+        $scope.loader.loading=false;
+        $scope.tempAnnouncement = data;
+        $scope.tempAnnouncement.groups.forEach(function (group) {
+            $scope.selected.push(group.id);
+        });
+        $scope.edited_post = $scope.tempAnnouncement.body;
+    });
+
+    $http.get('/getGroups').success(function (data) {
+        $scope.groups = data;
+    });
+    
     $scope.hide = function () {
         $mdDialog.hide();
     };
@@ -4405,13 +4422,33 @@ function postEditDialogController($scope, $mdDialog, AnnouncementService, $mdToa
         $mdDialog.cancel();
     };
     $scope.update = function () {
-        var date = new Date();
-        AnnouncementService.announcements[index].date = date;
-        AnnouncementService.announcements[index].text = $scope.edited_post;
-        AnnouncementService.announcements[index].groups = $scope.selected;
-        $mdToast.show($mdToast.simple().textContent('Post edited'));
-        $mdDialog.hide();
+        $scope.loader.posting = true;
+        $http({
+            method: 'POST',
+            url: '/updateAnnouncement',
+            data: {
+                id: announcement_id,
+                body: $scope.edited_post,
+                owner_id: user_id,
+                group_list: $scope.selected
+            }
+        }).success(function (data) {
+            if (data == 2) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('You can\'t edit this post'));
+            }
+            else {
+                $mdDialog.hide();
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Post edited'));
+            }
+        }).error(function (data) {
+            $scope.loader.posting = false;
+            $mdToast.show($mdToast.simple().textContent('Error occured'));
+            console.log(data);
+        });
     };
+
     $scope.toggle = function (item, list) {
         var idx = list.indexOf(item);
         if (idx > -1) list.splice(idx, 1);
@@ -4586,7 +4623,8 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
 function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data) {
     //initializing progress loading
     $scope.loader = {
-        loading: true
+        loading: true,
+        posting: false
     };
     var id = Data.EventId;
     var user_id = $cookies.get('userId');
@@ -4728,7 +4766,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         }
 
         if (startTime.isBefore(endTime)) {
-            $scope.loader.loading = true;
+            $scope.loader.posting = true;
             $http({
                 method: 'POST',
                 url: '/updateEvent',
@@ -4755,6 +4793,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Event updated'));
             }).error(function (data) {
+                $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
@@ -4772,7 +4811,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
 
 function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $timeout, $q, $mdToast, Data) {
     $scope.loader = {
-        loading: false
+        posting: false
     };
     var type = Data.AddEventType;
     var user_id = $cookies.get('userId');
@@ -4874,7 +4913,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         }
 
         if (startTime.isBefore(endTime)) {
-            $scope.loader.loading = true;
+            $scope.loader.posting = true;
             $http({
                 method: 'POST',
                 url: '/postEvent',
@@ -4901,6 +4940,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
             }).error(function (data) {
+                $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })
@@ -4920,69 +4960,83 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
 
 function notificationSelectDialogController($scope, $route, $http, $cookies, $mdDialog, $mdToast, Data) {
     $scope.loader = {
-        loading: false
+        loading: true,
+        posting: false
     };
-    $scope.notification_data = Data.NotificationData;
-
-    $scope.notificationType = $scope.notification_data.type;
 
     $scope.user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
 
     $scope.editMode = false;
 
-    if ($scope.notificationType == 'announcement') {
-        $scope.notificationDate = $scope.notification_data.updated_at;
-        $scope.notificationTitle = 'Announcement';
-        $scope.notificationContent = $scope.notification_data.body;
-        $scope.notificationOwner = $scope.notification_data.owner.name;
-        $scope.notificationOwnerId = $scope.notification_data.owner.id;
-        $scope.notificationOwnerType = $scope.notification_data.owner_type;
-    }
-    else {
-        if ($scope.notificationType == 'lesson')
-            $scope.notificationTitle = 'Lesson';
-        else
-            $scope.notificationTitle = 'Mentor reservation';
+    var notification_id = Data.NotificationId;
 
-        $scope.notificationDate = $scope.notification_data.date;
-        $scope.notificationContent = $scope.notification_data.description;
-        $scope.notificationOwner = $scope.notification_data.owner[0].name;
-        $scope.notificationAnotherResponsible = $scope.notification_data.responsible_another;
-        //for teacher case
-        if ($scope.notification_data.receiver.length == 0)
-            $scope.notificationReceiverId = 0;
-        else
-            $scope.notificationReceiverId = $scope.notification_data.receiver[0].id;
-        $scope.notificationReceiverType = $scope.notification_data.receiver_type;
-        $scope.notificationOwnerType = $scope.notification_data.owner_type;
-        $scope.notificationStatus = $scope.notification_data.status;
-        $scope.notificationEventType = $scope.notification_data.type;
-        $scope.notificationStartTime = $scope.notification_data.start_time;
-        $scope.notificationEndTime = $scope.notification_data.end_time;
+    $http.get('/getNotification/' + notification_id).success(function (data) {
+        $scope.loader.loading = false;
 
-        var startTime = $scope.notificationStartTime.split(':');
-        var endTime = $scope.notificationEndTime.split(':');
+        $scope.notification_data = data;
 
-        $scope.startHour = startTime[0];
-        $scope.startMinute = startTime[1];
-        $scope.endHour = endTime[0];
-        $scope.endMinute = endTime[1];
-    }
+        $scope.notificationType = $scope.notification_data.type;
 
-    //edit icon checker
-    $scope.edit_check = (
-    !$scope.editMode
-    && $scope.notificationStatus == null
-    && $scope.notificationOwnerType != 'teacher'
-    && $scope.notificationReceiverType == $scope.user_type
-    && $scope.notificationReceiverId == $scope.user_id);
+        if ($scope.notificationType == 'announcement') {
+            $scope.notificationDate = $scope.notification_data.updated_at;
+            $scope.notificationTitle = 'Announcement';
+            $scope.notificationContent = $scope.notification_data.body;
+            $scope.notificationOwner = $scope.notification_data.owner.name;
+            $scope.notificationOwnerId = $scope.notification_data.owner.id;
+            $scope.notificationOwnerType = $scope.notification_data.owner_type;
+        }
+        else {
+            if ($scope.notificationType == 'lesson')
+                $scope.notificationTitle = 'Lesson';
+            else
+                $scope.notificationTitle = 'Mentor reservation';
+
+            $scope.notificationDate = $scope.notification_data.date;
+            $scope.notificationContent = $scope.notification_data.description;
+            $scope.notificationOwner = $scope.notification_data.owner[0].name;
+            $scope.notificationAnotherResponsible = $scope.notification_data.responsible_another;
+            //for teacher case
+            if ($scope.notification_data.receiver.length == 0)
+                $scope.notificationReceiverId = 0;
+            else
+                $scope.notificationReceiverId = $scope.notification_data.receiver[0].id;
+            $scope.notificationReceiverType = $scope.notification_data.receiver_type;
+            $scope.notificationOwnerType = $scope.notification_data.owner_type;
+            $scope.notificationStatus = $scope.notification_data.status;
+            $scope.notificationEventType = $scope.notification_data.type;
+            $scope.notificationStartTime = $scope.notification_data.start_time;
+            $scope.notificationEndTime = $scope.notification_data.end_time;
+
+            var startTime = $scope.notificationStartTime.split(':');
+            var endTime = $scope.notificationEndTime.split(':');
+
+            $scope.startHour = startTime[0];
+            $scope.startMinute = startTime[1];
+            $scope.endHour = endTime[0];
+            $scope.endMinute = endTime[1];
+        }
+
+        //edit icon checker
+        $scope.edit_check = (
+        !$scope.editMode
+        && $scope.notificationStatus == null
+        && $scope.notificationOwnerType != 'teacher'
+        && $scope.notificationReceiverType == $scope.user_type
+        && $scope.notificationReceiverId == $scope.user_id);
+
+    }).error(function (data) {
+        $mdToast.show($mdToast.simple().textContent('Error loading notification data'));
+        $mdDialog.hide();
+        $route.reload();
+        console.log(data);
+    });
 
     $scope.extra_respond_check = function () {
-        return !$scope.editMode 
-            && $scope.notificationStatus == null 
-            && $scope.notificationOwnerType != 'teacher' 
-            && $scope.notificationType == 'extra' 
+        return !$scope.editMode
+            && $scope.notificationStatus == null
+            && $scope.notificationOwnerType != 'teacher'
+            && $scope.notificationType == 'extra'
             && $scope.user_type != 'teacher'
     };
 
@@ -4998,7 +5052,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
     };
 
     $scope.eventAccept = function (bool) {
-        $scope.loader.loading = true;
+        $scope.loader.posting = true;
         if (bool) {
             $http({
                 method: 'POST',
@@ -5013,6 +5067,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Extra lesson request accepted'));
             }).error(function (data) {
+                $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             });
@@ -5046,10 +5101,15 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                             $mdDialog.hide();
                             $route.reload();
                             $mdToast.show($mdToast.simple().textContent('Your response rolled back'));
+                        }).error(function (data) {
+                            $scope.loader.posting = false;
+                            $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                            console.log(data);
                         });
                     }
                 });
             }).error(function (data) {
+                $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             });
@@ -5076,7 +5136,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
         if (startTime.isBefore(endTime)) {
-            $scope.loader.loading = true;
+            $scope.loader.posting = true;
             $http({
                 method: 'POST',
                 url: '/changeTimeEvent',
@@ -5091,6 +5151,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Extra lesson time changed changed'));
             }).error(function (data) {
+                $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             });
@@ -5124,7 +5185,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
     //get the data of selected person from server
     $http.get('/getDataUser/' + $scope.person_table + '/' + $scope.person_id).success(function (data) {
         $scope.person_data = data;
-        $scope.loader.loading = false;
+        //$scope.loader.loading = false;
     });
 
     //check the user has access to edit personal data

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Student;
+use App\Place;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-class StudentController extends Controller
+class PlaceController extends Controller
 {
     public function getAll() {
-        $students = Student::all();
-        return json_encode($students);
+        $places = Place::all();
+        return json_encode($places);
     }
 }

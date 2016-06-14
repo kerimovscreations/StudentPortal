@@ -13,8 +13,8 @@
             </div>
         </md-toolbar>
         <md-dialog-content>
-            <div class="md-dialog-content" style="min-height: 100px;">
-                <md-progress-circular ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
+            <div class="md-dialog-content" layout="column" layout-align="center none" style="min-height: 100px;">
+                <md-progress-circular class="center-with-margin" ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
                 <div ng-hide="loader.loading" layout="row" layout-align="center none">
                     <div>
                         <img class="md-avatar" ng-src="images/profile_icon.png"

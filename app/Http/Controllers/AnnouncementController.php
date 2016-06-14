@@ -10,28 +10,78 @@ use App\Http\Requests;
 
 class AnnouncementController extends Controller
 {
-    public function store(Request $request){
-        $announcement=new Announcement();
-        $announcement->body=$request['body'];
-        $announcement->owner_id=$request['owner_id'];
+    public function getAll()
+    {
+        $announcements = Announcement::all();
+        $groups = array();
+        $owner = array();
+        foreach ($announcements as $announcement) {
+            array_push($groups, $announcement->groups);
+            array_push($owner, $announcement->owner);
+        }
+        $results = array();
+        array_push($results, $announcements, $groups, $owner);
+        return json_encode($results);
+    }
+
+    public function getById($id)
+    {
+        $announcement = Announcement::find($id);
+
+        $announcement->groups;
+        $announcement->owner;
+
+        return json_encode($announcement);
+    }
+
+    public function update(Request $request)
+    {
+        $announcement = Announcement::find($request['id']);
+        $announcement->groups()->sync($request['group_list']);
+        if ($announcement->owner_id == $request['owner_id']) {
+            $announcement->update($request->all());
+        } else
+            return 2;
+
+        $notification = Notification::where([['source_table', 'announcements'], ['source_id', $request['id']]]);
+        $notification->delete();
+
+        foreach ($request['group_list'] as $group_id) {
+            $notification = new Notification();
+            $notification->text = 'Announcement has been edited: "'.mb_strimwidth($announcement->body, 0, 87, '..."');
+            $notification->receiver_id = $group_id;
+            $notification->receiver_table = 'groups';
+            $notification->source_id = $announcement->id;
+            $notification->source_table = 'announcements';
+            $notification->save();
+        }
+
+        return 1;
+    }
+
+    public function store(Request $request)
+    {
+        $announcement = new Announcement();
+        $announcement->body = $request['body'];
+        $announcement->owner_id = $request['owner_id'];
         $announcement->save();
         $announcement->groups()->sync($request['group_list']);
 
-        $result_mail=[];
+        $result_mail = [];
 
-        foreach($request['group_list'] as $group_id){
-            $notification=new Notification();
-            $notification->text='New announcement';
-            $notification->receiver_id=$group_id;
-            $notification->receiver_table='groups';
-            $notification->source_id=$announcement->id;
-            $notification->source_table='announcements';
+        foreach ($request['group_list'] as $group_id) {
+            $notification = new Notification();
+            $notification->text = 'New announcement: "'.mb_strimwidth($announcement->body, 0, 87, '..."');
+            $notification->receiver_id = $group_id;
+            $notification->receiver_table = 'groups';
+            $notification->source_id = $announcement->id;
+            $notification->source_table = 'announcements';
             $notification->save();
 
             $mail1 = [
                 'receiver_id' => $group_id,
                 'receiver_table' => 'groups',
-                'subject' => 'New Announcement',
+                'subject' => 'New Announcement: "'.mb_strimwidth($announcement->body, 0, 47, '..."'),
                 'source_id' => $announcement->id,
                 'source_table' => 'announcements',
                 'type' => 'group_announcement'
@@ -41,10 +91,11 @@ class AnnouncementController extends Controller
         EmailController::send($result_mail);
     }
 
-    public function delete(Request $request){
-        $announcement=Announcement::find($request['id']);
+    public function delete(Request $request)
+    {
+        $announcement = Announcement::find($request['id']);
         $announcement->delete();
-        $notification=Notification::where([['source_table','announcements'],['source_id',$request['id']]]);
+        $notification = Notification::where([['source_table', 'announcements'], ['source_id', $request['id']]]);
         $notification->delete();
     }
 }

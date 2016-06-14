@@ -4,7 +4,7 @@
             <div class="md-toolbar-tools">
                 <h3><% notificationTitle %></h3>
                 <span flex></span>
-                <md-button ng-if="edit_check" class="md-icon-button" ng-click="edit()">
+                <md-button ng-disabled="loader.posting" ng-if="edit_check" class="md-icon-button" ng-click="edit()">
                     <md-icon md-svg-src="svg/ic_edit_white_24px.svg" aria-label="Edit Event"></md-icon>
                 </md-button>
                 <md-button class="md-icon-button" ng-click="hide()">
@@ -13,14 +13,15 @@
             </div>
         </md-toolbar>
         <md-dialog-content>
-            <div class="md-dialog-content" style="min-height: 100px">
-                <md-progress-circular ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
+            <div class="md-dialog-content" layout="column" layout-align="center none" style="min-height: 100px">
+                <md-progress-circular class="center-with-margin" ng-show="loader.loading"
+                                      md-mode="indeterminate"></md-progress-circular>
                 <div ng-hide="loader.loading" layout="column" layout-align="center center">
                     <span ng-if="!editMode" class="md-subhead" style="color: #94cac2; margin-top: 10px">By <% notificationOwner %></span>
                 <span ng-if="!editMode && notificationEventType=='extra'" class="md-body-2"
                       style="color: #94cac2; margin-top: 10px">Your responsible person: <% notificationAnotherResponsible %></span>
                     <span class="md-headline" style="margin-top: 10px">Content</span>
-                    <span class="md-title"><% notificationContent %></span>
+                    <span class="md-title" style="text-align: center"><% notificationContent %></span>
                     <div layout="row" style="margin-top: 5px" ng-show="editMode">
                         <div layout="row" layout-align="center center" style="color: #88c8d0">
                             <h4 class="md-title">Start time: </h4>
@@ -28,7 +29,7 @@
                             <div layout="row" layout-align="center">
                                 <md-input-container>
                                     <label>hour</label>
-                                    <md-select ng-model="startHour" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="startHour" class="md-subhead">
                                         <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
                                             <% hour.selectedHour %>
                                         </md-option>
@@ -36,7 +37,7 @@
                                 </md-input-container>
                                 <md-input-container>
                                     <label>minute</label>
-                                    <md-select ng-model="startMinute" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="startMinute" class="md-subhead">
                                         <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
                                             <% minute.selectedMinute %>
                                         </md-option>
@@ -51,7 +52,7 @@
                             <div layout="row" layout-align="center">
                                 <md-input-container>
                                     <label>hour</label>
-                                    <md-select ng-model="endHour" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="endHour" class="md-subhead">
                                         <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
                                             <% hour.selectedHour %>
                                         </md-option>
@@ -59,7 +60,7 @@
                                 </md-input-container>
                                 <md-input-container>
                                     <label>minute</label>
-                                    <md-select ng-model="endMinute" class="md-subhead">
+                                    <md-select ng-disabled="loader.posting" ng-model="endMinute" class="md-subhead">
                                         <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
                                             <% minute.selectedMinute %>
                                         </md-option>
@@ -77,27 +78,32 @@
                 </div>
             </div>
         </md-dialog-content>
-        <md-dialog-actions ng-hide="loader.loading" layout="row">
+        <md-dialog-actions ng-hide="loader.loading" ng-hide="loader.loading" layout="row">
+            <md-progress-circular class="small-progress" ng-show="loader.posting"
+                                  md-mode="indeterminate"></md-progress-circular>
             <!--buttons for announcement-->
-            <md-button ng-if="notificationType!='extra' || notificationStatus==0" class="md-primary"
+            <md-button ng-disabled="loader.posting" ng-if="notificationType!='extra' || notificationStatus==0"
+                       class="md-primary"
                        ng-click="hide()"
                        style="margin-right:20px;">
                 Ok
             </md-button>
             <!--buttons for extra lesson -->
-            <md-button ng-if="extra_respond_check()" class="md-primary"
+            <md-button ng-disabled="loader.posting" ng-if="extra_respond_check()" class="md-primary"
                        ng-click="eventAccept(false)" style="margin-right:20px;">
                 Decline
             </md-button>
-            <md-button ng-if="extra_respond_check()"
+            <md-button ng-disabled="loader.posting" ng-if="extra_respond_check()"
                        class="md-raised md-primary" ng-click="eventAccept(true)" style="margin-right:20px;">
                 Accept
             </md-button>
             <!--buttons for edit mode -->
-            <md-button ng-if="editMode" class="md-primary" ng-click="cancel()" style="margin-right:20px;">
+            <md-button ng-disabled="loader.posting" ng-if="editMode" class="md-primary" ng-click="cancel()"
+                       style="margin-right:20px;">
                 Cancel
             </md-button>
-            <md-button ng-if="editMode" class="md-raised md-primary" ng-click="update()" style="margin-right:20px;">
+            <md-button ng-disabled="loader.posting" ng-if="editMode" class="md-raised md-primary" ng-click="update()"
+                       style="margin-right:20px;">
                 Update
             </md-button>
         </md-dialog-actions>

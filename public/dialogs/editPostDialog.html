@@ -10,19 +10,23 @@
                     </md-button>
                 </div>
             </md-toolbar>
-            <md-dialog-content>
-                <div class="md-dialog-content" layout="column" layout-align="center center" >
+            <md-dialog-content style="min-height: 100px" layout="column" layout-align="center none">
+                <md-progress-circular class="center-with-margin" ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
+                <div ng-hide="loader.loading" class="md-dialog-content" layout="column" layout-align="center center">
                     <form>
                         <md-input-container class="md-block" style="margin-bottom: 0; width: 100%">
                             <label>Edit announcement</label>
-                            <textarea ng-model="::edited_post" md-maxlength="300" md-select-on-focus></textarea>
+                            <textarea ng-disabled="loader.posting" ng-model="edited_post" md-maxlength="300" md-select-on-focus></textarea>
                         </md-input-container>
                         <div layout="row" layout-align="end center">
                             <div>
                                 <p style="font-size: 16px; color: #585858;">Edit groups to notify</p>
                                 <div layout="row" layout-wrap>
-                                    <md-checkbox ng-repeat="group in groups" ng-checked="exists(group, selected)" ng-click="toggle(group, selected)">
-                                        <% group %>
+                                    <md-checkbox ng-disabled="loader.posting"
+                                                 ng-repeat="group in groups track by $index"
+                                                 ng-checked="exists(group.id, selected)"
+                                                 ng-click="toggle(group.id, selected)">
+                                        <% group.name %>
                                     </md-checkbox>
                                 </div>
                             </div>
@@ -31,11 +35,12 @@
                     </form>
                 </div>
             </md-dialog-content>
-            <md-dialog-actions layout="row">
-                <md-button ng-click="cancel()" >
+            <md-dialog-actions ng-hide="loader.loading"  layout="row">
+                <md-progress-circular class="small-progress" ng-show="loader.posting" md-mode="indeterminate"></md-progress-circular>
+                <md-button ng-disabled="loader.posting" ng-click="cancel()">
                     Cancel
                 </md-button>
-                <md-button class="md-primary" ng-click="update()" style="margin-right:20px;">
+                <md-button ng-disabled="loader.posting" class="md-primary" ng-click="update()" style="margin-right:20px;">
                     Update
                 </md-button>
             </md-dialog-actions>

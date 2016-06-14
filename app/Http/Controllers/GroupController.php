@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Student;
+use App\Group;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-class StudentController extends Controller
+class GroupController extends Controller
 {
     public function getAll() {
-        $students = Student::all();
-        return json_encode($students);
+        $groups = Group::all();
+        return json_encode($groups);
     }
 }
