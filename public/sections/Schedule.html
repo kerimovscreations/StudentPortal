@@ -6,112 +6,161 @@
         <div layout="column" class="md-padding">
             <md-calendar ng-model="dt" class="fixed-calendar"></md-calendar>
             <md-button class="md-raised md-accent" ng-click="today()" style="margin-top: 20px">Today</md-button>
+
+            <!-- Mentors work schedule -->
+            <div>
+                <md-list class="md-dense" flex>
+                    <md-subheader class="md-no-sticky">Mentors work schedule</md-subheader>
+                    <md-list-item class="md-3-line" ng-repeat="mentor in mentors">
+                        <img ng-src="images/profile_icon.png" class="md-avatar" alt="<% mentor.name %>"/>
+                        <div class="md-list-item-text" layout="column">
+                            <h3><% mentor.name %></h3>
+                            <p>Work days: <% mentor.work_days%></p>
+                            <p>Work hours <% mentor.work_start_time %> - <% mentor.work_end_time %></p>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </div>
         </div>
 
         <!--Schedule of week -->
+        <div layout="column">
+            <div layout="row" class="md-padding" style="min-height: 300px">
 
-        <div flex layout="row" class="md-padding" >
+                <!--Every column stands for one day -->
 
-            <!--Every column stands for one day -->
+                <div flex layout="column">
+                    <label class="schedule-day-label"><% displayDate(dt) %></label>
+                    <div flex>
+                        <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
+                             ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == parseDate(dt)"
+                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.id)">
+                            <h5><% event.title %></h5>
+                            <span><% event.start_time %>-<% event.end_time %></span>
+                        </div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div flex layout="column">
+                    <label class="schedule-day-label"><% displayMoment(temp1) %></label>
+                    <div flex>
+                        <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
+                             ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp1.format('MM-DD-YYYY')"
+                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.id)">
+                            <h5><% event.title %></h5>
+                            <span><% event.start_time %>-<% event.end_time %></span>
+                        </div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div flex layout="column">
+                    <label class="schedule-day-label"><% displayMoment(temp2) %></label>
+                    <div flex>
+                        <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
+                             ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp2.format('MM-DD-YYYY')"
+                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.id)">
+                            <h5><% event.title %></h5>
+                            <span><% event.start_time %>-<% event.end_time %></span>
+                        </div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div flex layout="column">
+                    <label class="schedule-day-label"><% displayMoment(temp3) %></label>
+                    <div flex>
+                        <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
+                             ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp3.format('MM-DD-YYYY')"
+                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.id)">
+                            <h5><% event.title %></h5>
+                            <span><% event.start_time %>-<% event.end_time %></span>
+                        </div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div flex layout="column">
+                    <label class="schedule-day-label"><% displayMoment(temp4) %></label>
+                    <div flex>
+                        <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
+                             ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp4.format('MM-DD-YYYY')"
+                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.id)">
+                            <h5><% event.title %></h5>
+                            <span><% event.start_time %>-<% event.end_time %></span>
+                        </div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div flex layout="column">
+                    <label class="schedule-day-label"><% displayMoment(temp5) %></label>
+                    <div flex>
+                        <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
+                             ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp5.format('MM-DD-YYYY')"
+                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.id)">
+                            <h5><% event.title %></h5>
+                            <span><% event.start_time %>-<% event.end_time %></span>
+                        </div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div flex layout="column">
+                    <label class="schedule-day-label"><% displayMoment(temp6) %></label>
+                    <div flex>
+                        <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
+                             ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp6.format('MM-DD-YYYY')"
+                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.id)">
+                            <h5><% event.title %></h5>
+                            <span><% event.start_time %>-<% event.end_time %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <div flex layout="column">
-                <label class="schedule-day-label"><% displayDate(dt) %></label>
-                <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'" ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == parseDate(dt)" ng-class="{'extra': event.type=='extra', 'wait': event.status==null}" ng-click="eventSelect(event.id)">
-                        <h5><% event.title %></h5>
-                        <span><% event.start_time %>-<% event.end_time %></span>
-                    </div>
-                </div>
+            <div layout="row" layout-align="end center">
+                <div class="schedule-agenda extra">Extra</div>
+                <div class="schedule-agenda">Lesson</div>
+                <div style="width: 20px"></div>
             </div>
-            <md-divider></md-divider>
-            <div flex layout="column">
-                <label class="schedule-day-label"><% displayMoment(temp1) %></label>
-                <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'" ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp1.format('MM-DD-YYYY')" ng-class="{'extra': event.type=='extra', 'wait': event.status==null}" ng-click="eventSelect(event.id)">
-                        <h5><% event.title %></h5>
-                        <span><% event.start_time %>-<% event.end_time %></span>
-                    </div>
-                </div>
+
+            <!--Event add float button -->
+
+            <div ng-if="user_type!='mentor'" class="lock-size" layout="row" layout-align="end" style="margin: 20px">
+                <md-fab-speed-dial md-open="isOpen" md-direction="left"
+                                   class="md-scale">
+                    <md-fab-trigger>
+                        <md-button aria-label="add event" class="md-fab md-warn">
+                            <md-tooltip md-direction="top" md-visible="tooltipVisible">Add event</md-tooltip>
+                            <md-icon md-svg-src="svg/ic_add_white_36px.svg" aria-label="add event"></md-icon>
+                        </md-button>
+                    </md-fab-trigger>
+                    <md-fab-actions>
+                            <md-button ng-if="user_type!='student'" aria-label="lesson" class="md-fab md-raised md-mini"
+                                       ng-click="eventAdd('lesson')">
+                                <md-tooltip md-direction="top" md-visible="tooltipVisible"
+                                            md-autohide="false">
+                                    Lesson
+                                </md-tooltip>
+                                <md-icon md-svg-src="svg/ic_assignment_white_36px.svg" aria-label="lesson add"></md-icon>
+                            </md-button>
+                            <md-button aria-label="extra" class="md-fab md-raised md-mini"
+                                       ng-click="eventAdd('extra')">
+                                <md-tooltip md-direction="top" md-visible="tooltipVisible"
+                                            md-autohide="false">
+                                    Mentor reservation
+                                </md-tooltip>
+                                <md-icon md-svg-src="svg/ic_people_white_36px.svg" aria-label="mentor reservation"></md-icon>
+                            </md-button>
+                    </md-fab-actions>
+                </md-fab-speed-dial>
             </div>
-            <md-divider></md-divider>
-            <div flex layout="column">
-                <label class="schedule-day-label"><% displayMoment(temp2) %></label>
-                <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'" ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp2.format('MM-DD-YYYY')" ng-class="{'extra': event.type=='extra', 'wait': event.status==null}" ng-click="eventSelect(event.id)">
-                        <h5><% event.title %></h5>
-                        <span><% event.start_time %>-<% event.end_time %></span>
-                    </div>
-                </div>
-            </div>
-            <md-divider></md-divider>
-            <div flex layout="column">
-                <label class="schedule-day-label"><% displayMoment(temp3) %></label>
-                <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'" ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp3.format('MM-DD-YYYY')" ng-class="{'extra': event.type=='extra', 'wait': event.status==null}" ng-click="eventSelect(event.id)">
-                        <h5><% event.title %></h5>
-                        <span><% event.start_time %>-<% event.end_time %></span>
-                    </div>
-                </div>
-            </div>
-            <md-divider></md-divider>
-            <div flex layout="column">
-                <label class="schedule-day-label"><% displayMoment(temp4) %></label>
-                <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'" ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp4.format('MM-DD-YYYY')" ng-class="{'extra': event.type=='extra', 'wait': event.status==null}" ng-click="eventSelect(event.id)">
-                        <h5><% event.title %></h5>
-                        <span><% event.start_time %>-<% event.end_time %></span>
-                    </div>
-                </div>
-            </div>
-            <md-divider></md-divider>
-            <div flex layout="column">
-                <label class="schedule-day-label"><% displayMoment(temp5) %></label>
-                <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'" ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp5.format('MM-DD-YYYY')" ng-class="{'extra': event.type=='extra', 'wait': event.status==null}" ng-click="eventSelect(event.id)">
-                        <h5><% event.title %></h5>
-                        <span><% event.start_time %>-<% event.end_time %></span>
-                    </div>
-                </div>
-            </div>
-            <md-divider></md-divider>
-            <div flex layout="column">
-                <label class="schedule-day-label"><% displayMoment(temp6) %></label>
-                <div flex>
-                    <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'" ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp6.format('MM-DD-YYYY')" ng-class="{'extra': event.type=='extra', 'wait': event.status==null}" ng-click="eventSelect(event.id)">
-                        <h5><% event.title %></h5>
-                        <span><% event.start_time %>-<% event.end_time %></span>
-                    </div>
-                </div>
-            </div>
+
+
+
         </div>
     </div>
-    <div layout="row" layout-align="end center">
-        <div class="schedule-agenda extra">Extra</div>
-        <div class="schedule-agenda">Lesson</div>
-        <div style="width: 20px"></div>
-    </div>
-    <div ng-if="user_type!='mentor'" style="height: 100px"></div> <!--Empty space for dividing event add button and schedule-->
-
-    <!--Event add float button -->
-
-    <md-fab-toolbar ng-if="user_type!='mentor'" md-open="isOpen" count="fab_btn.count" md-direction="left" style=" width: 100%; position: absolute; bottom: 0; right: 0">
-        <!--Main button-->
-        <md-fab-trigger class="align-with-text" style="margin-right: 20px">
-            <md-button aria-label="add" class="md-fab md-primary">
-                <md-icon md-svg-src="svg/ic_add_white_36px.svg"></md-icon>
-            </md-button>
-        </md-fab-trigger>
-        <md-toolbar>
-            <md-fab-actions class="md-toolbar-tools">
-                <!--Event add button-->
-                <md-button ng-if="user_type=='teacher'" aria-label="lesson" class="md-icon-button" ng-click="eventAdd('lesson')">
-                    <md-icon md-svg-src="svg/ic_assignment_white_36px.svg"></md-icon>
-                </md-button>
-                <!--Meeting add button-->
-                <md-button ng-if="user_type!='mentor'" aria-label="extra" class="md-icon-button" ng-click="eventAdd('extra')">
-                    <md-icon md-svg-src="svg/ic_people_white_36px.svg"></md-icon>
-                </md-button>
-            </md-fab-actions>
-        </md-toolbar>
-    </md-fab-toolbar>
 </md-content>

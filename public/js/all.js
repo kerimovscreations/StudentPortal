@@ -4183,13 +4183,19 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         }
     })
-    .controller('ScheduleController', function ($scope, $rootScope, $http, $cookies, $mdDialog, $mdMedia, Data) {
+    .controller('ScheduleController', function ($scope, $rootScope, $http, $cookies, $mdDialog, $timeout, $mdMedia, Data) {
         $rootScope.current_section = 'Schedule';
         $scope.Data = Data;
         $scope.user_type = $cookies.get('userType');
         $scope.events = [];
 
         $scope.dt = new Date();
+
+        $scope.isOpen= false;
+
+        $http.get('/getMentors').success(function (data) {
+            $scope.mentors = data;
+        });
 
         $scope.today = function () {
             $scope.dt = new Date();
@@ -4207,13 +4213,6 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             $scope.temp5 = moment($scope.dt).add(5, 'd');
             $scope.temp6 = moment($scope.dt).add(6, 'd');
         });
-
-        //FAB button to add new event
-        $scope.isOpen = false;
-        $scope.fab_btn = {
-            isOpen: false,
-            count: 0
-        };
 
         $scope.displayDate = function (elem) {
             return moment(elem).format("dddd, MMMM DD YYYY");
@@ -4391,13 +4390,13 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
 // Announcement edit dialog controller
 
-function postEditDialogController($scope, $mdDialog, $http, $cookies, $mdToast, Data, $route) {
+function postEditDialogController($scope, $mdDialog, $http, $mdToast, Data, $route) {
     var announcement_id = Data.PostId;
     $scope.loader = {
         loading: true,
         posting: false
     };
-    
+
     $scope.selected = [];
 
     $http.get('/getAnnouncement/' + announcement_id).success(function (data) {
