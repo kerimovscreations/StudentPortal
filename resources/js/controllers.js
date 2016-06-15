@@ -510,13 +510,11 @@ function postEditDialogController($scope, $mdDialog, $http, $cookies, $mdToast, 
         loading: true,
         posting: false
     };
-
-    var user_id = $cookies.get('userId');
-
+    
     $scope.selected = [];
 
     $http.get('/getAnnouncement/' + announcement_id).success(function (data) {
-        $scope.loader.loading=false;
+        $scope.loader.loading = false;
         $scope.tempAnnouncement = data;
         $scope.tempAnnouncement.groups.forEach(function (group) {
             $scope.selected.push(group.id);
@@ -527,7 +525,7 @@ function postEditDialogController($scope, $mdDialog, $http, $cookies, $mdToast, 
     $http.get('/getGroups').success(function (data) {
         $scope.groups = data;
     });
-    
+
     $scope.hide = function () {
         $mdDialog.hide();
     };
@@ -542,19 +540,12 @@ function postEditDialogController($scope, $mdDialog, $http, $cookies, $mdToast, 
             data: {
                 id: announcement_id,
                 body: $scope.edited_post,
-                owner_id: user_id,
                 group_list: $scope.selected
             }
-        }).success(function (data) {
-            if (data == 2) {
-                $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('You can\'t edit this post'));
-            }
-            else {
-                $mdDialog.hide();
-                $route.reload();
-                $mdToast.show($mdToast.simple().textContent('Post edited'));
-            }
+        }).success(function () {
+            $mdDialog.hide();
+            $route.reload();
+            $mdToast.show($mdToast.simple().textContent('Post edited'));
         }).error(function (data) {
             $scope.loader.posting = false;
             $mdToast.show($mdToast.simple().textContent('Error occured'));
@@ -1298,7 +1289,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
     //get the data of selected person from server
     $http.get('/getDataUser/' + $scope.person_table + '/' + $scope.person_id).success(function (data) {
         $scope.person_data = data;
-        //$scope.loader.loading = false;
+        $scope.loader.loading = false;
     });
 
     //check the user has access to edit personal data
@@ -1343,7 +1334,8 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
 function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast, $route, Data) {
     //progress circular initialization
     $scope.loader = {
-        loading: true
+        loading: true,
+        posting: false
     };
     //get the edited person data from factory
     $scope.edited_person_id = Data.PersonId;
@@ -1412,7 +1404,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
 
         //data posting function
         function postData() {
-            $scope.loader.loading = true;
+            $scope.loader.posting = true;
             $http({
                 method: 'POST',
                 url: '/updateUser',
@@ -1434,6 +1426,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Personal data updated'));
             }).error(function (data) {
+                $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
                 console.log(data);
             })

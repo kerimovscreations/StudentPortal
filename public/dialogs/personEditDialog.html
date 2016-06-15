@@ -20,7 +20,7 @@
                     <div layout="column">
                         <md-input-container class="reduce-margin">
                             <label>Name</label>
-                        <textarea ng-disabled="loader.loading" required class="md-title" ng-model="edited_person_data.name"
+                        <textarea ng-disabled="loader.posting" required class="md-title" ng-model="edited_person_data.name"
                                   minlength="10" maxlength="100" name="edited_person_name"></textarea>
                             <div ng-messages="edit_personal_info_form.edited_person_name.$error" role="alert">
                                 <div ng-message-exp="['required', 'minlength', 'maxlength']">
@@ -30,7 +30,7 @@
                         </md-input-container>
                         <md-input-container class="reduce-margin">
                             <label>Email</label>
-                            <input ng-disabled="loader.loading" required type="email" ng-model="edited_person_data.email"
+                            <input ng-disabled="loader.posting" required type="email" ng-model="edited_person_data.email"
                                    minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" name="edited_person_email"/>
                             <div ng-messages="edit_personal_info_form.edited_person_email.$error" role="alert">
                                 <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
@@ -41,7 +41,7 @@
                         <div ng-show="edited_person_table=='students'" layout="row">
                             <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
                                 <label>Phone Number</label>
-                                <input ng-disabled="loader.loading"  type="text" name="edited_person_phone" ng-model="edited_person_data.phone"
+                                <input ng-disabled="loader.posting"  type="text" name="edited_person_phone" ng-model="edited_person_data.phone"
                                        placeholder="+994123456789" required>
                                 <div ng-messages="edit_personal_info_form.edited_person_phone" role="alert">
                                     <div ng-message="required">Required field!</div>
@@ -49,7 +49,7 @@
                             </md-input-container>
                             <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
                                 <label>Birth Date</label>
-                                <input ng-disabled="loader.loading" type="text" name="edited_person_birth" ng-model="edited_person_data.birthDate"
+                                <input ng-disabled="loader.posting" type="text" name="edited_person_birth" ng-model="edited_person_data.birthDate"
                                        placeholder="MM-DD-YYYY" required maxlength="10">
                                 <div ng-messages="edit_personal_info_form.edited_person_birth" role="alert">
                                     <div ng-message="required">Required field!</div>
@@ -57,7 +57,7 @@
                             </md-input-container>
                             <md-input-container style="margin-top: 10px">
                                 <label>Group</label>
-                                <md-select ng-disabled="loader.loading" ng-model="edited_person_data.group_id" ng-disabled="user_type!='teacher'">
+                                <md-select ng-disabled="loader.posting" ng-model="edited_person_data.group_id" ng-disabled="user_type!='teacher'">
                                     <md-option ng-repeat="group in groups" value="<% group.id %>">
                                         <% group.name %>
                                     </md-option>
@@ -71,7 +71,7 @@
                                 <div layout="row" layout-align="center">
                                     <md-input-container required>
                                         <label>hour</label>
-                                        <md-select ng-disabled="loader.loading" ng-model="startHour" class="md-subhead">
+                                        <md-select ng-disabled="loader.posting" ng-model="startHour" class="md-subhead">
                                             <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
                                                 <% hour.selectedHour %>
                                             </md-option>
@@ -79,7 +79,7 @@
                                     </md-input-container>
                                     <md-input-container require>
                                         <label>minute</label>
-                                        <md-select ng-disabled="loader.loading" ng-model="startMinute" class="md-subhead">
+                                        <md-select ng-disabled="loader.posting" ng-model="startMinute" class="md-subhead">
                                             <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
                                                 <% minute.selectedMinute %>
                                             </md-option>
@@ -94,7 +94,7 @@
                                 <div layout="row" layout-align="center">
                                     <md-input-container required>
                                         <label>hour</label>
-                                        <md-select ng-disabled="loader.loading" ng-model="endHour" class="md-subhead">
+                                        <md-select ng-disabled="loader.posting" ng-model="endHour" class="md-subhead">
                                             <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
                                                 <% hour.selectedHour %>
                                             </md-option>
@@ -102,7 +102,7 @@
                                     </md-input-container>
                                     <md-input-container required>
                                         <label>minute</label>
-                                        <md-select ng-disabled="loader.loading" ng-model="endMinute" class="md-subhead">
+                                        <md-select ng-disabled="loader.posting" ng-model="endMinute" class="md-subhead">
                                             <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
                                                 <% minute.selectedMinute %>
                                             </md-option>
@@ -113,7 +113,7 @@
                             <div style="width: 20px"></div>
                             <md-input-container class="reduce-margin">
                                 <label>Work days</label>
-                                <md-select ng-disabled="loader.loading" ng-model="selected_days" multiple>
+                                <md-select ng-disabled="loader.posting" ng-model="selected_days" multiple>
                                     <md-optgroup label="Week Days">
                                         <md-option ng-value="day" ng-repeat="day in week_days"><% day %></md-option>
                                     </md-optgroup>
@@ -128,12 +128,12 @@
                 </div>
             </div>
         </md-dialog-content>
-        <md-dialog-actions layout="row">
-            <md-progress-circular class="small-progress" ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
-            <md-button ng-disabled="loader.loading" ng-click="hide()">
+        <md-dialog-actions ng-hide="loader.loading" layout="row">
+            <md-progress-circular class="small-progress" ng-show="loader.posting" md-mode="indeterminate"></md-progress-circular>
+            <md-button ng-disabled="loader.posting" ng-click="hide()">
                 Cancel
             </md-button>
-            <md-button ng-disabled="loader.loading" class="md-raised md-primary" ng-click="update()" style="margin-right:20px;">
+            <md-button ng-disabled="loader.posting" class="md-raised md-primary" ng-click="update()" style="margin-right:20px;">
                 Update
             </md-button>
         </md-dialog-actions>

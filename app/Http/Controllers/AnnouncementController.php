@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Gate;
 use App\Announcement;
 use App\Notification;
+use App\Teacher;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class AnnouncementController extends Controller
 {
@@ -37,18 +40,20 @@ class AnnouncementController extends Controller
     public function update(Request $request)
     {
         $announcement = Announcement::find($request['id']);
+        $id = Auth::guard('teacher')->user()->id;
+        $teacher = Teacher::findOrFail($id);
+
+        $this->authorizeForUser($teacher, $announcement);
+        
         $announcement->groups()->sync($request['group_list']);
-        if ($announcement->owner_id == $request['owner_id']) {
-            $announcement->update($request->all());
-        } else
-            return 2;
+        $announcement->update($request->all());
 
         $notification = Notification::where([['source_table', 'announcements'], ['source_id', $request['id']]]);
         $notification->delete();
 
         foreach ($request['group_list'] as $group_id) {
             $notification = new Notification();
-            $notification->text = 'Announcement has been edited: "'.mb_strimwidth($announcement->body, 0, 87, '..."');
+            $notification->text = 'Announcement has been edited: "' . mb_strimwidth($announcement->body, 0, 87, '..."');
             $notification->receiver_id = $group_id;
             $notification->receiver_table = 'groups';
             $notification->source_id = $announcement->id;
@@ -71,7 +76,7 @@ class AnnouncementController extends Controller
 
         foreach ($request['group_list'] as $group_id) {
             $notification = new Notification();
-            $notification->text = 'New announcement: "'.mb_strimwidth($announcement->body, 0, 87, '..."');
+            $notification->text = 'New announcement: "' . mb_strimwidth($announcement->body, 0, 87, '..."');
             $notification->receiver_id = $group_id;
             $notification->receiver_table = 'groups';
             $notification->source_id = $announcement->id;
@@ -81,7 +86,7 @@ class AnnouncementController extends Controller
             $mail1 = [
                 'receiver_id' => $group_id,
                 'receiver_table' => 'groups',
-                'subject' => 'New Announcement: "'.mb_strimwidth($announcement->body, 0, 47, '..."'),
+                'subject' => 'New Announcement: "' . mb_strimwidth($announcement->body, 0, 47, '..."'),
                 'source_id' => $announcement->id,
                 'source_table' => 'announcements',
                 'type' => 'group_announcement'
@@ -94,6 +99,12 @@ class AnnouncementController extends Controller
     public function delete(Request $request)
     {
         $announcement = Announcement::find($request['id']);
+
+        $id = Auth::guard('teacher')->user()->id;
+        $teacher = Teacher::findOrFail($id);
+
+        $this->authorizeForUser($teacher, $announcement);
+        
         $announcement->delete();
         $notification = Notification::where([['source_table', 'announcements'], ['source_id', $request['id']]]);
         $notification->delete();
