@@ -28,7 +28,8 @@
                 <!--profile icon and drop down menu-->
 
                 <div style="position: relative">
-                    <div id="toggleDropDown" style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%; overflow: hidden">
+                    <div id="toggleDropDown"
+                         style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%; overflow: hidden">
                         <img ng-src="images/profile_icon.png" style="width:100%; height: 100%;"/>
                     </div>
                     <div tabindex="-1" id="dropDown" class="md-whiteframe-2dp" ng-blur="hideDropDown()">
@@ -40,7 +41,6 @@
                                      style="width:100px; height: 100px;"/>
                                 <div class="change-profile-image-text">Change</div>
                             </div>
-
                             <div layout="column" style="margin: 10px 15px;" layout-align="start start">
                                 <h4 style="margin: 0"><% user_name %></h4>
                                 <span style="margin-top: 0px; font-size: 12px; color:#909090"><% user_email %></span>
@@ -52,7 +52,7 @@
                         </div>
                         <md-divider></md-divider>
                         <div layout="row" style=" padding: 5px; background-color: #F0F0F0" layout-align="end">
-                            <md-button style="color: #A6A6A6"><a href="/<% user_type %>/logout">Sign Out</a></md-button>
+                            <md-button style="color: #A6A6A6"><a href="/logout">Sign Out</a></md-button>
                         </div>
                     </div>
                 </div>

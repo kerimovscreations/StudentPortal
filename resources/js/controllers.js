@@ -9,8 +9,7 @@ registerApp.controller('RegisterController', function ($scope) {
     $scope.birthDateFormatted = moment($scope.user.birthDate).format('MM-DD-YYYY')
 });
 
-loginApp.controller('LoginController', function ($scope) {
-    $scope.select_user_type = 'student';
+loginApp.controller('LoginController', function () {
 });
 
 portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookies, $mdDialog, $mdMedia, $timeout, $mdSidenav, $http, $location, Data) {

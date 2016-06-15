@@ -113,7 +113,6 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         Route::post('/changeStatusEvent', 'EventController@changeStatus');
         Route::post('/changeTimeEvent', 'EventController@changeTime');
 
-
         /**
          * Set the access to post announcement only for teachers
          */
@@ -133,28 +132,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         else
             return view('welcome');
     });
-
-    /**
-     * login, logout and registration for students
-     */
-    Route::post('/student/login', 'StudentAuth\AuthController@login');
-    Route::post('/student/register', 'StudentAuth\AuthController@register');
-    Route::get('/student/logout', 'StudentAuth\AuthController@logout');
-
-    /**
-     * login, logout and registration for teachers
-     */
-    Route::post('/teacher/login', 'TeacherAuth\AuthController@login');
-    Route::post('/teacher/register', 'TeacherAuth\AuthController@register');
-    Route::get('/teacher/logout', 'TeacherAuth\AuthController@logout');
-
-
-    /**
-     * login, logout and registration for mentor
-     */
-    Route::post('/mentor/login', 'MentorAuth\AuthController@login');
-    Route::post('/mentor/register', 'MentorAuth\AuthController@register');
-    Route::get('/mentor/logout', 'MentorAuth\AuthController@logout');
+    
     /**
      * Login/Register routes generation
      */
