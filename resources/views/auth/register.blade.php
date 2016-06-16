@@ -6,11 +6,10 @@
     <div ng-controller="RegisterController" layout="column" layout-align="center center" layout-fill ng-cloak
          style="height: auto">
         <md-card style="max-width: 400px" ng-cloak>
-            <form name='userForm' role="form" method="POST" action="<%'/'+ select_user_type +'/register'%>">
+            <form name='userForm' role="form" method="POST" action="/register">
                 <md-card-title>
                     <md-card-title-text layout="column" layout-align="center center">
-                            <span class="md-headline" style="color: #2E4454">Registration for <span
-                                        style="color: #1da8bc;"><% select_user_type %></span></span>
+                            <span class="md-headline" style="color: #2E4454">Registration</span>
                     </md-card-title-text>
                 </md-card-title>
                 <md-card-content layout="column" layout-align="center">
@@ -63,7 +62,7 @@
                             </div>
                         </md-input-container>
                     </div>
-                    <div layout-gt-sm="row" ng-if="select_user_type=='student'">
+                    <div layout-gt-sm="row">
                         <md-input-container class="md-block" flex-gt-sm style="margin: 30px 0">
                             <label>Phone Number</label>
                             <input type="text" name="phone" ng-model="user.number"
@@ -81,14 +80,9 @@
                             <input type="hidden" name="birthDate" ng-value="birthDateFormatted">
                         </md-input-container>
                     </div>
-                    <md-radio-group ng-model="select_user_type" layout="row" layout-align="center">
-                        <md-radio-button value="student">Student</md-radio-button>
-                        <md-radio-button value="teacher"> Teacher</md-radio-button>
-                        <md-radio-button value="mentor">Mentor</md-radio-button>
-                    </md-radio-group>
                 </md-card-content>
                 <md-card-actions layout="row" layout-align="center none" style="padding: 5px;">
-                    <md-button class="md-raised md-primary" type="submit">Submit</md-button>
+                    <md-button class="md-raised md-primary" type="submit" style="width: 100%">Submit</md-button>
                 </md-card-actions>
             </form>
         </md-card>

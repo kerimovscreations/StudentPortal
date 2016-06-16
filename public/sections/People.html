@@ -49,5 +49,27 @@
                 </md-list-item>
             </md-tab-body>
         </md-tab>
+        <md-tab ng-show="user_type=='teacher'" id="not_verified_tab">
+            <md-tab-label class="custom-tab">Not verified users</md-tab-label>
+            <md-tab-body>
+                <md-progress-circular class="center-with-margin" ng-show="loader.posting"
+                                      md-mode="indeterminate"></md-progress-circular>
+                <md-list-item style="max-width: 1000px; margin: 0 auto;" ng-repeat="contact in notVerified track by $index"
+                              ng-click="showContact(contact.id,'users')" class="noright">
+                    <img class="md-avatar" ng-src="images/profile_icon.png"
+                         style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
+                    <span class="md-title"><% contact.name %></span>
+                    <span flex></span>
+                    <span class="md-subhead"><% contact.email %></span>
+                    <md-button class="md-raised md-primary" ng-click="changeType(contact.id,'student')">Student</md-button>
+                    <md-button class="md-raised md-primary" ng-click="changeType(contact.id, 'mentor')">Mentor</md-button>
+                    <md-button class="md-raised md-primary" ng-click="changeType(contact.id, 'teacher')">Teacher</md-button>
+                    <md-button class="md-raised md-warn" ng-click="deleteUser(contact.id)">Delete</md-button>
+                    <md-icon md-svg-icon="svg/ic_email_black_24px.svg" ng-click="sendEmail(contact.id)"
+                             aria-label="Send Email" class="md-secondary md-hue-3"></md-icon>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </md-tab-body>
+        </md-tab>
     </md-tabs>
 </md-content>

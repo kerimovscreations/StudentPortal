@@ -12,11 +12,9 @@
 */
 
 
-use Illuminate\Support\Facades\Auth;
-
 Route::group(['middleware' => ['web'], ['api']], function () {
 
-    Route::group(['middleware' => 'auth'], function () {
+    Route::group(['middleware' => 'verify'], function () {
 
         Route::get('/home', 'HomeController@index');
         /**
@@ -32,7 +30,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         /**
          * Get the user's data to save on cookie on angular js $cookies part
          */
-        Route::get('/getUser','UserController@getInfo');
+        Route::get('/getUser', 'UserController@getInfo');
 
         /**
          * Get the announcements
@@ -120,6 +118,9 @@ Route::group(['middleware' => ['web'], ['api']], function () {
             Route::post('/postAnnouncement', 'AnnouncementController@store');
             Route::post('/updateAnnouncement', 'AnnouncementController@update');
             Route::post('/deleteAnnouncement', 'AnnouncementController@delete');
+            Route::get('/getNotVerifiedUsers', 'UserController@getAllNotVerified');
+            Route::post('/changeUserType', 'UserController@changeType');
+            Route::post('/deleteUser', 'UserController@delete');
         });
     });
 
@@ -127,15 +128,44 @@ Route::group(['middleware' => ['web'], ['api']], function () {
      * choosing the default view for site visitor
      */
     Route::get('/', function () {
-        if (Auth::guard('teacher')->user() || Auth::guard('student')->user() || Auth::guard('mentor')->user())
-            return view('/home');
-        else
+        if (Auth::user()) {
+            return view('successRegister');
+        } else if (Auth::guard('teacher')->user() || Auth::guard('student')->user() || Auth::guard('mentor')->user()) {
+            return redirect('/home');
+        } else
             return view('welcome');
     });
-    
+
+    Route::get('sendRegistered','UserController@email');
+
+    Route::get('/check1', ['middleware' => 'user', function () {
+        return 'user';
+    }]);
+
+    Route::get('/check2', ['middleware' => 'verify', function () {
+        //return view('/home');
+        return 'verified';
+    }]);
+
     /**
      * Login/Register routes generation
      */
-    Route::auth();
-    
+    Route::group(['middleware' => ['guest:teacher','guest:student','guest:mentor']], function () {
+        Route::get('login', 'Auth\AuthController@showLoginForm');
+        Route::get('register', 'Auth\AuthController@showRegistrationForm');
+        Route::post('login', 'Auth\AuthController@login');
+        Route::post('register', 'Auth\AuthController@register');
+//
+//    Route::post('password/email','Auth\PasswordController@sendResetLinkEmail');
+//    Route::post('password/reset','Auth\PasswordController@reset');
+//    Route::post('password/reset/{token?}','Auth\PasswordController@showResetForm');
+
+    });
+    Route::get('logout', 'Auth\AuthController@logout');
+
+    if (Auth::guest() && Auth::guard('teacher')->guest() && Auth::guard('student')->guest() && Auth::guard('mentor')->guest()){
+
+    }
+
+
 });

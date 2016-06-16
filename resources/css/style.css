@@ -160,6 +160,14 @@ md-input-container:not(.md-input-has-value) input:not(:focus) {
     margin: 10px;
 }
 
+.md-tabs-wrappermd-tabs.md-default-theme.md-accent > md-tabs-wrapper, md-tabs.md-accent > md-tabs-wrapper{
+    background-color: #5db775;
+    color: #fff;
+}
+md-tabs.md-default-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]), md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]){
+    color: #fff;
+}
+
 .fabSpeedDialdemoBasicUsage .text-capitalize {
     text-transform: capitalize; }
 .fabSpeedDialdemoBasicUsage .md-fab:hover, .fabSpeedDialdemoBasicUsage .md-fab.md-focused {

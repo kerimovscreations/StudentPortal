@@ -25,10 +25,10 @@
                         <span class="md-display-1"><% person_data.name %></span>
                         <span class="md-subhead"><% person_data.email %></span>
                         <div style="height: 15px;"></div>
-                        <div ng-if="person_table=='students'">
+                        <div ng-if="person_table=='students' || person_table == 'users'">
                             <p class="md-title personal-info-text">Phone: <% person_data.phone %></p>
                             <p class="md-title personal-info-text">Birthdate: <% displayBirthDate() %></p>
-                            <p class="md-title personal-info-text">Group: <% person_data.group %></p>
+                            <p  ng-if="person_table=='students'" class="md-title personal-info-text">Group: <% person_data.group %></p>
                         </div>
                         <div ng-if="person_table!='students'">
                             <p ng-if="person_data.work_days!=null" class="md-title personal-info-text">Work days: <%

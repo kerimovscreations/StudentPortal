@@ -1,10 +1,8 @@
 registerApp.controller('RegisterController', function ($scope) {
-    $scope.select_user_type = 'student';
     $scope.user = {};
     var today = new Date();
     var today1 = moment(today);
     $scope.maxDate = today1.format('YYYY-MM-DD');
-    console.log($scope.maxDate);
 
     $scope.birthDateFormatted = moment($scope.user.birthDate).format('MM-DD-YYYY')
 });
@@ -250,11 +248,18 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         };
 
     })
-    .controller('PeopleController', function ($http, $scope, $rootScope, $mdDialog, $mdMedia, Data) {
+    .controller('PeopleController', function ($http, $scope, $rootScope, $cookies, $route, $mdDialog, $mdMedia, $mdToast, Data) {
         $rootScope.current_section = 'People';
+        $scope.user_type = $cookies.get('userType');
         $scope.students = [];
         $scope.teachers = [];
         $scope.mentors = [];
+        $scope.notVerified = [];
+
+        $scope.loader = {
+            loading: false,
+            posting: false
+        };
 
         $http.get('/getStudents').success(function (data) {
             $scope.students = data;
@@ -265,6 +270,10 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $http.get('/getMentors').success(function (data) {
             $scope.mentors = data;
         });
+        if ($scope.user_type == 'teacher')
+            $http.get('/getNotVerifiedUsers').success(function (data) {
+                $scope.notVerified = data;
+            });
 
         $scope.selectedIndex = 0;
 
@@ -290,6 +299,42 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             });
         };
 
+        $scope.changeType = function (id, type) {
+            $scope.loader.posting = true;
+            $http({
+                method: 'POST',
+                url: '/changeUserType',
+                data: {
+                    id: id,
+                    type: type
+                }
+            }).success(function () {
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('User type changed'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                console.log(data);
+            })
+        };
+
+        $scope.deleteUser=function (id) {
+            $scope.loader.posting = true;
+            $http({
+                method: 'POST',
+                url: '/deleteUser',
+                data: {
+                    id: id
+                }
+            }).success(function () {
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('User deleted'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            })
+        };
 
         $scope.sendEmail = function (id) {
 
@@ -303,7 +348,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.dt = new Date();
 
-        $scope.isOpen= false;
+        $scope.isOpen = false;
 
         $http.get('/getMentors').success(function (data) {
             $scope.mentors = data;
@@ -469,7 +514,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                     $scope.notifications[type][index].status = 1;
                     showSelectNotificationDialog(id);
                 }).error(function (data) {
-                    $mdToast.show($mdToast.simple().textContent('Error occured'));
+                    $mdToast.show($mdToast.simple().textContent('Error occurred'));
                     console.log(data);
                 });
             else
@@ -546,7 +591,7 @@ function postEditDialogController($scope, $mdDialog, $http, $mdToast, Data, $rou
             $mdToast.show($mdToast.simple().textContent('Post edited'));
         }).error(function (data) {
             $scope.loader.posting = false;
-            $mdToast.show($mdToast.simple().textContent('Error occured'));
+            $mdToast.show($mdToast.simple().textContent('Error occurred'));
             console.log(data);
         });
     };
@@ -632,7 +677,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
         }).success(function () {
             $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
         }).error(function (data) {
-            $mdToast.show($mdToast.simple().textContent('Error occured'));
+            $mdToast.show($mdToast.simple().textContent('Error occurred'));
             console.log(data);
         });
     };
@@ -709,7 +754,7 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('Event deleted'));
             }).error(function (data) {
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             });
         });
@@ -896,7 +941,7 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
                 $mdToast.show($mdToast.simple().textContent('Event updated'));
             }).error(function (data) {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             })
         } else {
@@ -1043,7 +1088,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
                 $mdToast.show($mdToast.simple().textContent('Event Added'));
             }).error(function (data) {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             })
         } else {
@@ -1391,7 +1436,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
-        if ($scope.edited_person_table != 'students') {
+        if ($scope.edited_person_table != 'students' && $scope.edited_person_table != 'users') {
             if (startTime.isBefore(endTime)) {
                 postData();
             } else {

@@ -56,7 +56,11 @@ return [
         'mentor' => [
             'driver' => 'session',
             'provider' => 'mentor'
-        ],
+        ]
+//        'user' => [
+//            'driver' => 'session',
+//            'provider' => 'user'
+//        ],
     ],
 
     /*
@@ -81,23 +85,22 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-        'student'=> [
+        'student' => [
             'driver' => 'eloquent',
             'model' => App\Student::class,
         ],
-        'teacher'=> [
+        'teacher' => [
             'driver' => 'eloquent',
             'model' => App\Teacher::class,
         ],
-        'mentor'=> [
+        'mentor' => [
             'driver' => 'eloquent',
             'model' => App\Mentor::class,
-        ]
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        ],
+//        'users' => [
+//            'driver' => 'database',
+//            'table' => 'users',
+//        ],
     ],
 
     /*

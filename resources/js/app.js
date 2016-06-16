@@ -39,10 +39,10 @@ var customTheme={
     '700': '3c092c',
     '800': 'facd3e', //hue-2
     '900': '3c092c',
-    'A100': 'fd6542', //hue-3 and accent
-    'A200': 'fd6542',
-    'A400': 'fd6542',
-    'A700': 'fd6542',
+    'A100': '6737FF', //hue-3 and accent
+    'A200': '6737FF',
+    'A400': '6737FF',
+    'A700': '6737FF',
     'contrastDefaultColor': 'light',    // whether, by default, text (contrast)
                                         // on this palette should be dark or light
     'contrastDarkColors': ['50', '100', //hues which contrast should be 'dark' by default

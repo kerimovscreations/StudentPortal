@@ -5,6 +5,7 @@ use App\Announcement;
 use App\Event;
 use App\Group;
 use App\Student;
+use App\User;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -16,7 +17,32 @@ class EmailController extends Controller
     public static function send(array $request)
     {
         foreach ($request as $elem) {
-            if($elem['source_table']=='events'){
+            if ($elem['type'] == 'success_register') {
+                $receiver = User::findOrFail($elem['receiver_id']);
+
+                $data = [
+                    'receiver' => $receiver->name,
+                ];
+
+                Mail::send('emails.success_register', $data, function ($message) use ($receiver, $elem) {
+                    $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
+                });
+                return true;
+            } else if ($elem['type'] == 'confirm') {
+                $receiver = DB::table($elem['receiver_type'] . 's')->where('id', $elem['receiver_id'])->first();
+
+                $data = [
+                    'receiver' => $receiver->name,
+                    'receiver_type' => $elem['receiver_type']
+                ];
+
+                Mail::send('emails.confirmation_email', $data, function ($message) use ($receiver, $elem) {
+                    $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
+                });
+                return true;
+            }
+
+            if ($elem['source_table'] == 'events') {
                 $action_pre = '';
                 $action_post = '';
                 $person_name = '';
@@ -47,19 +73,19 @@ class EmailController extends Controller
                         $action_post = 'changed time of the extra lesson to ';
                         break;
                     case 'updated_extra':
-                        $action_pre='Extra lesson has been updated by ';
+                        $action_pre = 'Extra lesson has been updated by ';
                         $person_name = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
-                        $action_post=' to ';
+                        $action_post = ' to ';
                         break;
                     case 'cancelled_extra':
-                        $action_pre='Extra lesson has been cancelled by ';
+                        $action_pre = 'Extra lesson has been cancelled by ';
                         $person_name = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
-                        $action_post=' which would be held on ';
+                        $action_post = ' which would be held on ';
                         break;
                     case 'deleted_extra':
-                        $action_pre='Extra lesson has been deleted by ';
+                        $action_pre = 'Extra lesson has been deleted by ';
                         $person_name = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
-                        $action_post=' which would be held on ';
+                        $action_post = ' which would be held on ';
                         break;
                 };
 
@@ -77,13 +103,11 @@ class EmailController extends Controller
                 Mail::send('emails.notification_extra_lesson', $data, function ($message) use ($receiver, $elem) {
                     $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
                 });
-            }
-
-            else if($elem['source_table']=='announcements'){
+            } else if ($elem['source_table'] == 'announcements') {
                 $announcement = Announcement::find($elem['source_id']);
-                $receiver=Group::find($elem['receiver_id']);
+                $receiver = Group::find($elem['receiver_id']);
                 $person_name = DB::table('teachers')->where('id', $announcement->owner_id)->value('name');
-                $action_post=' has made a new announcement:';
+                $action_post = ' has made a new announcement:';
 
                 $data = [
                     'receiver' => $receiver->name,

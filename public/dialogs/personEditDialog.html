@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                         </md-input-container>
-                        <div ng-show="edited_person_table=='students'" layout="row">
+                        <div ng-show="edited_person_table=='students' || edited_person_table=='users'" layout="row">
                             <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
                                 <label>Phone Number</label>
                                 <input ng-disabled="loader.posting"  type="text" name="edited_person_phone" ng-model="edited_person_data.phone"
@@ -55,7 +55,7 @@
                                     <div ng-message="required">Required field!</div>
                                 </div>
                             </md-input-container>
-                            <md-input-container style="margin-top: 10px">
+                            <md-input-container ng-show="edited_person_table=='students'" style="margin-top: 10px">
                                 <label>Group</label>
                                 <md-select ng-disabled="loader.posting" ng-model="edited_person_data.group_id" ng-disabled="user_type!='teacher'">
                                     <md-option ng-repeat="group in groups" value="<% group.id %>">
@@ -64,7 +64,7 @@
                                 </md-select>
                             </md-input-container>
                         </div>
-                        <div ng-show="edited_person_table!='students'" layout="row">
+                        <div ng-hide="edited_person_table=='students' || edited_person_table=='users'" layout="row">
                             <div layout="row" layout-align="center center" style="color: #81D18F">
                                 <h4 class="md-title">Start time: </h4>
                                 <div style="width: 10px"></div>
@@ -120,7 +120,7 @@
                                 </md-select>
                             </md-input-container>
                         </div>
-                        <md-input-container >
+                        <md-input-container ng-hide="edited_person_table=='users'">
                             <label>Bio</label>
                             <textarea ng-disabled="loader.loading" ng-model="edited_person_data.bio"></textarea>
                         </md-input-container>
