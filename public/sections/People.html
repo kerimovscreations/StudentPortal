@@ -49,7 +49,7 @@
                 </md-list-item>
             </md-tab-body>
         </md-tab>
-        <md-tab ng-show="user_type=='teacher'" id="not_verified_tab">
+        <md-tab ng-if="user_type=='teacher'" id="not_verified_tab">
             <md-tab-label class="custom-tab">Not verified users</md-tab-label>
             <md-tab-body>
                 <md-progress-circular class="center-with-margin" ng-show="loader.posting"
