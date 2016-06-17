@@ -48,12 +48,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
          * Get the list of groups
          */
         Route::get('/getGroups', 'GroupController@getAll');
-
-        /**
-         * Get the list of students
-         */
-        Route::get('/getStudents', 'StudentController@getAll');
-
+        
         /**
          * Get the data of user
          */
@@ -114,17 +109,41 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         Route::post('/changeTimeEvent', 'EventController@changeTime');
 
         /**
-         * Set the access to post announcement only for teachers
+         * Set the restrict for students
+         */
+        Route::group(['middleware' => 'notStudent'], function () {
+            
+            /**
+             * Get the list of students
+             */
+            Route::get('/getStudents', 'StudentController@getAll');
+
+        });
+
+        /**
+         * Set the access only for teachers
          */
         Route::group(['middleware' => 'teacher'], function () {
             Route::post('/postAnnouncement', 'AnnouncementController@store');
             Route::post('/updateAnnouncement', 'AnnouncementController@update');
             Route::post('/deleteAnnouncement', 'AnnouncementController@delete');
+
+            /**
+             * Get the registered but pending users list
+             */
             Route::get('/getPending', function (){
                 $users = User::all();
                 return $users;
             });
+
+            /**
+             * Change the type of user or confirm the pending users
+             */
             Route::post('/changeUserType', 'UserController@changeType');
+
+            /**
+             * Delete the user
+             */
             Route::post('/deleteUser', 'UserController@delete');
         });
     });

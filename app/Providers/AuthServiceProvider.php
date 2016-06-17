@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Announcement;
 use App\Policies\AnnouncementPolicy;
-use App\Policies\UserPolicy;
 use App\User;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -18,7 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
-        Announcement::class => AnnouncementPolicy::class,
+        'App\Announcement' => 'App\Policies\AnnouncementPolicy'
     ];
 
     /**

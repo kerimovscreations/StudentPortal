@@ -3747,7 +3747,8 @@ portalApp.factory('Data', function () {
         NotificationId: null,
         PostId: null,
         PersonId: null,
-        PersonTable: null
+        PersonTable: null,
+        SelectedMentor: null
     };
 });
 
@@ -3760,7 +3761,8 @@ portalApp.service('ProfileService', function ($cookies, $http) {
             {name:'Announcement', url: 'svg/ic_announcement_white_48px.svg'},
             {name:'Notification', url: 'svg/ic_notifications_white_48px.svg'},
             {name:'Schedule', url: 'svg/ic_event_white_48px.svg'},
-            {name:'People', url: 'svg/ic_people_white_48px.svg'}
+            {name:'People', url: 'svg/ic_people_white_48px.svg'},
+            {name:'Mentor-schedule', url: 'svg/ic_event_note_white_48px.svg'}
         ];
     })
     .service('PeopleService', function ($http) {
@@ -3891,7 +3893,13 @@ registerApp.controller('RegisterController', function ($scope) {
     var today1 = moment(today);
     $scope.maxDate = today1.format('YYYY-MM-DD');
 
-    $scope.birthDateFormatted = moment($scope.user.birthDate).format('MM-DD-YYYY')
+    // $scope.$watch('user.birthDate',function () {
+    //     console.log($scope.user.birthDate);
+    // });
+
+    $scope.birthDateFormatted = function () {
+        return moment($scope.user.birthDate).format('MM-DD-YYYY')
+    };
 });
 
 loginApp.controller('LoginController', function () {
@@ -4142,19 +4150,22 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.teachers = [];
         $scope.mentors = [];
         $scope.pending = [];
-        $scope.groups=[];
+        $scope.groups = [];
 
         $scope.loader = {
             loading: false,
             posting: false
         };
 
-        $http.get('/getGroups').success(function (data) {
-            $scope.groups=data;
-        });
-        $http.get('/getStudents').success(function (data) {
-            $scope.students = data;
-        });
+        if ($scope.user_type != 'student') {
+            $http.get('/getGroups').success(function (data) {
+                $scope.groups = data;
+            });
+            $http.get('/getStudents').success(function (data) {
+                $scope.students = data;
+            });
+        }
+
         $http.get('/getTeachers').success(function (data) {
             $scope.teachers = data;
         });
@@ -4301,7 +4312,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.eventAdd = function (type) {
             $scope.Data.AddEventType = type;
-
+            Data.SelectedMentor=[];
             $mdDialog.show({
                 controller: eventAddDialogController,
                 templateUrl: 'dialogs/eventAddDialog.html',
@@ -4435,6 +4446,37 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         };
 
     })
+    .controller('MentorScheduleController', function ($scope, $rootScope, $http, $mdDialog, $mdMedia, Data) {
+        $rootScope.current_section = 'Mentor Schedule';
+
+        $scope.metors = [];
+
+        $http.get('/getMentors').success(function (data) {
+            $scope.mentors = data;
+        });
+
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+
+        $scope.eventAdd = function (index) {
+            Data.AddEventType = 'extra';
+            Data.SelectedMentor=$scope.mentors[index];
+
+            $mdDialog.show({
+                controller: eventAddDialogController,
+                templateUrl: 'dialogs/eventAddDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                fullscreen: useFullScreen
+            });
+            $scope.$watch(function () {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function (wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
+            });
+        }
+    });
 
 // Announcement edit dialog controller
 
@@ -4865,7 +4907,7 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     $scope.eventStatus = null;
     $scope.eventResponsible1 = [];
     $scope.eventResponsible1Table = null;
-    $scope.eventResponsible2 = [];
+    $scope.eventResponsible2 = Data.SelectedMentor;
     $scope.eventResponsible2Table = null;
     $scope.eventType = type;
     $scope.eventDate = new Date();
@@ -5375,10 +5417,10 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
                     bio: $scope.edited_person_data.bio
                 }
             }).success(function (data) {
-                if(data==2){
+                if (data == 2) {
                     $scope.loader.posting = false;
                     $mdToast.show($mdToast.simple().textContent('Old password doesn\'t match!'));
-                }else{
+                } else {
                     $mdDialog.hide();
                     $route.reload();
                     $mdToast.show($mdToast.simple().textContent('Personal data updated'));
@@ -5470,37 +5512,41 @@ function clone(obj) {
     }
     return copy;
 }
-portalApp.config(['$routeProvider', function($routeProvider){
+portalApp.config(['$routeProvider', function ($routeProvider) {
     $routeProvider
-        .when('/',{
+        .when('/', {
             templateUrl: "sections/Schedule.html",
             controller: 'ScheduleController'
         })
-        .when('/announcement',{
+        .when('/announcement', {
             templateUrl: "sections/Announcement.html",
             controller: 'AnnouncementController'
         })
-        .when('/conversation',{
+        .when('/conversation', {
             templateUrl: "sections/Conversation.html",
             controller: 'ConversationController'
         })
-        .when('/notification',{
+        .when('/notification', {
             templateUrl: "sections/Notification.html",
             controller: 'NotificationController'
         })
-        .when('/people',{
+        .when('/people', {
             templateUrl: "sections/People.html",
             controller: 'PeopleController'
         })
-        .when('/schedule',{
+        .when('/schedule', {
             templateUrl: "sections/Schedule.html",
             controller: 'ScheduleController'
         })
-        .when('/assignment',{
+        .when('/mentor-schedule', {
+            templateUrl: "sections/MentorSchedule.html",
+            controller: 'MentorScheduleController'
+        })
+        .when('/assignment', {
             templateUrl: "sections/Assignments.html",
             controller: 'AssignmentsController'
         })
-        .when('/grading',{
+        .when('/grading', {
             templateUrl: "sections/Grading.html",
             controller: 'GradingController'
         })

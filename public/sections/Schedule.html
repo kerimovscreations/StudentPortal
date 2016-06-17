@@ -6,21 +6,6 @@
         <div layout="column" class="md-padding">
             <md-calendar ng-model="dt" class="fixed-calendar"></md-calendar>
             <md-button class="md-raised md-accent" ng-click="today()" style="margin-top: 20px">Today</md-button>
-
-            <!-- Mentors work schedule -->
-            <div>
-                <md-list class="md-dense" flex>
-                    <md-subheader class="md-no-sticky">Mentors work schedule</md-subheader>
-                    <md-list-item class="md-3-line" ng-repeat="mentor in mentors">
-                        <img ng-src="images/profile_icon.png" class="md-avatar" alt="<% mentor.name %>"/>
-                        <div class="md-list-item-text" layout="column">
-                            <h3><% mentor.name %></h3>
-                            <p>Work days: <% mentor.work_days%></p>
-                            <p>Work hours <% mentor.work_start_time %> - <% mentor.work_end_time %></p>
-                        </div>
-                    </md-list-item>
-                </md-list>
-            </div>
         </div>
 
         <!--Schedule of week -->
@@ -158,9 +143,6 @@
                     </md-fab-actions>
                 </md-fab-speed-dial>
             </div>
-
-
-
         </div>
     </div>
 </md-content>

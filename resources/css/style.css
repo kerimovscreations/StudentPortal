@@ -86,6 +86,7 @@ body {
 
 .schedule-day-label {
     width: 100%;
+    min-height: 50px;
     padding: 5px;
     background-color: #2E4454;
     color: #fff;

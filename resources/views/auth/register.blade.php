@@ -61,7 +61,7 @@
                         </md-input-container>
                     </div>
                     <div layout-gt-sm="row">
-                        <md-input-container class="md-block" flex-gt-sm style="margin: 30px 0">
+                        <md-input-container class="md-block" flex-gt-sm style="margin-top: 38px">
                             <label>Phone Number</label>
                             <input type="text" name="phone" ng-model="user.number"
                                    placeholder="+994123456789" required>
@@ -69,13 +69,13 @@
                                 <div ng-message="required">Required field!</div>
                             </div>
                         </md-input-container>
-                        <md-input-container class="md-block" flex-gt-sm style="margin: 10px 0">
+                        <md-input-container class="md-block" flex-gt-sm>
                             <mdp-date-picker mdp-open-on-click required mdp-placeholder="Birth Date" mdp-format="MM-DD-YYYY" ng-model="user.birthDate" mdp-max-date="maxDate">
                                 <div ng-messages="userForm.birthDate.$error">
                                     <div ng-message="required">This is required</div>
                                 </div>
                             </mdp-date-picker>
-                            <input type="hidden" name="birthDate" ng-value="birthDateFormatted">
+                            <input type="hidden" name="birthDate" ng-value="birthDateFormatted()">
                         </md-input-container>
                     </div>
                 </md-card-content>

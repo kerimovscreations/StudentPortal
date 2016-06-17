@@ -40,8 +40,8 @@ class AnnouncementController extends Controller
     public function update(Request $request)
     {
         $announcement = Announcement::find($request['id']);
-        $id = Auth::guard('teacher')->user()->id;
-        $teacher = Teacher::findOrFail($id);
+
+        $teacher = Auth::guard('teacher')->user();
 
         $this->authorizeForUser($teacher, $announcement);
         
@@ -100,8 +100,7 @@ class AnnouncementController extends Controller
     {
         $announcement = Announcement::find($request['id']);
 
-        $id = Auth::guard('teacher')->user()->id;
-        $teacher = Teacher::findOrFail($id);
+        $teacher = Auth::guard('teacher')->user();
 
         $this->authorizeForUser($teacher, $announcement);
         

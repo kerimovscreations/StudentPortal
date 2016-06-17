@@ -53,6 +53,7 @@ class Kernel extends HttpKernel
         'student' => \App\Http\Middleware\RedirectIfNotStudent::class,
         'teacher' => \App\Http\Middleware\RedirectIfNotTeacher::class,
         'mentor' => \App\Http\Middleware\RedirectIfNotMentor::class,
+        'notStudent' => \App\Http\Middleware\RedirectIfStudent::class,
         'verify' => \App\Http\Middleware\Verificate::class,
         'fullGuest' => \App\Http\Middleware\RedirectIfNotFullGuest::class
     ];

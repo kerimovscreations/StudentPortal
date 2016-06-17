@@ -31,8 +31,17 @@ class UserController extends Controller
     public function getDataUser($table, $id)
     {
         if ($table == 'students') {
-            $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate', 'bio')->get();
-            $user[0]->group = Group::find($user[0]->group_id)->name;
+            if(Auth::guard('student')->check()){
+                if(Auth::guard('student')->user()->id==$id){
+                    $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate', 'bio')->get();
+                    $user[0]->group = Group::find($user[0]->group_id)->name;
+                }else{
+                    return redirect('/');
+                }
+            }else{
+                $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate', 'bio')->get();
+                $user[0]->group = Group::find($user[0]->group_id)->name;
+            }
         } else if ($table == 'users') {
             $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'phone', 'birthDate')->get();
         } else {
@@ -59,7 +68,7 @@ class UserController extends Controller
             $teachers = DB::table('teachers')->lists('id');
 
             foreach($teachers as $id) {
-                $temp_mail = [                    
+                $temp_mail = [
                     'receiver_id' => $id,
                     'registered_user' => $user->name,
                     'subject' => 'New registered user on Student Portal: ' . $user->name,

@@ -5,6 +5,7 @@ portalApp.factory('Data', function () {
         NotificationId: null,
         PostId: null,
         PersonId: null,
-        PersonTable: null
+        PersonTable: null,
+        SelectedMentor: null
     };
 });

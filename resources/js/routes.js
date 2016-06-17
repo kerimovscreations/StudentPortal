@@ -1,34 +1,38 @@
-portalApp.config(['$routeProvider', function($routeProvider){
+portalApp.config(['$routeProvider', function ($routeProvider) {
     $routeProvider
-        .when('/',{
+        .when('/', {
             templateUrl: "sections/Schedule.html",
             controller: 'ScheduleController'
         })
-        .when('/announcement',{
+        .when('/announcement', {
             templateUrl: "sections/Announcement.html",
             controller: 'AnnouncementController'
         })
-        .when('/conversation',{
+        .when('/conversation', {
             templateUrl: "sections/Conversation.html",
             controller: 'ConversationController'
         })
-        .when('/notification',{
+        .when('/notification', {
             templateUrl: "sections/Notification.html",
             controller: 'NotificationController'
         })
-        .when('/people',{
+        .when('/people', {
             templateUrl: "sections/People.html",
             controller: 'PeopleController'
         })
-        .when('/schedule',{
+        .when('/schedule', {
             templateUrl: "sections/Schedule.html",
             controller: 'ScheduleController'
         })
-        .when('/assignment',{
+        .when('/mentor-schedule', {
+            templateUrl: "sections/MentorSchedule.html",
+            controller: 'MentorScheduleController'
+        })
+        .when('/assignment', {
             templateUrl: "sections/Assignments.html",
             controller: 'AssignmentsController'
         })
-        .when('/grading',{
+        .when('/grading', {
             templateUrl: "sections/Grading.html",
             controller: 'GradingController'
         })

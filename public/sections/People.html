@@ -1,7 +1,7 @@
 <md-content>
     <md-tabs class="md-accent" md-selected="selectedIndex" md-align-tabs="top" md-dynamic-height md-border-bottom
              md-center-tabs="true" md-swipe-content="true">
-        <md-tab id="student_tab">
+        <md-tab ng-if="user_type!='student'" id="student_tab">
             <md-tab-label>Students</md-tab-label>
             <md-tab-body>
                 <section style="max-width: 1000px; margin: 0 auto;" ng-repeat="group in groups track by $index">
