@@ -5,9 +5,9 @@
 @section('content')
     <div ng-controller="MainMenuController" layout="column" layout-fill ng-cloak>
         <md-toolbar class="md-whiteframe-3dp">
-            <div class="md-toolbar-tools">
+            <div ng-cloak class="md-toolbar-tools">
 
-                <!--menu sidenav button-->
+                <!--menu side nav button-->
 
                 <md-button class="md-icon-button" aria-label="Menu" ng-click="toggleNavBar()">
                     <md-icon md-svg-icon="svg/ic_menu_white_36px.svg"></md-icon>
@@ -21,7 +21,7 @@
                     <md-icon md-svg-src="svg/ic_notifications_none_white_48px.svg" aria-label="Notification"
                              style="position: relative;left: 0px; width:35px; height: 35px;"></md-icon>
                     <div ng-show="notification_count!=0" class="notification-circle"
-                         style="position: relative;right: 20px"><% notification_count %>
+                         style="position: relative;right: 20px" ng-cloak><% notification_count %>
                     </div>
                 </div>
 

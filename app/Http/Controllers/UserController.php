@@ -22,7 +22,7 @@ class UserController extends Controller
         return json_encode($result);
     }
 
-    public function getAllNotVerified()
+    public static function pending()
     {
         $users = User::all();
         return $users;
@@ -48,12 +48,25 @@ class UserController extends Controller
             $user = Auth::guard($user_type)->user();
 
             $result_mail = array();
-            $result_mail[0] = [
+            $temp_mail = [
                 'receiver_id' => $user->id,
                 'receiver_table' => 'users',
                 'subject' => 'Thanks for registering on Student Portal',
                 'type' => 'success_register'
             ];
+            array_push($result_mail, $temp_mail);
+
+            $teachers = DB::table('teachers')->lists('id');
+
+            foreach($teachers as $id) {
+                $temp_mail = [                    
+                    'receiver_id' => $id,
+                    'registered_user' => $user->name,
+                    'subject' => 'New registered user on Student Portal: ' . $user->name,
+                    'type' => 'teacher_registered'
+                ];
+                array_push($result_mail, $temp_mail);
+            }
 
             EmailController::send($result_mail);
         }
@@ -77,29 +90,38 @@ class UserController extends Controller
             $user = User::findOrFail($request['id']);
         }
 
-        if (($owner->id === $user->id && $user_type . 's' == $table) || $user_type == 'teacher')
+        if (($owner->id === $user->id && $user_type . 's' == $table) || $user_type == 'teacher') {
+            if ($request['old_pass'] != null) {
+                if (password_verify($request['old_pass'], $user->getAuthPassword())) {
+                    $user->password = bcrypt($request['new_pass']);
+                } else {
+                    return 2;
+                }
+            }
             $user->update($request->all());
-        else
+        } else
             abort(403, 'Unauthorized action.');
     }
 
     public function changeType(Request $request)
     {
         $user = User::findOrFail($request['id']);
-        $user->remember_token=null;
-        $userArray = $user->toArray();
+        $user->remember_token = null;
         $newUser = null;
         if ($request['type'] == 'student') {
-            $newUser = new Student($userArray);
+            $newUser = new Student();
             $newUser->group_id = Group::first()->id;
-            $newUser->api_token='0';
+            $newUser->phone = $user->phone;
+            $newUser->birthDate = $user->birthDate;
         } else if ($request['type'] == 'teacher') {
-            $newUser = new Teacher($userArray);
-            $newUser->api_token='0';
+            $newUser = new Teacher();
         } else if ($request['type'] == 'mentor') {
-            $newUser = new Mentor($userArray);
-            $newUser->api_token='0';
+            $newUser = new Mentor();
         }
+        $newUser->api_token = str_random(60);
+        $newUser->name = $user->name;
+        $newUser->email = $user->email;
+        $newUser->password = $user->password;
         $newUser->save();
         $user->delete();
 

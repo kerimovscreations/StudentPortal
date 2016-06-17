@@ -19,25 +19,15 @@
                     <md-input-container class="reduce-margin">
                         <label>Email</label>
                         <input ng-model="user_email" type="email" name="email">
-                        @if ($errors->has('email'))
-                            <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                        @endif
                     </md-input-container>
                     <md-input-container class="reduce-margin">
                         <label>Password</label>
                         <input ng-model="user_password" type="password" name="password">
-                        @if ($errors->has('password'))
-                            <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                        @endif
                     </md-input-container>
                 </md-card-content>
                 <md-card-actions layout="row" layout-align="center none">
                 <!--
-                    <a class="md-button" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
+                    <a class="md-button" href="{ url('/password/reset') }}">Forgot Your Password?</a>
                     -->
                     <input flex type="submit" class="md-button md-raised md-primary" value="Login">
                 </md-card-actions>

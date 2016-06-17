@@ -4,7 +4,7 @@
     <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="9">
+          <list size="17">
             <item index="0" class="java.lang.String" itemvalue="ng-blur" />
             <item index="1" class="java.lang.String" itemvalue="ng-focus" />
             <item index="2" class="java.lang.String" itemvalue="layout" />
@@ -14,6 +14,14 @@
             <item index="6" class="java.lang.String" itemvalue="ng-model" />
             <item index="7" class="java.lang.String" itemvalue="value" />
             <item index="8" class="java.lang.String" itemvalue="require" />
+            <item index="9" class="java.lang.String" itemvalue="ng-show" />
+            <item index="10" class="java.lang.String" itemvalue="ng-controller" />
+            <item index="11" class="java.lang.String" itemvalue="ng-messages" />
+            <item index="12" class="java.lang.String" itemvalue="ng-pattern" />
+            <item index="13" class="java.lang.String" itemvalue="multiple" />
+            <item index="14" class="java.lang.String" itemvalue="layout-gt-sm" />
+            <item index="15" class="java.lang.String" itemvalue="ng-src" />
+            <item index="16" class="java.lang.String" itemvalue="ng-repeat" />
           </list>
         </value>
       </option>
@@ -22,7 +30,7 @@
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="10">
+          <list size="24">
             <item index="0" class="java.lang.String" itemvalue="nobr" />
             <item index="1" class="java.lang.String" itemvalue="noembed" />
             <item index="2" class="java.lang.String" itemvalue="comment" />
@@ -33,6 +41,20 @@
             <item index="7" class="java.lang.String" itemvalue="md-dialog-actions" />
             <item index="8" class="java.lang.String" itemvalue="md-item-template" />
             <item index="9" class="java.lang.String" itemvalue="md-not-found" />
+            <item index="10" class="java.lang.String" itemvalue="md-input-container" />
+            <item index="11" class="java.lang.String" itemvalue="md-button" />
+            <item index="12" class="java.lang.String" itemvalue="md-progress-circular" />
+            <item index="13" class="java.lang.String" itemvalue="md-icon" />
+            <item index="14" class="java.lang.String" itemvalue="md-card-actions" />
+            <item index="15" class="java.lang.String" itemvalue="md-card-content" />
+            <item index="16" class="java.lang.String" itemvalue="md-tabs" />
+            <item index="17" class="java.lang.String" itemvalue="md-tab" />
+            <item index="18" class="java.lang.String" itemvalue="md-tab-body" />
+            <item index="19" class="java.lang.String" itemvalue="md-tab-label" />
+            <item index="20" class="java.lang.String" itemvalue="md-list-item" />
+            <item index="21" class="java.lang.String" itemvalue="md-divider" />
+            <item index="22" class="java.lang.String" itemvalue="md-subheader" />
+            <item index="23" class="java.lang.String" itemvalue="md-list" />
           </list>
         </value>
       </option>

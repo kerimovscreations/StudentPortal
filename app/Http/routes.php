@@ -12,6 +12,8 @@
 */
 
 
+use App\User;
+
 Route::group(['middleware' => ['web'], ['api']], function () {
 
     Route::group(['middleware' => 'verify'], function () {
@@ -118,7 +120,10 @@ Route::group(['middleware' => ['web'], ['api']], function () {
             Route::post('/postAnnouncement', 'AnnouncementController@store');
             Route::post('/updateAnnouncement', 'AnnouncementController@update');
             Route::post('/deleteAnnouncement', 'AnnouncementController@delete');
-            Route::get('/getNotVerifiedUsers', 'UserController@getAllNotVerified');
+            Route::get('/getPending', function (){
+                $users = User::all();
+                return $users;
+            });
             Route::post('/changeUserType', 'UserController@changeType');
             Route::post('/deleteUser', 'UserController@delete');
         });

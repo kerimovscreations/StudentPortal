@@ -4141,13 +4141,17 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.students = [];
         $scope.teachers = [];
         $scope.mentors = [];
-        $scope.notVerified = [];
+        $scope.pending = [];
+        $scope.groups=[];
 
         $scope.loader = {
             loading: false,
             posting: false
         };
 
+        $http.get('/getGroups').success(function (data) {
+            $scope.groups=data;
+        });
         $http.get('/getStudents').success(function (data) {
             $scope.students = data;
         });
@@ -4158,8 +4162,8 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             $scope.mentors = data;
         });
         if ($scope.user_type == 'teacher')
-            $http.get('/getNotVerifiedUsers').success(function (data) {
-                $scope.notVerified = data;
+            $http.get('/getPending').success(function (data) {
+                $scope.pending = data;
             });
 
         $scope.selectedIndex = 0;
@@ -4205,7 +4209,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             })
         };
 
-        $scope.deleteUser=function (id) {
+        $scope.deleteUser = function (id) {
             $scope.loader.posting = true;
             $http({
                 method: 'POST',
@@ -5278,6 +5282,9 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
     $scope.startMinute = null;
     $scope.endHour = null;
     $scope.endMinute = null;
+    $scope.old_password = '';
+    $scope.new_password = '';
+    $scope.new_password_confirm = '';
 
     //model for week days list
     $scope.week_days = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
@@ -5323,14 +5330,28 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
-        if ($scope.edited_person_table != 'students' && $scope.edited_person_table != 'users') {
-            if (startTime.isBefore(endTime)) {
-                postData();
+        if ($scope.old_password.length != 0) {
+            if ($scope.new_password == $scope.new_password_confirm) {
+                if ($scope.new_password.length <= 8)
+                    $mdToast.show($mdToast.simple().textContent('Password should be at least 8 character!'));
+                else
+                    checkTime();
             } else {
-                $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+                $mdToast.show($mdToast.simple().textContent('Passwords don\'t match'));
             }
         } else
-            postData();
+            checkTime();
+
+        function checkTime() {
+            if ($scope.edited_person_table != 'students' && $scope.edited_person_table != 'users') {
+                if (startTime.isBefore(endTime)) {
+                    postData();
+                } else {
+                    $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+                }
+            } else
+                postData();
+        }
 
         //data posting function
         function postData() {
@@ -5343,6 +5364,8 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
                     id: $scope.edited_person_id,
                     name: $scope.edited_person_data.name,
                     email: $scope.edited_person_data.email,
+                    old_pass: $scope.old_password,
+                    new_pass: $scope.new_password,
                     phone: $scope.edited_person_data.phone,
                     birthDate: $scope.edited_person_data.birthDate,
                     group_id: $scope.edited_person_data.group_id,
@@ -5351,10 +5374,15 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
                     work_end_time: endTime.format('HH:mm'),
                     bio: $scope.edited_person_data.bio
                 }
-            }).success(function () {
-                $mdDialog.hide();
-                $route.reload();
-                $mdToast.show($mdToast.simple().textContent('Personal data updated'));
+            }).success(function (data) {
+                if(data==2){
+                    $scope.loader.posting = false;
+                    $mdToast.show($mdToast.simple().textContent('Old password doesn\'t match!'));
+                }else{
+                    $mdDialog.hide();
+                    $route.reload();
+                    $mdToast.show($mdToast.simple().textContent('Personal data updated'));
+                }
             }).error(function (data) {
                 $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occured'));
@@ -5372,6 +5400,7 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
     };
 
 }
+
 // Assignment add dialog controller
 
 function assignmentAddDialogController($scope, $mdDialog, $mdToast) {

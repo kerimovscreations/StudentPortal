@@ -11,10 +11,7 @@
 
 <div>
     <span style="color:#696969;">
-        <span style="font-family:lucida sans unicode,lucida grande,sans-serif;">Your registration is confirmed. You can use Student Portal as {!! $receiver_type !!}.<br>
-            Login from <a href="http://portal.code.edu.az/"
-       style="text-decoration: none;color:#5db775;font-family:lucida sans unicode,lucida grande,sans-serif;">here</a>.
-        </span>
+        <span style="font-family:lucida sans unicode,lucida grande,sans-serif;">{!! $registered_user !!} has successfully registered on Student Portal. <br> He/she is in pending mode now and waits for your confirmation to use the Portal.</span>
     </span>
 </div>
 

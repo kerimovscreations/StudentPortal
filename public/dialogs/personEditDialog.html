@@ -1,15 +1,15 @@
 <md-dialog aria-label="Person Edit" ng-cloak>
-    <form name="edit_personal_info_form">
-        <md-toolbar>
-            <div class="md-toolbar-tools">
-                <h3>Edit Personal Info</h3>
-                <span flex></span>
-                <md-button class="md-icon-button" ng-click="hide()">
-                    <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
-                </md-button>
-            </div>
-        </md-toolbar>
-        <md-dialog-content>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h3>Edit Personal Info</h3>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="hide()">
+                <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <form name="edit_personal_info_form" role="form">
             <div class="md-dialog-content" style="min-height: 100px;">
                 <div layout="row" layout-align="center none" style="padding-bottom: 0">
                     <div>
@@ -20,7 +20,8 @@
                     <div layout="column">
                         <md-input-container class="reduce-margin">
                             <label>Name</label>
-                        <textarea ng-disabled="loader.posting" required class="md-title" ng-model="edited_person_data.name"
+                        <textarea ng-disabled="loader.posting" required class="md-title"
+                                  ng-model="edited_person_data.name"
                                   minlength="10" maxlength="100" name="edited_person_name"></textarea>
                             <div ng-messages="edit_personal_info_form.edited_person_name.$error" role="alert">
                                 <div ng-message-exp="['required', 'minlength', 'maxlength']">
@@ -30,18 +31,49 @@
                         </md-input-container>
                         <md-input-container class="reduce-margin">
                             <label>Email</label>
-                            <input ng-disabled="loader.posting" required type="email" ng-model="edited_person_data.email"
-                                   minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" name="edited_person_email"/>
+                            <input ng-disabled="loader.posting" required type="email"
+                                   ng-model="edited_person_data.email"
+                                   minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/"
+                                   name="edited_person_email"/>
                             <div ng-messages="edit_personal_info_form.edited_person_email.$error" role="alert">
                                 <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
                                     Invalid email
                                 </div>
                             </div>
                         </md-input-container>
+                        <div layout="row">
+
+                            <md-input-container class="reduce-margin" style="margin-top: 10px">
+                                <label>Old password</label>
+                                <input ng-disabled="loader.posting" ng-model="old_password" type="password"
+                                       name="old_password">
+                            </md-input-container>
+
+                            <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
+                                <label>New password</label>
+                                <input ng-disabled="loader.posting" name="new_password" ng-model="new_password" required
+                                       type="password"
+                                       minlength="8">
+                                <div ng-messages="edit_personal_info_form.new_password.$error" multiple md-auto-hide="false">
+                                    <div ng-message="minlength">Required at least 8 character!</div>
+                                </div>
+                            </md-input-container>
+
+                            <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
+                                <label>Confirm Password</label>
+                                <input ng-disabled="loader.posting" name="new_password_confirm"
+                                       ng-model="new_password_confirm" required
+                                       type="password" ng-pattern="new_password">
+                                <div ng-messages="edit_personal_info_form.new_password_confirm.$error" multiple md-auto-hide="false">
+                                    <div ng-message="pattern">Not the same to confirm!</div>
+                                </div>
+                            </md-input-container>
+                        </div>
                         <div ng-show="edited_person_table=='students' || edited_person_table=='users'" layout="row">
                             <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
                                 <label>Phone Number</label>
-                                <input ng-disabled="loader.posting"  type="text" name="edited_person_phone" ng-model="edited_person_data.phone"
+                                <input ng-disabled="loader.posting" type="text" name="edited_person_phone"
+                                       ng-model="edited_person_data.phone"
                                        placeholder="+994123456789" required>
                                 <div ng-messages="edit_personal_info_form.edited_person_phone" role="alert">
                                     <div ng-message="required">Required field!</div>
@@ -49,7 +81,8 @@
                             </md-input-container>
                             <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
                                 <label>Birth Date</label>
-                                <input ng-disabled="loader.posting" type="text" name="edited_person_birth" ng-model="edited_person_data.birthDate"
+                                <input ng-disabled="loader.posting" type="text" name="edited_person_birth"
+                                       ng-model="edited_person_data.birthDate"
                                        placeholder="MM-DD-YYYY" required maxlength="10">
                                 <div ng-messages="edit_personal_info_form.edited_person_birth" role="alert">
                                     <div ng-message="required">Required field!</div>
@@ -57,7 +90,8 @@
                             </md-input-container>
                             <md-input-container ng-show="edited_person_table=='students'" style="margin-top: 10px">
                                 <label>Group</label>
-                                <md-select ng-disabled="loader.posting" ng-model="edited_person_data.group_id" ng-disabled="user_type!='teacher'">
+                                <md-select ng-disabled="loader.posting" ng-model="edited_person_data.group_id"
+                                           ng-disabled="user_type!='teacher'">
                                     <md-option ng-repeat="group in groups" value="<% group.id %>">
                                         <% group.name %>
                                     </md-option>
@@ -79,8 +113,10 @@
                                     </md-input-container>
                                     <md-input-container require>
                                         <label>minute</label>
-                                        <md-select ng-disabled="loader.posting" ng-model="startMinute" class="md-subhead">
-                                            <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                        <md-select ng-disabled="loader.posting" ng-model="startMinute"
+                                                   class="md-subhead">
+                                            <md-option ng-repeat="minute in minutes"
+                                                       value="<% minute.selectedMinute %>">
                                                 <% minute.selectedMinute %>
                                             </md-option>
                                         </md-select>
@@ -103,7 +139,8 @@
                                     <md-input-container required>
                                         <label>minute</label>
                                         <md-select ng-disabled="loader.posting" ng-model="endMinute" class="md-subhead">
-                                            <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                            <md-option ng-repeat="minute in minutes"
+                                                       value="<% minute.selectedMinute %>">
                                                 <% minute.selectedMinute %>
                                             </md-option>
                                         </md-select>
@@ -127,15 +164,17 @@
                     </div>
                 </div>
             </div>
-        </md-dialog-content>
-        <md-dialog-actions ng-hide="loader.loading" layout="row">
-            <md-progress-circular class="small-progress" ng-show="loader.posting" md-mode="indeterminate"></md-progress-circular>
-            <md-button ng-disabled="loader.posting" ng-click="hide()">
-                Cancel
-            </md-button>
-            <md-button ng-disabled="loader.posting" class="md-raised md-primary" ng-click="update()" style="margin-right:20px;">
-                Update
-            </md-button>
-        </md-dialog-actions>
-    </form>
+        </form>
+    </md-dialog-content>
+    <md-dialog-actions ng-hide="loader.loading" layout="row">
+        <md-progress-circular class="small-progress" ng-show="loader.posting"
+                              md-mode="indeterminate"></md-progress-circular>
+        <md-button ng-disabled="loader.posting" ng-click="hide()">
+            Cancel
+        </md-button>
+        <md-button ng-disabled="loader.posting" class="md-raised md-primary" ng-click="update()"
+                   style="margin-right:20px;">
+            Update
+        </md-button>
+    </md-dialog-actions>
 </md-dialog>

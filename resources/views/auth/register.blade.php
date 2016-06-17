@@ -5,7 +5,7 @@
 @section('content')
     <div ng-controller="RegisterController" layout="column" layout-align="center center" layout-fill ng-cloak
          style="height: auto">
-        <md-card style="max-width: 400px" ng-cloak>
+        <md-card style="max-width: 400px">
             <form name='userForm' role="form" method="POST" action="/register">
                 <md-card-title>
                     <md-card-title-text layout="column" layout-align="center center">
@@ -17,16 +17,14 @@
                     <div layout-gt-sm="row">
                         <md-input-container class="md-block" flex-gt-sm style="margin: 10px 0">
                             <label>First name</label>
-                            <input type="text" name="firstName" ng-model="user.firstName" required
-                                   value="{{ old('firstName') }}">
+                            <input type="text" name="firstName" ng-model="user.firstName" required>
                             <div ng-messages="userForm.firstName.$error" role="alert">
                                 <div ng-message="required">Required field!</div>
                             </div>
                         </md-input-container>
                         <md-input-container class="md-block" flex-gt-sm style="margin: 10px 0">
                             <label>Last Name</label>
-                            <input type="text" name="lastName" ng-model="user.lastName" required
-                                   value="{{ old('lastName') }}">
+                            <input type="text" name="lastName" ng-model="user.lastName" required>
                             <div ng-messages="userForm.lastName.$error" role="alert">
                                 <div ng-message="required">Required field!</div>
                             </div>
@@ -35,7 +33,7 @@
                     <md-input-container style="width: 100%; margin: 10px 0">
                         <label>Email</label>
                         <input name="email" ng-model="user.email" required type="email"
-                               ng-pattern="/^.+@.+\..+$/" value="{{ old('email') }}">
+                               ng-pattern="/^.+@.+\..+$/">
                         <div ng-messages="userForm.email.$error" role="alert" multiple>
                             <div ng-message="required">Required field!</div>
                             <div ng-message="pattern">It doesn't seem like an email!</div>
