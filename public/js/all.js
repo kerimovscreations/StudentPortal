@@ -4151,6 +4151,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.mentors = [];
         $scope.pending = [];
         $scope.groups = [];
+        $scope.show_list=[];
 
         $scope.loader = {
             loading: false,
@@ -4160,6 +4161,9 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         if ($scope.user_type != 'student') {
             $http.get('/getGroups').success(function (data) {
                 $scope.groups = data;
+                for(var i=0; i<$scope.groups.length;i++){
+                    $scope.show_list[i]=true;
+                }
             });
             $http.get('/getStudents').success(function (data) {
                 $scope.students = data;
@@ -4179,6 +4183,14 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.selectedIndex = 0;
 
+        $scope.toggleList=function (index) {
+            $scope.show_list[index]=!$scope.show_list[index];
+        };
+        
+        $scope.searchEvent=function ($event) {
+            $event.stopPropagation();
+        };
+        
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
@@ -4312,7 +4324,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.eventAdd = function (type) {
             $scope.Data.AddEventType = type;
-            Data.SelectedMentor=[];
+            Data.SelectedMentor = [];
             $mdDialog.show({
                 controller: eventAddDialogController,
                 templateUrl: 'dialogs/eventAddDialog.html',
@@ -4461,7 +4473,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.eventAdd = function (index) {
             Data.AddEventType = 'extra';
-            Data.SelectedMentor=$scope.mentors[index];
+            Data.SelectedMentor = $scope.mentors[index];
 
             $mdDialog.show({
                 controller: eventAddDialogController,

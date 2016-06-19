@@ -1,14 +1,28 @@
 <md-content>
+    <style>
+        .md-errors-spacer{
+            display:none;
+        }
+    </style>
     <md-tabs class="md-accent" md-selected="selectedIndex" md-align-tabs="top" md-dynamic-height md-border-bottom
              md-center-tabs="true" md-swipe-content="true">
         <md-tab ng-if="user_type!='student'" id="student_tab">
             <md-tab-label>Students</md-tab-label>
             <md-tab-body>
                 <section style="max-width: 1000px; margin: 0 auto;" ng-repeat="group in groups track by $index">
-                    <md-subheader style="background-color:#ececec; color: rgb(245, 126, 54)"><% group.name %>
+                    <md-subheader ng-click="toggleList($index)" class="no-outline" style="background-color:#ececec; color: rgb(245, 126, 54); margin-bottom: 1px">
+                        <div layout="row" layout-align="space-between center" >
+                            <span><% group.name %></span>
+                            <div layout="row">
+                                <md-input-container ng-click="searchEvent($event)" ng-hide="show_list[$index]" style="margin: 0">
+                                    <md-icon md-svg-icon="svg/ic_search_white_24px.svg" class="search"></md-icon>
+                                    <input ng-model="searchName" type="text" aria-label="searchName">
+                                </md-input-container>
+                            </div>
+                        </div>
                     </md-subheader>
-                    <md-list layout="column" style="padding: 0;">
-                        <md-list-item style="max-width: 100%;" ng-repeat="contact in students track by $index"
+                    <md-list ng-hide="show_list[$index]" layout="column" style="padding: 0;">
+                        <md-list-item style="max-width: 100%;" ng-repeat="contact in students | filter:searchName"
                                       ng-if="contact.group_id == group.id" ng-click="showContact(contact.id,'students')"
                                       class="noright">
                             <img class="md-avatar" ng-src="images/profile_icon.png"
