@@ -13,7 +13,7 @@ class Teacher extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'api_token', 'work_days', 'work_start_time', 'work_end_time', 'bio'
+        'name', 'email', 'password', 'api_token', 'work_days', 'work_start_time', 'work_end_time', 'bio', 'profile_link'
     ];
 
     /**

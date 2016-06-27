@@ -28,28 +28,6 @@ class UserController extends Controller
         return $users;
     }
 
-    public function getDataUser($table, $id)
-    {
-        if ($table == 'students') {
-            if(Auth::guard('student')->check()){
-                if(Auth::guard('student')->user()->id==$id){
-                    $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate', 'bio')->get();
-                    $user[0]->group = Group::find($user[0]->group_id)->name;
-                }else{
-                    return redirect('/');
-                }
-            }else{
-                $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'group_id', 'phone', 'birthDate', 'bio')->get();
-                $user[0]->group = Group::find($user[0]->group_id)->name;
-            }
-        } else if ($table == 'users') {
-            $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'phone', 'birthDate')->get();
-        } else {
-            $user = DB::table($table)->where('id', intval($id))->select('name', 'email', 'bio', 'work_days', 'work_start_time', 'work_end_time')->get();
-        }
-        return json_encode($user[0]);
-    }
-
     public function email()
     {
         $user_type = session()->get('userType');

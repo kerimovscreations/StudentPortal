@@ -1,5 +1,5 @@
-var registerApp=angular.module('appRegister',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies','mdPickers']);
-registerApp.config(function($mdThemingProvider, $interpolateProvider){
+var registerApp = angular.module('appRegister', ['ngMaterial', 'ngRoute', 'ngResource', 'ngMessages', 'ngCookies', 'mdPickers']);
+registerApp.config(function ($mdThemingProvider, $interpolateProvider) {
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
         .primaryPalette('customTheme');
@@ -7,8 +7,8 @@ registerApp.config(function($mdThemingProvider, $interpolateProvider){
     $interpolateProvider.endSymbol('%>');
 });
 
-var loginApp=angular.module('appLogin',['ngMaterial','ngRoute','ngResource','ngMessages','ngCookies']);
-loginApp.config(function($mdThemingProvider, $interpolateProvider){
+var loginApp = angular.module('appLogin', ['ngMaterial', 'ngRoute', 'ngResource', 'ngMessages', 'ngCookies']);
+loginApp.config(function ($mdThemingProvider, $interpolateProvider) {
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
         .primaryPalette('customTheme');
@@ -16,11 +16,11 @@ loginApp.config(function($mdThemingProvider, $interpolateProvider){
     $interpolateProvider.endSymbol('%>');
 });
 
-var welcomeApp=angular.module('appWelcome',['ngMaterial','ngRoute','ngResource']);
+var welcomeApp = angular.module('appWelcome', ['ngMaterial', 'ngRoute', 'ngResource']);
 
 
-var portalApp=angular.module('appTeacherDashboard',['ngMaterial','ngRoute','ngResource','ngMessages', 'ngCookies']);
-portalApp.config(function($mdThemingProvider, $interpolateProvider){
+var portalApp = angular.module('appTeacherDashboard', ['ngMaterial', 'ngRoute', 'ngResource', 'ngMessages', 'ngCookies', 'ngFileUpload', 'ngImgCrop']);
+portalApp.config(function ($mdThemingProvider, $interpolateProvider) {
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')
         .primaryPalette('customTheme');
@@ -28,7 +28,7 @@ portalApp.config(function($mdThemingProvider, $interpolateProvider){
     $interpolateProvider.endSymbol('%>');
 });
 
-var customTheme={
+var customTheme = {
     '50': '3c092c',
     '100': '3c092c',
     '200': '3c092c',

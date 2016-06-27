@@ -12,13 +12,22 @@
         <form name="edit_personal_info_form" role="form">
             <div class="md-dialog-content" style="min-height: 100px;">
                 <div layout="row" layout-align="center none" style="padding-bottom: 0">
-                    <div>
-                        <img class="md-avatar" ng-src="images/profile_icon.png"
-                             style="width: 150px;height: 150px;border-radius: 100%"/>
+                    <div style="width: 150px">
+                        <div class="no-outline" style="position: relative; width: 100%; height: 150px;border-radius: 100%; overflow: hidden">
+                            <img class="md-avatar" ng-src="<% edited_person_data.profile_link || 'images/profile_icon.png' %>"
+                                 style="position: absolute; top: 0;left: 0;width: 100%;height: 100%"/>
+                            <div class="no-outline" ng-show="checkOwner()" style="position:absolute;top: 0;left: 0; background: black;opacity: 0.5;
+                        width: 100%;height: 100%; text-align: center; color: white; padding: 30px 20px" ng-click="changeProfileImage()">
+                                <i class="fa fa-camera fa-4x" aria-hidden="true"></i>
+                                <br>
+                                <span>Change profile picture</span>
+                            </div>
+                        </div>
+
                     </div>
                     <div style="width: 30px"></div>
                     <div layout="column">
-                        <md-input-container class="reduce-margin">
+                        <md-input-container class="reduce-margin-bottom">
                             <label>Name</label>
                         <textarea ng-disabled="loader.posting" required class="md-title"
                                   ng-model="edited_person_data.name"
@@ -28,8 +37,8 @@
                                     Please fill out your full name
                                 </div>
                             </div>
-                        </md-input-container>
-                        <md-input-container class="reduce-margin">
+                        </md-input-container >
+                        <md-input-container class="reduce-margin-bottom">
                             <label>Email</label>
                             <input ng-disabled="loader.posting" required type="email"
                                    ng-model="edited_person_data.email"
@@ -42,14 +51,13 @@
                             </div>
                         </md-input-container>
                         <div layout="row">
-
-                            <md-input-container class="reduce-margin" style="margin-top: 5px">
+                            <md-input-container style="margin-top: 5px" class="reduce-margin-bottom">
                                 <label>Old password</label>
                                 <input ng-disabled="loader.posting" ng-model="old_password" type="password"
                                        name="old_password">
-                            </md-input-container>
+                            </md-input-container >
 
-                            <md-input-container class="reduce-margin" flex-gt-sm>
+                            <md-input-container class="reduce-margin-bottom" style="margin-top: 5px"  flex-gt-sm>
                                 <label>New password</label>
                                 <input ng-disabled="loader.posting" name="new_password" ng-model="new_password" required
                                        type="password"
@@ -59,7 +67,7 @@
                                 </div>
                             </md-input-container>
 
-                            <md-input-container class="reduce-margin" flex-gt-sm>
+                            <md-input-container class="reduce-margin-bottom" style="margin-top: 5px"  flex-gt-sm>
                                 <label>Confirm Password</label>
                                 <input ng-disabled="loader.posting" name="new_password_confirm"
                                        ng-model="new_password_confirm" required
@@ -70,7 +78,7 @@
                             </md-input-container>
                         </div>
                         <div ng-show="edited_person_table=='students' || edited_person_table=='users'" layout="row">
-                            <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
+                            <md-input-container class="reduce-margin-bottom" flex-gt-sm style="margin: 10px 0">
                                 <label>Phone Number</label>
                                 <input ng-disabled="loader.posting" type="text" name="edited_person_phone"
                                        ng-model="edited_person_data.phone"
@@ -79,7 +87,7 @@
                                     <div ng-message="required">Required field!</div>
                                 </div>
                             </md-input-container>
-                            <md-input-container class="reduce-margin" flex-gt-sm style="margin: 10px 0">
+                            <md-input-container class="reduce-margin-bottom" flex-gt-sm style="margin: 10px 0">
                                 <label>Birth Date</label>
                                 <input ng-disabled="loader.posting" type="text" name="edited_person_birth"
                                        ng-model="edited_person_data.birthDate"
@@ -88,7 +96,7 @@
                                     <div ng-message="required">Required field!</div>
                                 </div>
                             </md-input-container>
-                            <md-input-container ng-show="edited_person_table=='students'" style="margin-top: 10px">
+                            <md-input-container class="reduce-margin-bottom" ng-show="edited_person_table=='students'" style="margin-top: 10px">
                                 <label>Group</label>
                                 <md-select ng-disabled="loader.posting || user_type!='teacher'" ng-model="edited_person_data.group_id">
                                     <md-option ng-repeat="group in groups" value="<% group.id %>">
@@ -102,7 +110,7 @@
                                 <h4 class="md-title">Start time: </h4>
                                 <div style="width: 10px"></div>
                                 <div layout="row" layout-align="center">
-                                    <md-input-container required>
+                                    <md-input-container required class="reduce-margin-bottom">
                                         <label>hour</label>
                                         <md-select ng-disabled="loader.posting" ng-model="startHour" class="md-subhead">
                                             <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
@@ -110,7 +118,7 @@
                                             </md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <md-input-container require>
+                                    <md-input-container require class="reduce-margin-bottom">
                                         <label>minute</label>
                                         <md-select ng-disabled="loader.posting" ng-model="startMinute"
                                                    class="md-subhead">
@@ -127,7 +135,7 @@
                                 <h4 class="md-title">End time: </h4>
                                 <div style="width: 10px"></div>
                                 <div layout="row" layout-align="center">
-                                    <md-input-container required>
+                                    <md-input-container required class="reduce-margin-bottom">
                                         <label>hour</label>
                                         <md-select ng-disabled="loader.posting" ng-model="endHour" class="md-subhead">
                                             <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
@@ -135,7 +143,7 @@
                                             </md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <md-input-container required>
+                                    <md-input-container required class="reduce-margin-bottom">
                                         <label>minute</label>
                                         <md-select ng-disabled="loader.posting" ng-model="endMinute" class="md-subhead">
                                             <md-option ng-repeat="minute in minutes"
@@ -147,7 +155,7 @@
                                 </div>
                             </div>
                             <div style="width: 20px"></div>
-                            <md-input-container class="reduce-margin">
+                            <md-input-container class="reduce-margin-bottom">
                                 <label>Work days</label>
                                 <md-select ng-disabled="loader.posting" ng-model="selected_days" multiple>
                                     <md-optgroup label="Week Days">

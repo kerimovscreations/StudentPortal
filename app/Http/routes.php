@@ -52,7 +52,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         /**
          * Get the data of user
          */
-        Route::get('/getDataUser/{table}/{id}', 'UserController@getDataUser');
+        Route::get('/getDataUser/{table}/{id}', 'UserDataController@getDataUser');
 
         /**
          * Update the data of user
@@ -94,6 +94,11 @@ Route::group(['middleware' => ['web'], ['api']], function () {
          */
         Route::get('/getWeekEvents/{data1}', 'EventController@getWeekly');
 
+        /**
+         * Image upload
+         */
+        Route::post('/uploadImage','ImageUploadController@store');
+        
         /**
          * Get the selected event data
          */

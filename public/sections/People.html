@@ -25,7 +25,7 @@
                         <md-list-item style="max-width: 100%;" ng-repeat="contact in students | filter:searchName"
                                       ng-if="contact.group_id == group.id" ng-click="showContact(contact.id,'students')"
                                       class="noright">
-                            <img class="md-avatar" ng-src="images/profile_icon.png"
+                            <img class="md-avatar" ng-src="<% contact.profile_link || 'images/profile_icon.png' %> "
                                  style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                             <span class="md-title"><% contact.name %></span>
                             <span flex></span>
@@ -44,7 +44,7 @@
                 <md-list layout="column" style="max-width: 1000px; margin: 0 auto;">
                     <md-list-item ng-repeat="contact in mentors track by $index"
                                   ng-click="showContact(contact.id,'mentors')" class="noright">
-                        <img class="md-avatar" ng-src="images/profile_icon.png"
+                        <img class="md-avatar" ng-src="<% contact.profile_link || 'images/profile_icon.png' %>"
                              style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                         <span class="md-title"><% contact.name %></span>
                         <span flex></span>
@@ -62,7 +62,7 @@
                 <md-list layout="column" style="max-width: 1000px; margin: 0 auto;">
                     <md-list-item ng-repeat="contact in teachers track by $index"
                                   ng-click="showContact(contact.id,'teachers')" class="noright">
-                        <img class="md-avatar" ng-src="images/profile_icon.png"
+                        <img class="md-avatar" ng-src="<% contact.profile_link || 'images/profile_icon.png' %>"
                              style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                         <span class="md-title"><% contact.name %></span>
                         <span flex></span>

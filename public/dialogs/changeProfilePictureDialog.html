@@ -1,0 +1,50 @@
+<md-dialog aria-label="Edit Post" ng-cloak>
+    <md-content>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Select profile picture</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="min-width: 300px; min-height: 100px" layout="column" layout-align="center none">
+            <md-progress-circular class="center-with-margin" ng-show="loader.loading"
+                                  md-mode="indeterminate"></md-progress-circular>
+            <form name="changePictureForm">
+                <div ng-hide="loader.loading" class="md-dialog-content" style="text-align: center">
+                    <div ng-hide="picture" ngf-drop ngf-select ng-model="picture" class="drop-box"
+                         ngf-drag-over-class="'dragover'" ngf-multiple="false" ngf-allow-dir="true"
+                         accept="image/*"
+                         ngf-pattern="'image/*'" ngf-max-size="2MB" ngf-model-invalid="errorFile">
+                        <i class="fa fa-upload fa-5x" aria-hidden="true"></i>
+                        <br><br>
+                            <span>Drop image here or click to upload
+                            <br> MAX Size: 2MB
+                            </span>
+                    </div>
+                    <span style="color: red; font-size: 20px" ng-show="errorFile">File is too large</span>
+                    <div ng-show="picture" ngf-drop ng-model="picture" ngf-pattern="image/*"
+                         class="cropArea">
+                        <img-crop image="picture  | ngfDataUrl"
+                                  result-image="croppedDataUrl" ng-init="croppedDataUrl=''">
+                        </img-crop>
+                    </div>
+                </div>
+            </form>
+        </md-dialog-content>
+        <md-dialog-actions ng-hide="loader.loading" layout="row">
+            <md-progress-circular class="small-progress" ng-show="loader.posting"
+                                  md-mode="indeterminate"></md-progress-circular>
+            <md-button ng-disabled="loader.posting" ng-click="cancel()">
+                Cancel
+            </md-button>
+            <md-button ng-disabled="loader.posting" class="md-primary md-raised"
+                       ng-click="upload(croppedDataUrl, picture.name)"
+                       style="margin-right:20px;">
+                Upload
+            </md-button>
+        </md-dialog-actions>
+    </md-content>
+</md-dialog>

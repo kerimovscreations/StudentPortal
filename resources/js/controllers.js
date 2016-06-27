@@ -31,6 +31,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $cookies.put('userName', result['name']);
         $cookies.put('userEmail', result['email']);
         $cookies.put('userType', result['type']);
+        $cookies.put('userProfilePic', result['profile_link']);
         if (result['type'] == 'student') {
             $cookies.put('userGroupId', result['group_id']);
         }
@@ -39,6 +40,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.user_email = $cookies.get('userEmail');
         $scope.user_type = $cookies.get('userType');
         $scope.user_id = $cookies.get('userId');
+        $scope.user_profile_pic = $cookies.get('userProfilePic');
 
 
         if ($scope.user_type == 'student') {
@@ -79,10 +81,29 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             temp.focus();
     });
 
+    //initializing the display to show dialog in full screen mode
+    $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+
     /**
      * Show the image change pop-up menu
      */
     $scope.changeProfileImage = function () {
+        Data.ChangeProfilePersonId = $scope.user_id;
+        Data.ChangeProfilePersonTable = $scope.user_type + 's';
+
+        $mdDialog.show({
+            controller: changeProfilePictureController,
+            templateUrl: 'dialogs/changeProfilePictureDialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen
+        });
+        $scope.$watch(function () {
+            return $mdMedia('xs') || $mdMedia('sm');
+        }, function (wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+        });
     };
 
     /**
@@ -92,10 +113,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     $scope.editProfile = function () {
         Data.PersonTable = $scope.user_type + 's';
         Data.PersonId = $scope.user_id;
-
-        //initializing the display to show dialog in full screen mode
-        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
-        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+        
         $mdDialog.show({
             controller: personEditDialogController,
             templateUrl: 'dialogs/personEditDialog.html',
@@ -108,7 +126,6 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         }, function (wantsFullScreen) {
             $scope.customFullscreen = (wantsFullScreen === true);
         });
-
     };
 
     function debounce(func, wait, context) {
@@ -262,7 +279,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.mentors = [];
         $scope.pending = [];
         $scope.groups = [];
-        $scope.show_list=[];
+        $scope.show_list = [];
 
         $scope.loader = {
             loading: false,
@@ -272,8 +289,8 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         if ($scope.user_type != 'student') {
             $http.get('/getGroups').success(function (data) {
                 $scope.groups = data;
-                for(var i=0; i<$scope.groups.length;i++){
-                    $scope.show_list[i]=true;
+                for (var i = 0; i < $scope.groups.length; i++) {
+                    $scope.show_list[i] = true;
                 }
             });
             $http.get('/getStudents').success(function (data) {
@@ -294,14 +311,14 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $scope.selectedIndex = 0;
 
-        $scope.toggleList=function (index) {
-            $scope.show_list[index]=!$scope.show_list[index];
+        $scope.toggleList = function (index) {
+            $scope.show_list[index] = !$scope.show_list[index];
         };
-        
-        $scope.searchEvent=function ($event) {
+
+        $scope.searchEvent = function ($event) {
             $event.stopPropagation();
         };
-        
+
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
@@ -1430,17 +1447,23 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
     };
 }
 
-function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast, $route, Data) {
+function personEditDialogController($scope, $http, $cookies, $mdMedia, $mdDialog, $mdToast, $route, Data) {
     //progress circular initialization
     $scope.loader = {
         loading: true,
         posting: false
     };
+    //get the type of user to access some actions
+    $scope.user_type = $cookies.get('userType');
+    $scope.user_id = $cookies.get('userId');
+
     //get the edited person data from factory
     $scope.edited_person_id = Data.PersonId;
     $scope.edited_person_table = Data.PersonTable;
+
     //get the type of user to access some actions
     $scope.user_type = $cookies.get('userType');
+
     //get the work days and hours for teachers and mentors
     $scope.selected_days = [];
     $scope.startHour = null;
@@ -1488,6 +1511,34 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
     //convert the birth date to readable format
     $scope.displayBirthDate = function (date) {
         return moment(date, 'MM-DD-YYYY').format('D MMMM YYYY')
+    };
+
+    //initializing the display to show dialog in full screen mode
+    $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+
+    //change profile picture
+    $scope.changeProfileImage = function () {
+        if ($scope.checkOwner()) {
+            $mdDialog.show({
+                controller: changeProfilePictureController,
+                templateUrl: 'dialogs/changeProfilePictureDialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                fullscreen: useFullScreen
+            });
+            $scope.$watch(function () {
+                return $mdMedia('xs') || $mdMedia('sm');
+            }, function (wantsFullScreen) {
+                $scope.customFullscreen = (wantsFullScreen === true);
+            });
+        }
+    };
+
+    //check the owner of data
+    $scope.checkOwner = function () {
+        return $scope.user_id == $scope.edited_person_id &&
+            $scope.user_type + 's' == $scope.edited_person_table;
     };
 
     //update the personal info
@@ -1564,6 +1615,54 @@ function personEditDialogController($scope, $http, $cookies, $mdDialog, $mdToast
         $mdDialog.cancel();
     };
 
+}
+
+//Profile picture edit controller
+
+function changeProfilePictureController($scope, $cookies, $mdDialog, $mdToast, $timeout, Upload) {
+    //progress circular initialization
+    $scope.loader = {
+        loading: false,
+        posting: false
+    };
+
+    //get the type of user to access some actions
+    var user_type = $cookies.get('userType');
+    var user_id = $cookies.get('userId');
+
+    //upload the cropped image to server
+    $scope.upload = function (dataUrl, name) {
+        $scope.loader.posting = true;
+        Upload.upload({
+            url: '/uploadImage',
+            data: {
+                user_type: user_type,
+                user_id: user_id,
+                file: Upload.dataUrltoBlob(dataUrl, name)
+            }
+        }).then(function (resp) {
+            $timeout(function () {
+                $scope.loader.posting = false;
+                if (resp.status == 200) {
+                    $mdDialog.hide();
+                    location.reload();
+                    $mdToast.show($mdToast.simple().textContent('Picture uploaded'));
+                }
+                else {
+                    console.log(resp);
+                    $mdToast.show($mdToast.simple().textContent('Error occured'));
+                }
+            });
+        }, null, null);
+    };
+
+    //help functions
+    $scope.hide = function () {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function () {
+        $mdDialog.cancel();
+    };
 }
 
 // Assignment add dialog controller

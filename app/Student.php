@@ -13,7 +13,7 @@ class Student extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'birthDate', 'group_id','api_token','bio'
+        'name', 'email', 'password', 'phone', 'birthDate', 'group_id', 'api_token', 'bio', 'profile_link'
     ];
 
     /**
@@ -22,10 +22,11 @@ class Student extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','api_token'
+        'password', 'remember_token', 'api_token'
     ];
 
-    public function group(){
+    public function group()
+    {
         return $this->belongsTo('App\Group');
     }
 
@@ -35,6 +36,7 @@ class Student extends Authenticatable
             ->timezone('Asia/Baku')
             ->toDateTimeString();
     }
+
     public function setUpdatedAtAttribute($value)
     {
         $this->attributes['updated_at'] = Carbon::createFromTimestamp(strtotime($value->subHour()))

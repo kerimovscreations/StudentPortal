@@ -4,5 +4,7 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="ng-file-upload" level="application" />
+    <orderEntry type="library" name="ng-img-crop" level="application" />
   </component>
 </module>

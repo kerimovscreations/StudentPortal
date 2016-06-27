@@ -30,14 +30,14 @@
                 <div style="position: relative">
                     <div id="toggleDropDown"
                          style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%; overflow: hidden">
-                        <img ng-src="images/profile_icon.png" style="width:100%; height: 100%;"/>
+                        <img ng-src="<% user_profile_pic || 'images/profile_icon.png'%>" style="width:100%; height: 100%;"/>
                     </div>
                     <div tabindex="-1" id="dropDown" class="md-whiteframe-2dp" ng-blur="hideDropDown()">
                         <div class="drop-down-profile-triangle"></div>
                         <div layout="row" style="padding: 10px">
-                            <div ng-click="changeProfileImage()"
+                            <div class="no-outline" ng-click="changeProfileImage()"
                                  style="width:100%; height: 100px; border-radius: 100%;position: relative; overflow: hidden; margin: 5px">
-                                <img ng-src="images/profile_icon.png"
+                                <img class="no-outline" ng-src="<% user_profile_pic || 'images/profile_icon.png'%>"
                                      style="width:100px; height: 100px;"/>
                                 <div class="change-profile-image-text">Change</div>
                             </div>

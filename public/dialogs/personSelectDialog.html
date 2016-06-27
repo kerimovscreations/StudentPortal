@@ -17,7 +17,7 @@
                 <md-progress-circular class="center-with-margin" ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
                 <div ng-hide="loader.loading" layout="row" layout-align="center none">
                     <div>
-                        <img class="md-avatar" ng-src="images/profile_icon.png"
+                        <img class="md-avatar" ng-src="<% person_data.profile_link || 'images/profile_icon.png' %>"
                              style="width: 150px;height: 150px;border-radius: 100%"/>
                     </div>
                     <div style="width: 30px"></div>
