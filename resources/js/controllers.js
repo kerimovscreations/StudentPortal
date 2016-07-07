@@ -4,10 +4,6 @@ registerApp.controller('RegisterController', function ($scope) {
     var today1 = moment(today);
     $scope.maxDate = today1.format('YYYY-MM-DD');
 
-    // $scope.$watch('user.birthDate',function () {
-    //     console.log($scope.user.birthDate);
-    // });
-
     $scope.birthDateFormatted = function () {
         return moment($scope.user.birthDate).format('MM-DD-YYYY')
     };
@@ -31,7 +27,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $cookies.put('userName', result['name']);
         $cookies.put('userEmail', result['email']);
         $cookies.put('userType', result['type']);
-        $cookies.put('userProfilePic', result['profile_link']);
+        $cookies.put('userProfileImage', result['profile_image_path']);
         if (result['type'] == 'student') {
             $cookies.put('userGroupId', result['group_id']);
         }
@@ -40,8 +36,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.user_email = $cookies.get('userEmail');
         $scope.user_type = $cookies.get('userType');
         $scope.user_id = $cookies.get('userId');
-        $scope.user_profile_pic = $cookies.get('userProfilePic');
-
+        $scope.user_profile_pic = $cookies.get('userProfileImage');
 
         if ($scope.user_type == 'student') {
             var user_group_id = $cookies.get('userGroupId');
@@ -113,7 +108,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     $scope.editProfile = function () {
         Data.PersonTable = $scope.user_type + 's';
         Data.PersonId = $scope.user_id;
-        
+
         $mdDialog.show({
             controller: personEditDialogController,
             templateUrl: 'dialogs/personEditDialog.html',
@@ -160,13 +155,33 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $location.path('/notification');
     }
 })
-    .controller('SectionListController', function ($scope, $location, $http, $rootScope, Data, SectionService) {
+    .controller('SectionListController', function ($scope, $location, $http, $cookies, $rootScope, Data, SectionService) {
         /*
          $http.get('/getSections').success(function (data) {
          $scope.sections = data;
          });
          */
         $scope.sections = SectionService.sections;
+
+        var user_type = $cookies.get('userType');
+
+        switch (user_type) {
+            case 'student':
+            {
+                $scope.user_access_level = 1;
+                break;
+            }
+            case 'mentor':
+            {
+                $scope.user_access_level = 2;
+                break;
+            }
+            case 'teacher':
+            {
+                $scope.user_access_level = 3;
+                break;
+            }
+        }
 
         $scope.selectSection = function (text) {
             $rootScope.current_section = text;
@@ -218,7 +233,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 $mdToast.show($mdToast.simple().textContent('Posted'));
             }).error(function (data) {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             })
         };
@@ -237,7 +252,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                     $route.reload();
                     $mdToast.show($mdToast.simple().textContent('Deleted'));
                 }).error(function (data) {
-                    $mdToast.show($mdToast.simple().textContent('Error occured'));
+                    $mdToast.show($mdToast.simple().textContent('Error occurred'));
                     console.log(data);
                 })
             });
@@ -271,6 +286,87 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         };
 
     })
+    .controller('AttendanceController', function ($scope, $rootScope, $mdDialog, $mdMedia, $mdToast, $http, $cookies, $route, Data) {
+        $rootScope.current_section = 'Attendance';
+
+        $scope.loader = {
+            loading: false,
+            posting: false
+        };
+
+        $scope.students = [];
+        $scope.groups = [];
+        var date = new Date();
+        $scope.momentDate = moment(date);
+        $scope.show_list = [];
+        $scope.attendances = [];
+
+        $scope.showFormattedDate = function () {
+            return $scope.momentDate.format('dddd, MMMM DD YYYY');
+        };
+
+        $scope.addDayToDate = function () {
+            $scope.momentDate.add(1, 'd');
+            updateDate();
+        };
+
+        $scope.subtractDayFromDate = function () {
+            $scope.momentDate.subtract(1, 'd');
+            updateDate();
+        };
+
+        $http.get('/getGroups').success(function (data) {
+            $scope.groups = data;
+            for (var i = 0; i < $scope.groups.length; i++) {
+                $scope.show_list[i] = false;
+            }
+        });
+
+        updateDate();
+
+        function updateDate() {
+            $scope.loader.loading = true;
+            $http.get('/getStudentsWithAttendances/' + $scope.momentDate.format('YYYYMMDD')).success(function (data) {
+                $scope.students = data;
+                $scope.loader.loading = false;
+            });
+        }
+
+        $scope.toggleList = function (index) {
+            $scope.show_list[index] = !$scope.show_list[index];
+        };
+
+        $scope.searchEvent = function ($event) {
+            $event.stopPropagation();
+        };
+
+        $scope.postAttendance = function () {
+            $scope.loader.posting = true;
+
+            for (var i = 0; i < $scope.students.length; i++) {
+                $scope.attendances[i] = $scope.students[i].attendance;
+                $scope.attendances[i].student_id = $scope.students[i].id;
+                $scope.attendances[i].note = $scope.students[i].attendance.note;
+                $scope.attendances[i].status = parseInt($scope.students[i].attendance.status);
+            }
+
+            $http({
+                method: 'POST',
+                url: '/postAttendance',
+                data: {
+                    date: $scope.momentDate.format('YYYYMMDD'),
+                    attendances: $scope.attendances
+                }
+            }).success(function () {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('User type changed'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            })
+        }
+    })
     .controller('PeopleController', function ($http, $scope, $rootScope, $cookies, $route, $mdDialog, $mdMedia, $mdToast, Data) {
         $rootScope.current_section = 'People';
         $scope.user_type = $cookies.get('userType');
@@ -286,6 +382,14 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             posting: false
         };
 
+        $scope.selected_group_id = null;
+
+        if ($scope.user_type == 'teacher')
+            $http.get('/getPending').success(function (data) {
+                $scope.pending = data;
+                $scope.loader.loading = false;
+            });
+
         if ($scope.user_type != 'student') {
             $http.get('/getGroups').success(function (data) {
                 $scope.groups = data;
@@ -298,16 +402,14 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             });
         }
 
-        $http.get('/getTeachers').success(function (data) {
-            $scope.teachers = data;
-        });
         $http.get('/getMentors').success(function (data) {
             $scope.mentors = data;
         });
-        if ($scope.user_type == 'teacher')
-            $http.get('/getPending').success(function (data) {
-                $scope.pending = data;
-            });
+
+        $http.get('/getTeachers').success(function (data) {
+            $scope.teachers = data;
+            $scope.loader.loading = false;
+        });
 
         $scope.selectedIndex = 0;
 
@@ -341,21 +443,22 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             });
         };
 
-        $scope.changeType = function (id, type) {
+        $scope.changeType = function (id, type, selected_group_id) {
             $scope.loader.posting = true;
             $http({
                 method: 'POST',
                 url: '/changeUserType',
                 data: {
                     id: id,
-                    type: type
+                    type: type,
+                    group_id: selected_group_id
                 }
             }).success(function () {
                 $route.reload();
                 $mdToast.show($mdToast.simple().textContent('User type changed'));
             }).error(function (data) {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             })
         };
@@ -382,11 +485,16 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         }
     })
-    .controller('ScheduleController', function ($scope, $rootScope, $http, $cookies, $mdDialog, $timeout, $mdMedia, Data) {
+    .controller('ScheduleController', function ($scope, $rootScope, $http, $location, $cookies, $mdDialog, $timeout, $mdMedia, Data) {
         $rootScope.current_section = 'Schedule';
         $scope.Data = Data;
         $scope.user_type = $cookies.get('userType');
         $scope.events = [];
+
+        $scope.loader = {
+            loading: false,
+            posting: false
+        };
 
         $scope.dt = new Date();
 
@@ -399,12 +507,23 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $scope.today = function () {
             $scope.dt = new Date();
         };
-
         //Watch the selected date variable and fill out the remaining 6 days' events
         $scope.$watch('dt', function () {
-            $http.get('/getWeekEvents/' + moment($scope.dt).format('YYYYMMDD')).success(function (data) {
-                $scope.events = data;
+            $scope.loader.loading = true;
+            $http.get('/getWeekEvents/' + moment($scope.dt).format('YYYYMMDD') + '-'
+                + moment($scope.dt).add(6, 'd').format('YYYYMMDD')).success(function (data) {
+                $scope.events = [];
+
+                angular.forEach(data, function (value1, key) {
+                    angular.forEach(value1[0], function (value, key) {
+                        var temp = value;
+                        temp['type'] = value1['type'];
+                        $scope.events.push(temp);
+                    });
+                });
+                $scope.loader.loading = false;
             });
+
             $scope.temp1 = moment($scope.dt).add(1, 'd');
             $scope.temp2 = moment($scope.dt).add(2, 'd');
             $scope.temp3 = moment($scope.dt).add(3, 'd');
@@ -433,40 +552,47 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
 
-        $scope.eventSelect = function (id) {
-            Data.EventId = id;
+        $scope.eventSelect = function (type, id) {
+            if (type == 'lesson')
+                $location.path('/lesson/' + id);
+            else if (type == 'reservation') {
+                Data.SelectedReservationId = id;
 
-            $mdDialog.show({
-                controller: eventSelectDialogController,
-                templateUrl: 'dialogs/eventSelectDialog.html',
-                parent: angular.element(document.body),
-                clickOutsideToClose: true,
-                fullscreen: useFullScreen
-            });
-            $scope.$watch(function () {
-                return $mdMedia('xs') || $mdMedia('sm');
-            }, function (wantsFullScreen) {
-                $scope.customFullscreen = (wantsFullScreen === true);
-            });
+                $mdDialog.show({
+                    controller: reservationSelectDialogController,
+                    templateUrl: 'dialogs/reservationSelectDialog.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen
+                });
+
+                $scope.$watch(function () {
+                    return $mdMedia('xs') || $mdMedia('sm');
+                }, function (wantsFullScreen) {
+                    $scope.customFullscreen = (wantsFullScreen === true);
+                });
+            }
         };
 
         $scope.eventAdd = function (type) {
-            $scope.Data.AddEventType = type;
-            Data.SelectedMentor = [];
-            $mdDialog.show({
-                controller: eventAddDialogController,
-                templateUrl: 'dialogs/eventAddDialog.html',
-                parent: angular.element(document.body),
-                clickOutsideToClose: true,
-                fullscreen: useFullScreen
-            });
-            $scope.$watch(function () {
-                return $mdMedia('xs') || $mdMedia('sm');
-            }, function (wantsFullScreen) {
-                $scope.customFullscreen = (wantsFullScreen === true);
-            });
+            if (type == 'lesson')
+                $location.path('/add-lesson');
+            else if (type == 'reservation') {
+                Data.SelectedMentor = [];
+                $mdDialog.show({
+                    controller: reservationAddDialogController,
+                    templateUrl: 'dialogs/reservationAddDialog.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen
+                });
+                $scope.$watch(function () {
+                    return $mdMedia('xs') || $mdMedia('sm');
+                }, function (wantsFullScreen) {
+                    $scope.customFullscreen = (wantsFullScreen === true);
+                });
+            }
         }
-
     })
     .controller('AssignmentsController', function ($scope, $rootScope, $mdDialog, $mdMedia, Data) {
         $rootScope.current_section = 'Assignment';
@@ -511,9 +637,14 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     .controller('ConversationController', function ($rootScope) {
         $rootScope.current_section = 'Conversation';
     })
-    .controller('NotificationController', function ($scope, $rootScope, $http, $cookies, $route, $mdDialog, $mdMedia, Data) {
+    .controller('NotificationController', function ($scope, $rootScope, $http, $cookies, $route, $mdDialog, $mdMedia, $mdToast, Data) {
         $rootScope.current_section = 'Notification';
         $scope.notifications = [[], []];
+
+        $scope.loader = {
+            loading: true,
+            posting: false
+        };
 
         $scope.user_type = $cookies.get('userType');
         var user_id = $cookies.get('userId');
@@ -525,18 +656,21 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             });
             $http.get('/getNotifications/students/' + user_id).success(function (data) {
                 $scope.notifications[1] = data;
+                $scope.loader.loading = false;
             });
         }
         else if ($scope.user_type == 'mentor') {
             $scope.notifications[0] = [];
             $http.get('/getNotifications/mentors/' + user_id).success(function (data) {
                 $scope.notifications[1] = data;
+                $scope.loader.loading = false;
             });
         }
         else {
             $scope.notifications[0] = [];
             $http.get('/getNotifications/teachers/' + 0).success(function (data) {
                 $scope.notifications[1] = data;
+                $scope.loader.loading = false;
             });
         }
 
@@ -564,7 +698,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         };
 
         function showSelectNotificationDialog(id) {
-            Data.NotificationId = id;
+            Data.SelectedNotificationId = id;
 
             $mdDialog.show({
                 controller: notificationSelectDialogController,
@@ -585,14 +719,48 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             return moment(date, "YYYY-MM-DD HH:mm:ss").fromNow()
         };
 
+        $scope.delete = function () {
+            $scope.loader.posting = true;
+
+            var list = [];
+
+            $scope.notifications.forEach(function (notification_group) {
+                notification_group.forEach(function (notification_elem) {
+                    if (notification_elem.selected == true) {
+                        list.push(notification_elem.id);
+                    }
+                })
+            });
+
+            $http({
+                method: 'POST',
+                url: '/deleteNotifications',
+                data: {
+                    list: list
+                }
+            }).success(function () {
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Notifications are deleted'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            });
+        }
     })
     .controller('MentorScheduleController', function ($scope, $rootScope, $http, $mdDialog, $mdMedia, Data) {
         $rootScope.current_section = 'Mentor Schedule';
 
         $scope.metors = [];
 
+        $scope.loader = {
+            loading: true,
+            posting: false
+        };
+
         $http.get('/getMentors').success(function (data) {
             $scope.mentors = data;
+            $scope.loader.loading = false;
         });
 
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
@@ -604,8 +772,8 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             Data.SelectedMentor = $scope.mentors[index];
 
             $mdDialog.show({
-                controller: eventAddDialogController,
-                templateUrl: 'dialogs/eventAddDialog.html',
+                controller: reservationAddDialogController,
+                templateUrl: 'dialogs/reservationAddDialog.html',
                 parent: angular.element(document.body),
                 clickOutsideToClose: true,
                 fullscreen: useFullScreen
@@ -616,8 +784,268 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 $scope.customFullscreen = (wantsFullScreen === true);
             });
         }
-    });
+    })
+    .controller('SettingsController', function ($scope, $rootScope, $http, $route, $mdToast) {
+        $rootScope.current_section = 'Settings';
 
+        $scope.loader = {
+            loading: true,
+            posting: false
+        };
+
+        $scope.groups = [];
+        $scope.places = [];
+
+        $scope.button_disable = {
+            group: false,
+            place: false
+        };
+
+        $scope.addItem = {
+            group: false,
+            place: false
+        };
+
+        $scope.new_group = [];
+        $scope.new_place = [];
+
+        $http.get('/getPlaces').success(function (data) {
+            $scope.places = data;
+
+            $http.get('/getGroups').success(function (data) {
+                $scope.groups = data;
+                $scope.loader = false;
+            });
+        });
+
+        $scope.toggleGroupItem = function () {
+            $scope.addItem.group = !$scope.addItem.group;
+            $scope.button_disable.group = !$scope.button_disable.group;
+        };
+
+        $scope.togglePlaceItem = function () {
+            $scope.addItem.place = !$scope.addItem.place;
+            $scope.button_disable.place = !$scope.button_disable.place;
+        };
+
+        $scope.createGroup = function () {
+            $http({
+                method: 'POST',
+                url: '/createGroup',
+                data: {
+                    name: $scope.new_group.name,
+                    email: $scope.new_group.email,
+                    place_id: $scope.new_group.place_id
+                }
+            }).success(function () {
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('New group created'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            })
+        };
+
+        $scope.createPlace = function () {
+            $http({
+                method: 'POST',
+                url: '/createPlace',
+                data: {
+                    name: $scope.new_place.name
+                }
+            }).success(function () {
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('New place created'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            })
+        };
+
+        $scope.deleteGroup=function (id) {
+            $http({
+                method: 'POST',
+                url: '/deleteGroup',
+                data: {
+                    id: id
+                }
+            }).success(function () {
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Group deleted'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            })
+        };
+
+        $scope.deletePlace=function (id) {
+            $http({
+                method: 'POST',
+                url: '/deletePlace',
+                data: {
+                    id: id
+                }
+            }).success(function () {
+                $route.reload();
+                $mdToast.show($mdToast.simple().textContent('Place deleted'));
+            }).error(function (data) {
+                $scope.loader.posting = false;
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            })
+        };
+
+        $scope.editPlace=function () {
+            $mdToast.show($mdToast.simple().textContent('In the next update'));
+        };
+
+        $scope.editGroup=function () {
+            $mdToast.show($mdToast.simple().textContent('In the next update'));
+        }
+
+    })
+    .controller('LessonController', function ($scope, $routeParams, $http, $sce) {
+        var lesson_id = $routeParams.lessonId;
+        $scope.lesson = [];
+
+        $scope.loader = {
+            loading: true,
+            posting: false
+        };
+
+        $http.get('/getLesson/' + lesson_id).success(function (data) {
+            $scope.lesson = data;
+            $scope.loader.loading = false;
+        });
+
+        $scope.deliberatelyTrustDangerousSnippet = function () {
+            return $sce.trustAsHtml($scope.lesson.body);
+        };
+
+        $scope.parsedDate = function () {
+            return moment($scope.lesson.date, 'YYYYMMDD').format("dddd, MMMM DD YYYY")
+        }
+    })
+    .controller('LessonEditorController', function ($scope, $rootScope, $cookies, $http, $location, Data, $mdDialog, $mdToast, $timeout, Upload) {
+        $rootScope.current_section = "Lesson Editor";
+
+        //progress circular initialization
+        $scope.loader = {
+            loading: false,
+            posting: false
+        };
+
+        $scope.lesson = {};
+        $scope.lesson.date = new Date();
+
+        $scope.minDate = new Date();
+        $scope.minDate.setDate((new Date()).getDate());
+
+        $scope.startHour = '';
+        $scope.startMinute = '';
+        $scope.endHour = '';
+        $scope.endMinute = '';
+
+        //options to selectors
+        $scope.hours = ('08 09 10 11 12 13 14 15 16 17 18 19 20 21 22').split(' ').map(function (hour) {
+            return {selectedHour: hour};
+        });
+        $scope.minutes = ('00 15 30 45').split(' ').map(function (minute) {
+            return {selectedMinute: minute};
+        });
+
+        $scope.places = [];
+        $http.get('/getPlaces').success(function (data) {
+            $scope.places = data;
+        });
+
+        $scope.groups = [];
+        $http.get('/getGroups').success(function (data) {
+            $scope.groups = data;
+        });
+
+        //get the type of user to access some actions
+        $scope.user_type = $cookies.get('userType');
+        var user_id = $cookies.get('userId');
+
+        $scope.addLesson = function () {
+            $scope.loader.posting = true;
+
+            var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
+            var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
+
+            checkTime();
+
+            function checkTime() {
+                if (startTime.isBefore(endTime)) {
+                    postData();
+                } else {
+                    $mdToast.show($mdToast.simple().textContent('Invalid time input'));
+                }
+            }
+
+            //data posting function
+            function postData() {
+                $http({
+                    method: 'POST',
+                    url: '/postLesson',
+                    data: {
+                        title: $scope.lesson.title,
+                        body: $scope.lesson.body,
+                        date: moment($scope.lesson.date).format("YYYYMMDD"),
+                        start_time: startTime.format('HH:mm'),
+                        end_time: endTime.format('HH:mm'),
+                        group_id: $scope.lesson.group,
+                        place_id: $scope.lesson.place,
+                        status: 0,
+                        teacher_id: user_id
+                    }
+                }).success(function () {
+                    $location.path('/schedule');
+                    $mdToast.show($mdToast.simple().textContent('Lesson added'));
+                }).error(function (data) {
+                    $scope.loader.posting = false;
+                    $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                    console.log(data);
+                })
+            }
+        };
+
+        $scope.trixAttachmentAdd = function (e) {
+            var attachment;
+            attachment = e.attachment;
+            if (attachment.file) {
+                return upload(attachment);
+            }
+        };
+
+        function upload(attachment) {
+            Upload.upload({
+                url: '/uploadFile',
+                data: {
+                    file: attachment.file
+                }
+            }).then(function (resp) {
+                if (resp.status == 200) {
+                    attachment.setAttributes({
+                        url: resp.data.href,
+                        href: resp.data.href
+                    });
+                    $mdToast.show($mdToast.simple().textContent('File uploaded'));
+                }
+                else {
+                    $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                }
+            }, null, function (evt) {
+                var progress;
+                progress = parseInt(100.0 * evt.loaded / evt.total);
+                return attachment.setUploadProgress(progress);
+            });
+        }
+    });
 // Announcement edit dialog controller
 
 function postEditDialogController($scope, $mdDialog, $http, $mdToast, Data, $route) {
@@ -630,12 +1058,12 @@ function postEditDialogController($scope, $mdDialog, $http, $mdToast, Data, $rou
     $scope.selected = [];
 
     $http.get('/getAnnouncement/' + announcement_id).success(function (data) {
-        $scope.loader.loading = false;
         $scope.tempAnnouncement = data;
         $scope.tempAnnouncement.groups.forEach(function (group) {
             $scope.selected.push(group.id);
         });
         $scope.edited_post = $scope.tempAnnouncement.body;
+        $scope.loader.loading = false;
     });
 
     $http.get('/getGroups').success(function (data) {
@@ -681,18 +1109,19 @@ function postEditDialogController($scope, $mdDialog, $http, $mdToast, Data, $rou
 
 // Schedule dialog controllers
 
-function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
+function reservationSelectDialogController($scope, $http, $route, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
     //initialize loading
     $scope.loader = {
-        loading: true
+        loading: true,
+        posting: false
     };
-    var id = Data.EventId;
+    var id = Data.SelectedReservationId;
     $scope.user_name = $cookies.get('userName');
     $scope.user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
 
-    $scope.temp_event = [];
-    $scope.temp_event_status = false;
+    $scope.select_reservation = [];
+    $scope.select_reservation_status = false;
 
     $scope.statusChangeCheck = function () {
         return false
@@ -701,54 +1130,40 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
         return false
     };
 
-    $http.get('/getEvent/' + id).success(function (data) {
+    $http.get('/getReservation/' + id).success(function (data) {
         $scope.loader.loading = false;
-        $scope.temp_event = data;
-        $scope.temp_event_status = $scope.temp_event.status == 1;
+        $scope.select_reservation = data;
+        $scope.select_reservation_status = $scope.select_reservation.status == 1;
+
         // to enable the switch to mark as 'done' if it's decided and user is the first responsible person
-        if ($scope.temp_event.type == 'lesson') {
-            $scope.statusChangeCheck = function () {
-                return $scope.temp_event.status != 1
-                    && $scope.user_type == 'teacher'
-            };
-            $scope.checkOwner = function () {
-                return $scope.user_type == 'teacher'
-            };
-        }
-        else if ($scope.temp_event.type == 'extra') {
-            $scope.statusChangeCheck = function () {
-                if ($scope.temp_event.type == 'lesson')
-                    return ($scope.temp_event.status == 0
-                    && $scope.user_type == 'teacher');
-                else
-                    return ($scope.temp_event.status == 0
-                    && $scope.user_id == $scope.temp_event.responsible_first_id
-                    && ($scope.user_type + 's') == $scope.temp_event.responsible_first_table);
-            };
-            // to display the delete and edit icon if user has an access to do actions
-            $scope.checkOwner = function () {
-                return ($scope.temp_event.owner_table == ($scope.user_type + 's')
-                    && $scope.temp_event.owner_id == $scope.user_id) || $scope.user_type == 'teacher';
-            };
-        }
+        $scope.statusChangeCheck = function () {
+            return ($scope.select_reservation.status == 0
+            && $scope.user_id == $scope.select_reservation.student_id
+            && $scope.user_type == 'student');
+        };
+
+        // to display the delete and edit icon if user has an access to do actions
+        $scope.checkOwner = function () {
+            return ($scope.select_reservation.student_id == $scope.user_id && $scope.user_type == 'student') || $scope.user_type == 'teacher';
+        };
+
     });
 
     $scope.onChange = function (cbState) {
         if (cbState)
-            $scope.temp_event.status = 1;
+            $scope.select_reservation.status = 1;
         else
-            $scope.temp_event.status = 0;
+            $scope.select_reservation.status = 0;
         $http({
             method: 'POST',
-            url: '/changeStatusEvent',
+            url: '/changeStatusReservation',
             data: {
                 id: id,
-                status: $scope.temp_event.status,
-                responsible_first_id: $scope.user_id,
-                responsible_first_table: $scope.user_type + 's'
+                status: $scope.select_reservation_status,
+                from: $scope.user_type
             }
         }).success(function () {
-            $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.temp_event.status)));
+            $mdToast.show($mdToast.simple().textContent('Event marked as ' + $scope.showStatus($scope.select_reservation.status)));
         }).error(function (data) {
             $mdToast.show($mdToast.simple().textContent('Error occurred'));
             console.log(data);
@@ -788,18 +1203,11 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
         return moment(date, 'YYYYMMDD').format("dddd, MMMM DD YYYY");
     };
 
-    $scope.displayEventTitle = function (type) {
-        if (type == 'lesson')
-            return "Lesson";
-        else if (type == 'extra')
-            return "Mentor reservation";
-    };
-
     $scope.edit = function () {
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
-            controller: eventEditDialogController,
-            templateUrl: 'dialogs/eventEditDialog.html',
+            controller: reservationEditDialogController,
+            templateUrl: 'dialogs/reservationEditDialog.html',
             parent: angular.element(document.body),
             clickOutsideToClose: true,
             fullscreen: useFullScreen
@@ -818,14 +1226,14 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
         $mdDialog.show(confirm).then(function () {
             $http({
                 method: 'POST',
-                url: '/deleteEvent',
+                url: '/deleteReservation',
                 data: {
                     id: id
                 }
             }).success(function () {
                 $mdDialog.hide();
                 $route.reload();
-                $mdToast.show($mdToast.simple().textContent('Event deleted'));
+                $mdToast.show($mdToast.simple().textContent('Reservation deleted'));
             }).error(function (data) {
                 $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
@@ -840,16 +1248,15 @@ function eventSelectDialogController($scope, $http, $route, $cookies, $mdDialog,
     };
 }
 
-function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data) {
+function reservationEditDialogController($scope, $http, $route, $cookies, $mdDialog, $timeout, $q, $mdToast, Data) {
     //initializing progress loading
     $scope.loader = {
         loading: true,
         posting: false
     };
-    var id = Data.EventId;
-    var user_id = $cookies.get('userId');
+    var id = Data.SelectedReservationId;
     var user_type = $cookies.get('userType');
-    $scope.edit_event = null;
+    $scope.edit_reservation = null;
 
     var startTime = [];
     var endTime = [];
@@ -858,27 +1265,12 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         return user_type == 'student';
     };
 
-    $http.get('/getEvent/' + id).success(function (data) {
-        $scope.edit_event = data;
-        $scope.event_id = $scope.edit_event.id;
-        $scope.event_title = $scope.edit_event.title;
-        $scope.event_description = $scope.edit_event.description;
-        $scope.event_type = $scope.edit_event.type;
-        $scope.event_date = new Date(moment($scope.edit_event.date, 'YYYYMMDD'));
-        $scope.event_start_time = $scope.edit_event.start_time;
-        $scope.event_end_time = $scope.edit_event.end_time;
-        $scope.event_group_id = $scope.edit_event.group_id;
-        $scope.event_place_id = $scope.edit_event.place_id;
-        $scope.event_status = $scope.edit_event.status;
-        $scope.event_owner_id = $scope.edit_event.owner_id;
-        $scope.event_owner_table = $scope.edit_event.owner_table;
-        $scope.event_responsible_first_id = $scope.edit_event.responsible_first_id;
-        $scope.event_responsible_first_table = $scope.edit_event.responsible_first_table;
-        $scope.event_responsible_second_id = $scope.edit_event.responsible_second_id;
-        $scope.event_responsible_second_table = $scope.edit_event.responsible_second_table;
+    $http.get('/getReservation/' + id).success(function (data) {
+        $scope.edit_reservation = data;
+        $scope.edit_reservation.date = new Date(moment($scope.edit_reservation.date, 'YYYYMMDD'));
 
-        startTime = $scope.event_start_time.split(':');
-        endTime = $scope.event_end_time.split(':');
+        startTime = $scope.edit_reservation.start_time.split(':');
+        endTime = $scope.edit_reservation.end_time.split(':');
 
         $scope.startHour = startTime[0];
         $scope.startMinute = startTime[1];
@@ -888,49 +1280,20 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         $scope.selectedResponsible1 = null;
         $scope.selectedResponsible2 = null;
 
-        if ($scope.event_type == 'lesson') {
-            $scope.eventResponsible1Table = 'teachers';
-            $http.get('/getTeachers').success(function (data) {
-                $scope.searchResponsiblePeople1 = loadAll(data);
-                for (key in $scope.searchResponsiblePeople1) {
-                    if ($scope.searchResponsiblePeople1[key].id == $scope.event_responsible_first_id) {
-                        $scope.selectedResponsible1 = $scope.searchResponsiblePeople1[key];
-                    }
+        $http.get('/getMentors').success(function (data) {
+            $scope.searchResponsiblePeople2 = loadAll(data);
+            for (key in $scope.searchResponsiblePeople2) {
+                if ($scope.searchResponsiblePeople2[key].id == $scope.edit_reservation.mentor_id) {
+                    $scope.selectedResponsible2 = $scope.searchResponsiblePeople2[key];
                 }
-            });
-        }
-        else {
-            $scope.eventResponsible1Table = 'students';
-            $scope.eventResponsible2Table = 'mentors';
-
-            $http.get('/getStudents').success(function (data) {
-                $scope.searchResponsiblePeople1 = loadAll(data);
-                for (key in $scope.searchResponsiblePeople1) {
-                    if ($scope.searchResponsiblePeople1[key].id == $scope.event_responsible_first_id) {
-                        $scope.selectedResponsible1 = $scope.searchResponsiblePeople1[key];
-                    }
-                }
-            });
-            $http.get('/getMentors').success(function (data) {
-                $scope.searchResponsiblePeople2 = loadAll(data);
-                for (key in $scope.searchResponsiblePeople2) {
-                    if ($scope.searchResponsiblePeople2[key].id == $scope.event_responsible_second_id) {
-                        $scope.selectedResponsible2 = $scope.searchResponsiblePeople2[key];
-                    }
-                }
-            });
-        }
+            }
+        });
         $scope.loader.loading = false;
     });
 
     $scope.places = [];
     $http.get('/getPlaces').success(function (data) {
         $scope.places = data;
-    });
-
-    $scope.groups = [];
-    $http.get('/getGroups').success(function (data) {
-        $scope.groups = data;
     });
 
     $scope.querySearch = querySearch;
@@ -965,53 +1328,34 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
         return people;
     }
 
-    $scope.displayEventTitle = function (type) {
-        if (type == 'lesson')
-            return "lesson";
-        else if (type == 'extra')
-            return "mentor reservation";
-    };
-
     $scope.submit = function () {
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
-        if ($scope.selectedResponsible1 != null)
-            $scope.event_responsible_first_id = $scope.selectedResponsible1.id;
-        if ($scope.selectedResponsible2 != null)
-            $scope.event_responsible_second_id = $scope.selectedResponsible2.id;
-
-        if ($scope.event_type == 'extra' && user_type != 'teacher') {
-            $scope.event_status = null;
+        if (user_type == 'student') {
+            $scope.edit_reservation.status = null;
         }
 
         if (startTime.isBefore(endTime)) {
             $scope.loader.posting = true;
             $http({
                 method: 'POST',
-                url: '/updateEvent',
+                url: '/updateReservation',
                 data: {
-                    id: $scope.event_id,
-                    title: $scope.event_title,
-                    description: $scope.event_description,
-                    type: $scope.event_type,
-                    date: moment($scope.event_date).format("YYYYMMDD"),
+                    id: $scope.edit_reservation.id,
+                    title: $scope.edit_reservation.title,
+                    description: $scope.edit_reservation.description,
+                    date: moment($scope.edit_reservation.date).format("YYYYMMDD"),
                     start_time: startTime.format('HH:mm'),
                     end_time: endTime.format('HH:mm'),
-                    group_id: $scope.event_group_id,
-                    place_id: $scope.event_place_id,
-                    status: $scope.event_status,
-                    owner_id: user_id,
-                    owner_table: user_type + 's',
-                    responsible_first_id: $scope.event_responsible_first_id,
-                    responsible_first_table: $scope.event_responsible_first_table,
-                    responsible_second_id: $scope.event_responsible_second_id,
-                    responsible_second_table: $scope.event_responsible_second_table
+                    place_id: $scope.edit_reservation.place_id,
+                    status: $scope.edit_reservation.status,
+                    mentor_id: $scope.selectedResponsible2.id
                 }
             }).success(function () {
                 $mdDialog.hide();
                 $route.reload();
-                $mdToast.show($mdToast.simple().textContent('Event updated'));
+                $mdToast.show($mdToast.simple().textContent('Reservation updated'));
             }).error(function (data) {
                 $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occurred'));
@@ -1029,27 +1373,21 @@ function eventEditDialogController($scope, $http, $route, $cookies, $mdDialog, $
     };
 }
 
-function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $timeout, $q, $mdToast, Data) {
+function reservationAddDialogController($scope, $http, $cookies, $route, $mdDialog, $timeout, $q, $mdToast, Data) {
     $scope.loader = {
         posting: false
     };
-    var type = Data.AddEventType;
     var user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
 
     $scope.minDate = new Date();
     $scope.minDate.setDate((new Date()).getDate());
 
-    $scope.eventTitle = null;
     $scope.eventDescription = '';
     $scope.eventPlace = '';
-    $scope.eventGroup = null;
     $scope.eventStatus = null;
     $scope.eventResponsible1 = [];
-    $scope.eventResponsible1Table = null;
     $scope.eventResponsible2 = Data.SelectedMentor;
-    $scope.eventResponsible2Table = null;
-    $scope.eventType = type;
     $scope.eventDate = new Date();
 
     $scope.startHour = '';
@@ -1062,22 +1400,14 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
         $scope.places = data;
     });
 
-    $scope.groups = [];
-    $http.get('/getGroups').success(function (data) {
-        $scope.groups = data;
-    });
-
-    if (type == 'extra') {
-        $scope.eventResponsible1Table = 'students';
-        $scope.eventResponsible2Table = 'mentors';
-
+    if ($scope.user_type != 'student')
         $http.get('/getStudents').success(function (data) {
             $scope.searchResponsiblePeople1 = loadAll(data);
         });
-        $http.get('/getMentors').success(function (data) {
-            $scope.searchResponsiblePeople2 = loadAll(data);
-        });
-    }
+
+    $http.get('/getMentors').success(function (data) {
+        $scope.searchResponsiblePeople2 = loadAll(data);
+    });
 
     $scope.querySearch = querySearch;
     $scope.selectedResponsible1 = $scope.eventResponsible1;
@@ -1108,24 +1438,17 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
     }
 
     function loadAll(people) {
-        for (key in people) {
+        for (var key in people) {
             people[key].value = (people[key].name).toLowerCase();
         }
         return people;
     }
 
-    $scope.displayEventTitle = function (type) {
-        if (type == 'lesson')
-            return "lesson";
-        else if (type == 'extra')
-            return "mentor reservation";
-    };
-
-
     $scope.submit = function () {
         var startTime = moment($scope.startHour + ':' + $scope.startMinute, 'HH:mm');
         var endTime = moment($scope.endHour + ':' + $scope.endMinute, 'HH:mm');
 
+        console.log($scope.selectedResponsible1);
         if ($scope.user_type == 'teacher')
             $scope.eventStatus = 0;
         else if ($scope.user_type == 'student') {
@@ -1136,29 +1459,21 @@ function eventAddDialogController($scope, $http, $cookies, $route, $mdDialog, $t
             $scope.loader.posting = true;
             $http({
                 method: 'POST',
-                url: '/postEvent',
+                url: '/addReservation',
                 data: {
-                    title: $scope.eventTitle,
                     description: $scope.eventDescription,
-                    type: $scope.eventType,
                     date: moment($scope.eventDate).format("YYYYMMDD"),
                     start_time: startTime.format('HH:mm'),
                     end_time: endTime.format('HH:mm'),
-                    group_id: $scope.eventGroup,
                     place_id: $scope.eventPlace,
                     status: $scope.eventStatus,
-                    owner_id: user_id,
-                    owner_table: $scope.user_type + 's',
-                    responsible_first_id: $scope.selectedResponsible1.id,
-                    responsible_first_table: $scope.eventResponsible1Table,
-                    responsible_second_id: $scope.selectedResponsible2.id,
-                    responsible_second_table: $scope.eventResponsible2Table,
-                    from: $scope.user_type
+                    student_id: $scope.selectedResponsible1.id,
+                    mentor_id: $scope.selectedResponsible2.id
                 }
             }).success(function () {
                 $mdDialog.hide();
                 $route.reload();
-                $mdToast.show($mdToast.simple().textContent('Event Added'));
+                $mdToast.show($mdToast.simple().textContent('Reservation added'));
             }).error(function (data) {
                 $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occurred'));
@@ -1186,50 +1501,39 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
 
     $scope.user_id = $cookies.get('userId');
     $scope.user_type = $cookies.get('userType');
+    $scope.notification_data = [];
+    $scope.notification_data.status = null;
 
     $scope.editMode = false;
 
-    var notification_id = Data.NotificationId;
+    var notification_id = Data.SelectedNotificationId;
 
     $http.get('/getNotification/' + notification_id).success(function (data) {
         $scope.loader.loading = false;
 
         $scope.notification_data = data;
 
-        $scope.notificationType = $scope.notification_data.type;
-
-        if ($scope.notificationType == 'announcement') {
+        if ($scope.notification_data.type == 'announcement') {
             $scope.notificationDate = $scope.notification_data.updated_at;
             $scope.notificationTitle = 'Announcement';
             $scope.notificationContent = $scope.notification_data.body;
             $scope.notificationOwner = $scope.notification_data.owner.name;
             $scope.notificationOwnerId = $scope.notification_data.owner.id;
-            $scope.notificationOwnerType = $scope.notification_data.owner_type;
         }
-        else {
-            if ($scope.notificationType == 'lesson')
-                $scope.notificationTitle = 'Lesson';
-            else
-                $scope.notificationTitle = 'Mentor reservation';
+        else if ($scope.notification_data.type == 'reservation') {
+            $scope.notificationTitle = 'Mentor reservation';
 
             $scope.notificationDate = $scope.notification_data.date;
             $scope.notificationContent = $scope.notification_data.description;
-            $scope.notificationOwner = $scope.notification_data.owner[0].name;
-            $scope.notificationAnotherResponsible = $scope.notification_data.responsible_another;
             //for teacher case
             if ($scope.notification_data.receiver.length == 0)
                 $scope.notificationReceiverId = 0;
             else
-                $scope.notificationReceiverId = $scope.notification_data.receiver[0].id;
+                $scope.notificationReceiverId = $scope.notification_data.receiver.id;
             $scope.notificationReceiverType = $scope.notification_data.receiver_type;
-            $scope.notificationOwnerType = $scope.notification_data.owner_type;
-            $scope.notificationStatus = $scope.notification_data.status;
-            $scope.notificationEventType = $scope.notification_data.type;
-            $scope.notificationStartTime = $scope.notification_data.start_time;
-            $scope.notificationEndTime = $scope.notification_data.end_time;
 
-            var startTime = $scope.notificationStartTime.split(':');
-            var endTime = $scope.notificationEndTime.split(':');
+            var startTime = $scope.notification_data.start_time.split(':');
+            var endTime = $scope.notification_data.end_time.split(':');
 
             $scope.startHour = startTime[0];
             $scope.startMinute = startTime[1];
@@ -1240,8 +1544,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         //edit icon checker
         $scope.edit_check = (
         !$scope.editMode
-        && $scope.notificationStatus == null
-        && $scope.notificationOwnerType != 'teacher'
+        && $scope.notification_data.status == null
         && $scope.notificationReceiverType == $scope.user_type
         && $scope.notificationReceiverId == $scope.user_id);
 
@@ -1252,11 +1555,10 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         console.log(data);
     });
 
-    $scope.extra_respond_check = function () {
+    $scope.reservationRespondCheck = function () {
         return !$scope.editMode
-            && $scope.notificationStatus == null
-            && $scope.notificationOwnerType != 'teacher'
-            && $scope.notificationType == 'extra'
+            && $scope.notification_data.status == null
+            && $scope.notification_data.type == 'reservation'
             && $scope.user_type != 'teacher'
     };
 
@@ -1271,12 +1573,12 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
             return 'Done';
     };
 
-    $scope.eventAccept = function (bool) {
+    $scope.reservationAccept = function (bool) {
         $scope.loader.posting = true;
         if (bool) {
             $http({
                 method: 'POST',
-                url: '/changeStatusEvent',
+                url: '/changeStatusReservation',
                 data: {
                     id: $scope.notification_data.id,
                     status: 0,
@@ -1294,7 +1596,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
         } else {
             $http({
                 method: 'POST',
-                url: '/changeStatusEvent',
+                url: '/changeStatusReservation',
                 data: {
                     id: $scope.notification_data.id,
                     status: 2,
@@ -1303,34 +1605,10 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
             }).success(function () {
                 $mdDialog.hide();
                 $route.reload();
-                var toast = $mdToast.simple()
-                    .textContent('Extra lesson request rejected')
-                    .action('UNDO')
-                    .highlightAction(true);
-                $mdToast.show(toast).then(function (response) {
-                    if (response == 'ok') {
-                        $http({
-                            method: 'POST',
-                            url: '/changeStatusEvent',
-                            data: {
-                                id: $scope.notification_data.id,
-                                status: null,
-                                from: $scope.user_type
-                            }
-                        }).success(function () {
-                            $mdDialog.hide();
-                            $route.reload();
-                            $mdToast.show($mdToast.simple().textContent('Your response rolled back'));
-                        }).error(function (data) {
-                            $scope.loader.posting = false;
-                            $mdToast.show($mdToast.simple().textContent('Error occurred'));
-                            console.log(data);
-                        });
-                    }
-                });
+                $mdToast.show($mdToast.simple().textContent('Reservation rejected'));
             }).error(function (data) {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             });
         }
@@ -1359,7 +1637,7 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
             $scope.loader.posting = true;
             $http({
                 method: 'POST',
-                url: '/changeTimeEvent',
+                url: '/changeTimeReservation',
                 data: {
                     id: $scope.notification_data.id,
                     startTime: startTime.format('HH:mm'),
@@ -1369,10 +1647,10 @@ function notificationSelectDialogController($scope, $route, $http, $cookies, $md
             }).success(function () {
                 $mdDialog.hide();
                 $route.reload();
-                $mdToast.show($mdToast.simple().textContent('Extra lesson time changed changed'));
+                $mdToast.show($mdToast.simple().textContent('Reservation time changed changed'));
             }).error(function (data) {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             });
         } else {
@@ -1410,7 +1688,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
 
     //check the user has access to edit personal data
     $scope.checkOwner = function () {
-        return (user_type == 'teacher') || (user_id == $scope.person_id && (user_type + 's') == $scope.person_table)
+        return (user_type == 'teacher' || (user_id == $scope.person_id && (user_type + 's') == $scope.person_table)) && $scope.person_table!='users';
     };
 
     //convert the birth date to readable format
@@ -1601,7 +1879,7 @@ function personEditDialogController($scope, $http, $cookies, $mdMedia, $mdDialog
                 }
             }).error(function (data) {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('Error occured'));
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 console.log(data);
             })
         }
@@ -1649,8 +1927,7 @@ function changeProfilePictureController($scope, $cookies, $mdDialog, $mdToast, $
                     $mdToast.show($mdToast.simple().textContent('Picture uploaded'));
                 }
                 else {
-                    console.log(resp);
-                    $mdToast.show($mdToast.simple().textContent('Error occured'));
+                    $mdToast.show($mdToast.simple().textContent('Error occurred'));
                 }
             });
         }, null, null);

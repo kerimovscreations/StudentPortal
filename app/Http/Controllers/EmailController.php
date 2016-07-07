@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Announcement;
 use App\Event;
 use App\Group;
+use App\Reservation;
 use App\Student;
 use App\Teacher;
 use App\User;
@@ -55,49 +56,49 @@ class EmailController extends Controller
                 }
 
             if(isset($elem['source_table'])){
-                if ($elem['source_table'] == 'events') {
+                if ($elem['source_table'] == 'reservations') {
                     $action_pre = '';
                     $action_post = '';
                     $person_name = '';
 
-                    $event = Event::find($elem['source_id']);
+                    $reservation = Reservation::findOrFail($elem['source_id']);
 
                     $receiver = DB::table($elem['receiver_table'])->where('id', $elem['receiver_id'])->first();
 
                     if ($elem['receiver_table'] == 'mentors')
-                        $person_name = DB::table($event->responsible_first_table)->where('id', $event->responsible_first_id)->value('name');
+                        $person_name = $reservation->student()->first()->name;
                     else if ($elem['receiver_table'] == 'students')
-                        $person_name = DB::table($event->responsible_second_table)->where('id', $event->responsible_second_id)->value('name');
+                        $person_name = $reservation->mentor()->first()->name;
 
                     switch ($elem['type']) {
                         case 'request_extra':
-                            $action_post = 'has requested to you for an extra lesson on ';
+                            $action_post = 'has requested to you for a reservation on ';
                             break;
                         case 'decided_extra':
-                            $action_pre = 'You have an extra lesson with ';
+                            $action_pre = 'You have a reservation with ';
                             break;
                         case 'accepted_extra':
-                            $action_post = 'accepted an extra lesson on ';
+                            $action_post = 'accepted reservation on ';
                             break;
                         case 'rejected_extra':
-                            $action_post = 'rejected an extra lesson on ';
+                            $action_post = 'rejected reservation on ';
                             break;
                         case 'time_changed_extra':
-                            $action_post = 'changed time of the extra lesson to ';
+                            $action_post = 'changed time of the reservation to ';
                             break;
                         case 'updated_extra':
-                            $action_pre = 'Extra lesson has been updated by ';
-                            $person_name = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
+                            $action_pre = 'Reservation has been updated by ';
+                            $person_name = $reservation->student()->first()->name;
                             $action_post = ' to ';
                             break;
                         case 'cancelled_extra':
-                            $action_pre = 'Extra lesson has been cancelled by ';
-                            $person_name = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
+                            $action_pre = 'Reservation has been cancelled by ';
+                            $person_name = $reservation->student()->first()->name;
                             $action_post = ' which would be held on ';
                             break;
                         case 'deleted_extra':
-                            $action_pre = 'Extra lesson has been deleted by ';
-                            $person_name = DB::table($event->owner_table)->where('id', $event->owner_id)->value('name');
+                            $action_pre = 'Reservation has been deleted by ';
+                            $person_name = $reservation->student()->first()->name;
                             $action_post = ' which would be held on ';
                             break;
                     };
@@ -107,10 +108,10 @@ class EmailController extends Controller
                         'person' => $person_name,
                         'action_pre' => $action_pre,
                         'action_post' => $action_post,
-                        'date' => date("Y M d", strtotime($event->date)),
-                        'start_time' => $event->start_time,
-                        'end_time' => $event->end_time,
-                        'description' => $event->description
+                        'date' => date("Y M d", strtotime($reservation->date)),
+                        'start_time' => $reservation->start_time,
+                        'end_time' => $reservation->end_time,
+                        'description' => $reservation->description
                     ];
 
                     Mail::send('emails.notification_extra_lesson', $data, function ($message) use ($receiver, $elem) {

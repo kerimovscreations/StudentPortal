@@ -16,6 +16,7 @@ class CreateGroupsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email',255)->unique();
+            $table->boolean('status');
             $table->integer('place_id')->unsigned();
             $table->timestamps();
 

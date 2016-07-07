@@ -2,10 +2,12 @@ portalApp.factory('Data', function () {
     return {
         EventId: null,
         AddEventType: null,
-        NotificationId: null,
+        SelectedNotificationId: null,
         PostId: null,
         PersonId: null,
         PersonTable: null,
-        SelectedMentor: null
+        SelectedMentor: null,
+        SelectedLessonId: null,
+        SelectedReservationId: null
     };
 });

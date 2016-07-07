@@ -128,7 +128,7 @@ body {
     margin: 5px auto;
 }
 
-.extra {
+.reservation {
     background: #3d5972;
 }
 
@@ -228,5 +228,16 @@ img-crop {
 
 img-crop canvas {
     margin: 0 auto !important;
+}
+
+trix-editor{
+    min-height: 250px;
+}
+
+md-progress-linear.md-default-theme ._md-container, md-progress-linear ._md-container {
+    background: #dddddd;
+}
+md-progress-linear.md-default-theme ._md-bar, md-progress-linear ._md-bar{
+    background-color: rgb(62, 207, 250);
 }
 

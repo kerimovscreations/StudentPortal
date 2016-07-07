@@ -1,32 +1,44 @@
+<md-progress-linear ng-show="loader.loading || loader.posting" md-mode="indeterminate"></md-progress-linear>
 <md-content ng-controller="NotificationController" style="max-width: 1000px; margin: 0 auto;height: 600px">
     <section ng-if="notifications[0].length!=0">
-        <md-subheader style="color: #DA1FFF">Group Notifications</md-subheader>
+        <md-subheader style="color: #DA1FFF">
+            <span>Group Notifications</span>
+            <md-icon class="pull-right" md-svg-icon="svg/ic_delete_black_24px.svg" style="opacity: 0.4" ng-click="delete()"></md-icon>
+        </md-subheader>
         <md-list layout="column" style="padding: 0;">
             <md-list-item ng-repeat="notification1 in notifications[0]"
                           class="md-2-line"
                           ng-click="selectNotification(notification1.id,$index,0)"
                           ng-class="{'unread': notification1.status==0}">
+                <md-checkbox ng-model="notification1.selected"></md-checkbox>
                 <md-icon md-svg-icon="svg/ic_announcement_black_24px.svg"></md-icon>
-                <div class="md-list-item-text" layout="row">
-                    <h3><% notification1.text %></h3>
-                    <span class="flex"></span>
-                    <h4><% showDateFromNow(notification1.updated_at) %></h4>
+                <div class="md-list-item-text" layout="row" layout-align="space-between center">
+                    <span style="font-size: 16px"><% notification1.text %></span>
+                    <div style="padding-top: 16px">
+                        <span style="font-size: 14px"><% showDateFromNow(notification1.updated_at) %></span>
+                        <md-checkbox style="margin-left: 15px" ng-model="notification1.selected" aria-label="delete checkbox"></md-checkbox>
+                    </div>
                 </div>
             </md-list-item>
         </md-list>
     </section>
     <section ng-if="notifications[1].length!=0">
-        <md-subheader style="color: #71B8E8">Personal Notifications</md-subheader>
+        <md-subheader style="color: #71B8E8">
+            <span>Personal Notifications</span>
+            <md-icon ng-disabled="loader.posting" class="pull-right" md-svg-icon="svg/ic_delete_black_24px.svg" style="opacity: 0.4" ng-click="delete()"></md-icon>
+        </md-subheader>
         <md-list layout="column" style="padding: 0;">
             <md-list-item ng-repeat="notification2 in notifications[1]"
                           class="md-2-line"
                           ng-click="selectNotification(notification2.id,$index,1)"
                           ng-class="{'unread': notification2.status==0}">
                 <md-icon md-svg-icon="svg/ic_people_black_24px.svg"></md-icon>
-                <div class="md-list-item-text">
-                    <h3><% notification2.text %></h3>
-                    <span class="flex"></span>
-                    <h4><% showDateFromNow(notification2.updated_at) %></h4>
+                <div class="md-list-item-text" layout="row" layout-align="space-between center">
+                    <span style="font-size: 16px"><% notification2.text %></span>
+                    <div style="padding-top: 16px">
+                        <span style="font-size: 14px"><% showDateFromNow(notification2.updated_at) %></span>
+                        <md-checkbox style="margin-left: 15px" ng-model="notification2.selected" aria-label="delete checkbox"></md-checkbox>
+                    </div>
                 </div>
             </md-list-item>
         </md-list>

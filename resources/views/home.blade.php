@@ -30,7 +30,7 @@
                 <div style="position: relative">
                     <div id="toggleDropDown"
                          style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%; overflow: hidden">
-                        <img ng-src="<% user_profile_pic || 'images/profile_icon.png'%>" style="width:100%; height: 100%;"/>
+                        <img ng-src="<% user_profile_pic %>" style="width:100%; height: 100%;"/>
                     </div>
                     <div tabindex="-1" id="dropDown" class="md-whiteframe-2dp" ng-blur="hideDropDown()">
                         <div class="drop-down-profile-triangle"></div>
@@ -73,7 +73,7 @@
                             <!--list of sections-->
 
                             <md-list-item class="secondary-button-padding" ng-repeat="section in sections"
-                                          ng-click="selectSection(section.name)">
+                                          ng-click="selectSection(section.name)" ng-if="section.access_level.indexOf(user_access_level) != -1">
                                 <md-icon md-svg-src="<% section.url %>"
                                          style="margin-right: 15px; margin-left: 0"></md-icon>
                                 <span> <% section.name %> </span>

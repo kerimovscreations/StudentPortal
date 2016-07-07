@@ -13,7 +13,7 @@ class Student extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'birthDate', 'group_id', 'api_token', 'bio', 'profile_link'
+        'name', 'email', 'password', 'phone', 'birthDate', 'group_id', 'api_token', 'bio', 'profile_image_path'
     ];
 
     /**
@@ -27,9 +27,17 @@ class Student extends Authenticatable
 
     public function group()
     {
-        return $this->belongsTo('App\Group');
+        return $this->belongsTo(Group::class);
     }
 
+    public function attendances(){
+        return $this->hasMany(Attendance::class);
+    }
+    
+    public function reservations(){
+        return $this->hasMany(Reservation::class);
+    }
+    
     public function setCreatedAtAttribute($value)
     {
         $this->attributes['created_at'] = Carbon::createFromTimestamp(strtotime($value))

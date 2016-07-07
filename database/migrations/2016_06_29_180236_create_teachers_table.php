@@ -13,8 +13,6 @@ class CreateTeachersTable extends Migration
     public function up()
     {
         Schema::create('teachers', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-
             $table->increments('id');
             $table->string('name',255);
             $table->string('email',255)->unique();
@@ -23,6 +21,7 @@ class CreateTeachersTable extends Migration
             $table->string('work_start_time',255)->nullable();
             $table->string('work_end_time',255)->nullable();
             $table->text('bio')->nullable();
+            $table->string('profile_image_path')->default('images/profile_icon.png');
             $table->rememberToken();
             $table->string('api_token',60)->unique();
             $table->timestamps();

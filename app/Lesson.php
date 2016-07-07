@@ -2,10 +2,10 @@
 
 namespace App;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
-class Teacher extends Authenticatable
+class Lesson extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -13,20 +13,23 @@ class Teacher extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'api_token', 'work_days', 'work_start_time', 'work_end_time', 'bio', 'profile_image_path'
+        'title', 'body', 'date', 'start_time', 'end_time', 
+        'group_id', 'place_id', 'teacher_id'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token', 'api_token'
-    ];
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
     
-    public function lessons(){
-        return $this->hasMany(Lesson::class);
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
+
+    public function place()
+    {
+        return $this->belongsTo(Place::class);
     }
 
     public function setCreatedAtAttribute($value)

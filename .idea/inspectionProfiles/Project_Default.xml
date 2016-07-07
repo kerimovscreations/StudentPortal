@@ -4,7 +4,7 @@
     <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="19">
+          <list size="22">
             <item index="0" class="java.lang.String" itemvalue="ng-blur" />
             <item index="1" class="java.lang.String" itemvalue="ng-focus" />
             <item index="2" class="java.lang.String" itemvalue="layout" />
@@ -24,6 +24,9 @@
             <item index="16" class="java.lang.String" itemvalue="ng-repeat" />
             <item index="17" class="java.lang.String" itemvalue="ng-hide" />
             <item index="18" class="java.lang.String" itemvalue="ng-click" />
+            <item index="19" class="java.lang.String" itemvalue="ng-app" />
+            <item index="20" class="java.lang.String" itemvalue="layout-fill" />
+            <item index="21" class="java.lang.String" itemvalue="ng-if" />
           </list>
         </value>
       </option>
@@ -32,7 +35,7 @@
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="26">
+          <list size="36">
             <item index="0" class="java.lang.String" itemvalue="nobr" />
             <item index="1" class="java.lang.String" itemvalue="noembed" />
             <item index="2" class="java.lang.String" itemvalue="comment" />
@@ -59,6 +62,16 @@
             <item index="23" class="java.lang.String" itemvalue="md-list" />
             <item index="24" class="java.lang.String" itemvalue="md-progress-linear" />
             <item index="25" class="java.lang.String" itemvalue="img-crop" />
+            <item index="26" class="java.lang.String" itemvalue="md-content" />
+            <item index="27" class="java.lang.String" itemvalue="trix-editor" />
+            <item index="28" class="java.lang.String" itemvalue="md-select" />
+            <item index="29" class="java.lang.String" itemvalue="md-option" />
+            <item index="30" class="java.lang.String" itemvalue="mdp-date-picker" />
+            <item index="31" class="java.lang.String" itemvalue="md-radio-group" />
+            <item index="32" class="java.lang.String" itemvalue="md-radio-button" />
+            <item index="33" class="java.lang.String" itemvalue="md-datepicker" />
+            <item index="34" class="java.lang.String" itemvalue="md-autocomplete" />
+            <item index="35" class="java.lang.String" itemvalue="md-checkbox" />
           </list>
         </value>
       </option>

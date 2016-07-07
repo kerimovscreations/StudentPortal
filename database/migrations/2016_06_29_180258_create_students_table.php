@@ -13,8 +13,6 @@ class CreateStudentsTable extends Migration
     public function up()
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-
             $table->increments('id');
             $table->string('name',255);
             $table->string('email',255)->unique();
@@ -23,6 +21,7 @@ class CreateStudentsTable extends Migration
             $table->string('phone',13);
             $table->string('birthDate',10);
             $table->text('bio')->nullable();
+            $table->string('profile_image_path')->default('images/profile_icon.png');
             $table->rememberToken();
             $table->string('api_token',60)->unique();
             $table->timestamps();

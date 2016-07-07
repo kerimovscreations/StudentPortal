@@ -10,7 +10,16 @@ use App\Http\Requests;
 class GroupController extends Controller
 {
     public function getAll() {
-        $groups = Group::all();
+        $groups = Group::with('place')->get();
         return json_encode($groups);
+    }
+    
+    public function create(Request $request){
+        Group::create($request->all());
+    }
+    
+    public function delete(Request $request){
+        $group=Group::findOrFail($request->id);
+        $group->delete();
     }
 }

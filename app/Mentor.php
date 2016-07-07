@@ -13,7 +13,7 @@ class Mentor extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'api_token', 'work_days', 'work_start_time', 'work_end_time', 'bio', 'profile_link'
+        'name', 'email', 'password', 'api_token', 'work_days', 'work_start_time', 'work_end_time', 'bio', 'profile_image_path'
     ];
 
     /**
@@ -25,6 +25,10 @@ class Mentor extends Authenticatable
         'password', 'remember_token', 'api_token'
     ];
 
+    public function reservations(){
+        return $this->hasMany(Reservation::class);
+    }
+    
     public function setCreatedAtAttribute($value)
     {
         $this->attributes['created_at'] = Carbon::createFromTimestamp(strtotime($value))

@@ -1,0 +1,109 @@
+<md-progress-linear ng-show="loader.loading || loader.posting" md-mode="indeterminate"></md-progress-linear>
+<md-content style="max-width: 1000px; margin: 0 auto; padding: 0 10px">
+
+    <style>
+        md-input-container .md-errors-spacer {
+            display: none;
+        }
+
+    </style>
+    <div style="width:100%; background: rgb(204, 250, 62); color: white; padding: 0 10px"
+         class="md-whiteframe-1dp">
+        <span style="font-size: 35px">New lesson</span>
+    </div>
+    <md-card class="page" style="padding: 20px">
+
+        <md-input-container>
+            <label>Title</label>
+            <input ng-model="lesson.title">
+        </md-input-container>
+
+        <trix-editor ng-model-options="{ updateOn: 'blur' }"
+                     spellcheck="false"
+                     class="trix-content"
+                     ng-model="lesson.body"
+                     angular-trix
+                     trix-initialize="trixInitialize(e, editor);"
+                     trix-change="trixChange(e, editor);"
+                     trix-selection-change="trixSelectionChange(e, editor);"
+                     trix-focus="trixFocus(e, editor);"
+                     trix-blur="trixBlur(e, editor);"
+                     trix-file-accept="trixFileAccept(e, editor);"
+                     trix-attachment-add="trixAttachmentAdd(e, editor);"
+                     trix-attachment-remove="trixAttachmentRemove(e, editor);"
+                     placeholder="Write something.."></trix-editor>
+        <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
+            <md-input-container required>
+                <label>Place</label>
+                <md-select ng-disabled="loader.posting" ng-model="lesson.place" class="md-subhead">
+                    <md-option ng-repeat="place in places" value="<% place.id %>">
+                        <% place.name %>
+                    </md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container ng-show="eventType!='extra'" required>
+                <label>Group</label>
+                <md-select ng-disabled="loader.posting" ng-model="lesson.group" class="md-subhead">
+                    <md-option ng-repeat="group in groups" value="<% group.id %>">
+                        <% group.name %>
+                    </md-option>
+                </md-select>
+            </md-input-container>
+            <div style="width: 10px"></div>
+        </div>
+        <div layout="row" layout-align="center center">
+            <md-datepicker ng-disabled="loader.posting" class="md-body-1" ng-model="lesson.date"
+                           md-placeholder="Enter date"
+                           md-min-date="minDate"
+                           layout="row"
+                           layout-align="center center"></md-datepicker>
+            <div style="width: 20px"></div>
+            <div layout="row" layout-align="center center" style="color: #2E4454">
+                <h4 class="md-title">Start time: </h4>
+                <div style="width: 10px"></div>
+                <div layout="row" layout-align="center">
+                    <md-input-container>
+                        <label>hour</label>
+                        <md-select ng-disabled="loader.posting" ng-model="startHour" class="md-subhead">
+                            <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                <% hour.selectedHour %>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container require>
+                        <label>minute</label>
+                        <md-select ng-disabled="loader.posting" ng-model="startMinute" class="md-subhead">
+                            <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                <% minute.selectedMinute %>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+            <div style="width: 20px"></div>
+            <div layout="row" layout-align="center center" style="color: #2E4454">
+                <h4 class="md-title">End time: </h4>
+                <div style="width: 10px"></div>
+                <div layout="row" layout-align="center">
+                    <md-input-container required>
+                        <label>hour</label>
+                        <md-select ng-disabled="loader.posting" ng-model="endHour" class="md-subhead">
+                            <md-option ng-repeat="hour in hours" value="<% hour.selectedHour %>">
+                                <% hour.selectedHour %>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container required>
+                        <label>minute</label>
+                        <md-select ng-disabled="loader.posting" ng-model="endMinute" class="md-subhead">
+                            <md-option ng-repeat="minute in minutes" value="<% minute.selectedMinute %>">
+                                <% minute.selectedMinute %>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+        </div>
+        <input type="button" class="md-button md-raised md-primary" value="Add Lesson" ng-click="addLesson()" ng-disabled="user_type!='teacher'">
+    </md-card>
+</md-content>

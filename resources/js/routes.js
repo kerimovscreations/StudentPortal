@@ -36,6 +36,30 @@ portalApp.config(['$routeProvider', function ($routeProvider) {
             templateUrl: "sections/Grading.html",
             controller: 'GradingController'
         })
+        .when('/add-lesson', {
+            templateUrl: "sections/Lesson-Editor.html",
+            controller: 'LessonEditorController'
+        })
+        .when('/lesson-editor/:lessonId', {
+            templateUrl: "sections/Lesson-Editor.html",
+            controller: 'LessonEditorController'
+        })
+        .when('/lesson/:lessonId', {
+            templateUrl: "sections/Lesson.html",
+            controller: 'LessonController'
+        })
+        .when('/attendance',{
+            templateUrl: "sections/Attendance.html",
+            controller: 'AttendanceController'
+        })
+        .when('/settings', {
+            templateUrl: "sections/Settings.html",
+            controller: 'SettingsController'
+        })
+        .when('/grading', {
+            templateUrl: "sections/Grading.html",
+            controller: 'GradingController'
+        })
         .otherwise({
             redirectTo: '/'
         });

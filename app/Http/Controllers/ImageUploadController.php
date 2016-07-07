@@ -22,13 +22,11 @@ class ImageUploadController extends Controller
                 $extension = $file->getClientOriginalExtension(); // getting image extension
                 $fileName = 'pic-1000' . str_random(8) . '.' . $extension; // renaming image
                 $file->move($destinationPath, $fileName); // uploading file to given path
-                $user->profile_link = '/'.$destinationPath . '/' . $fileName;
+                $user->profile_image_path = '/'.$destinationPath . '/' . $fileName;
                 $user->save();
             }else{
                 abort(602,'Size of file exceeds limit.');
             }
-
         }
-
     }
 }

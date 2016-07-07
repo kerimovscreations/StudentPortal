@@ -1,3 +1,4 @@
+<md-progress-linear ng-show="loader.loading || loader.posting" md-mode="indeterminate"></md-progress-linear>
 <md-content ng-controller="ScheduleController" layout="column" layout-align="space-between none">
     <div layout="row">
 
@@ -19,8 +20,8 @@
                     <div flex>
                         <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
                              ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == parseDate(dt)"
-                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
-                             ng-click="eventSelect(event.id)">
+                             ng-class="{'reservation': event.type=='reservation', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.type,event.id)">
                             <h5><% event.title %></h5>
                             <span><% event.start_time %>-<% event.end_time %></span>
                         </div>
@@ -32,8 +33,8 @@
                     <div flex>
                         <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
                              ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp1.format('MM-DD-YYYY')"
-                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
-                             ng-click="eventSelect(event.id)">
+                             ng-class="{'reservation': event.type=='reservation', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.type,event.id)">
                             <h5><% event.title %></h5>
                             <span><% event.start_time %>-<% event.end_time %></span>
                         </div>
@@ -45,8 +46,8 @@
                     <div flex>
                         <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
                              ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp2.format('MM-DD-YYYY')"
-                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
-                             ng-click="eventSelect(event.id)">
+                             ng-class="{'reservation': event.type=='reservation', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.type,event.id)">
                             <h5><% event.title %></h5>
                             <span><% event.start_time %>-<% event.end_time %></span>
                         </div>
@@ -58,8 +59,8 @@
                     <div flex>
                         <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
                              ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp3.format('MM-DD-YYYY')"
-                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
-                             ng-click="eventSelect(event.id)">
+                             ng-class="{'reservation': event.type=='reservation', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.type,event.id)">
                             <h5><% event.title %></h5>
                             <span><% event.start_time %>-<% event.end_time %></span>
                         </div>
@@ -71,8 +72,8 @@
                     <div flex>
                         <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
                              ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp4.format('MM-DD-YYYY')"
-                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
-                             ng-click="eventSelect(event.id)">
+                             ng-class="{'reservation': event.type=='reservation', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.type,event.id)">
                             <h5><% event.title %></h5>
                             <span><% event.start_time %>-<% event.end_time %></span>
                         </div>
@@ -84,8 +85,8 @@
                     <div flex>
                         <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
                              ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp5.format('MM-DD-YYYY')"
-                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
-                             ng-click="eventSelect(event.id)">
+                             ng-class="{'reservation': event.type=='reservation', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.type,event.id)">
                             <h5><% event.title %></h5>
                             <span><% event.start_time %>-<% event.end_time %></span>
                         </div>
@@ -97,8 +98,8 @@
                     <div flex>
                         <div class="schedule-item" ng-repeat="event in events | orderObjectBy:'start_time'"
                              ng-if="parseDateFormatted(event.date, 'YYYYMMDD') == temp6.format('MM-DD-YYYY')"
-                             ng-class="{'extra': event.type=='extra', 'wait': event.status==null}"
-                             ng-click="eventSelect(event.id)">
+                             ng-class="{'reservation': event.type=='reservation', 'wait': event.status==null}"
+                             ng-click="eventSelect(event.type,event.id)">
                             <h5><% event.title %></h5>
                             <span><% event.start_time %>-<% event.end_time %></span>
                         </div>
@@ -107,7 +108,7 @@
             </div>
 
             <div layout="row" layout-align="end center">
-                <div class="schedule-agenda extra">Extra</div>
+                <div class="schedule-agenda reservation">reservation</div>
                 <div class="schedule-agenda">Lesson</div>
                 <div style="width: 20px"></div>
             </div>
@@ -132,8 +133,8 @@
                                 </md-tooltip>
                                 <md-icon md-svg-src="svg/ic_assignment_white_36px.svg" aria-label="lesson add"></md-icon>
                             </md-button>
-                            <md-button aria-label="extra" class="md-fab md-raised md-mini"
-                                       ng-click="eventAdd('extra')">
+                            <md-button aria-label="reservation" class="md-fab md-raised md-mini"
+                                       ng-click="eventAdd('reservation')">
                                 <md-tooltip md-direction="top" md-visible="tooltipVisible"
                                             md-autohide="false">
                                     Mentor reservation

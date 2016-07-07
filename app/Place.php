@@ -15,11 +15,18 @@ class Place extends Model
         'name'
     ];
 
-    public function groups(){
-        return $this->hasMany('App\Group');
+    public function groups()
+    {
+        return $this->hasMany(Group::class);
     }
 
-    public function events(){
-        return $this->hasMany('App\Event');
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
     }
 }

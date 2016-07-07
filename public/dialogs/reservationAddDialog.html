@@ -2,7 +2,7 @@
     <md-content>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3>Edit <% displayEventTitle(eventType) %></h3>
+                <h3>Add mentor reservation</h3>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="hide()">
                     <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
@@ -10,51 +10,37 @@
             </div>
         </md-toolbar>
         <md-dialog-content>
-            <div class="md-dialog-content" layout="column" layout-align="center none" style="min-height: 100px">
-                <md-progress-circular class="center-with-margin" ng-show="loader.loading" md-mode="indeterminate"></md-progress-circular>
-                <div ng-hide="loader.loading" layout="column" layout-align="center center"
+            <div class="md-dialog-content" style="min-height: 100px">
+                <div layout="column" layout-align="center center"
                      style="width: 650px; margin-bottom: 0; padding: 24px 15px 0;">
-                    <md-input-container class="md-block" style="margin-top: 0;margin-bottom: 0; width: 100%"
-                                        ng-show="!checkStudent() && event_type!='extra'">
-                        <label>Title of event</label>
-                        <textarea ng-disabled="loader.posting" class="md-headline" style="color: #6a72a2" ng-model="event_title"
-                                  md-select-on-focus></textarea>
-                    </md-input-container>
                     <md-input-container class="md-block"
                                         style="margin-top: 0;margin-bottom: 0; width: 100%;color: #3d3d45">
                         <label>Description</label>
-                        <textarea ng-disabled="loader.posting" class="md-subhead" ng-model="event_description" md-select-on-focus></textarea>
+                        <textarea ng-disabled="loader.posting" class="md-subhead" ng-model="eventDescription" md-select-on-focus></textarea>
                     </md-input-container>
                     <div layout="row" layout-align="center center" style="margin-top: 0; color:#f16156">
                         <span class="md-body-1">Event date: </span>
-                        <md-datepicker ng-disabled="loader.posting" class="md-body-1" ng-model="event_date" md-placeholder="Enter date"
-                                       md-min-date="minDate"></md-datepicker>
+                        <md-datepicker ng-disabled="loader.posting" class="md-body-1" ng-model="eventDate"
+                                       md-placeholder="Enter date"
+                                       md-min-date="minDate"
+                                       layout="row"
+                                       layout-align="center center"></md-datepicker>
                         <div style="width: 20px"></div>
                         <md-input-container required>
                             <label>Place</label>
-                            <md-select ng-disabled="loader.posting" ng-model="event_place_id" class="md-subhead">
+                            <md-select ng-disabled="loader.posting" ng-model="eventPlace" class="md-subhead">
                                 <md-option ng-repeat="place in places" value="<% place.id %>">
                                     <% place.name %>
                                 </md-option>
                             </md-select>
                         </md-input-container>
-                        <div style="width: 10px"></div>
-                        <md-input-container ng-show="event_type!='extra'" required>
-                            <label>Group</label>
-                            <md-select ng-disabled="loader.posting" ng-model="event_group_id" class="md-subhead">
-                                <md-option ng-repeat="group in groups" value="<% group.id %>">
-                                    <% group.name %>
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                        <div style="width: 10px"></div>
                     </div>
                     <div layout="row">
                         <div layout="column" layout-align="none center" style="color: #b0cf79"
-                             ng-show="!checkStudent()">
-                            <span style="margin-right: 10px">Responsible <% event_responsible_first_table.slice(0, -1); %></span>
+                             ng-show="user_type=='teacher'">
+                            <span style="margin-right: 10px">Responsible student</span>
                             <md-autocomplete
-                                    ng-disabled="true || loader.posting"
+                                    ng-disabled="loader.posting"
                                     md-selected-item="selectedResponsible1"
                                     md-search-text="searchText1"
                                     md-items="item1 in querySearch(searchText1, searchResponsiblePeople1)"
@@ -69,9 +55,7 @@
                                 </md-not-found>
                             </md-autocomplete>
                         </div>
-                        <div style="width: 30px"></div>
-                        <div layout="column" ng-show="event_type=='extra'" layout-align="none center"
-                             style="color: #b0cf79">
+                        <div layout="column" layout-align="none center" style="color: #b0cf79">
                             <span style="margin-right: 10px">Responsible mentor</span>
                             <md-autocomplete
                                     ng-disabled="loader.posting"
@@ -96,7 +80,8 @@
                             </div>
                         </div>
                     </div>
-                    <div layout="row" style="margin-top: 15px">
+                    <div style="height: 10px"></div>
+                    <div layout="row">
                         <div layout="row" layout-align="center center" style="color: #88c8d0">
                             <h4 class="md-title">Start time: </h4>
                             <div style="width: 10px"></div>
@@ -146,12 +131,14 @@
                 </div>
             </div>
         </md-dialog-content>
-        <md-dialog-actions ng-hide="loader.loading" layout="row" style="margin-top:0">
-            <md-progress-circular class="small-progress" ng-show="loader.posting" md-mode="indeterminate"></md-progress-circular>
+        <md-dialog-actions layout="row" style="margin-top:0">
+            <md-progress-circular class="small-progress" ng-show="loader.posting"
+                                  md-mode="indeterminate"></md-progress-circular>
             <md-button class="md-primary" ng-disabled="loader.posting" ng-click="cancel()" style="margin-right:20px;">
                 Cancel
             </md-button>
-            <md-button class="md-raised md-primary" ng-disabled="loader.posting" ng-click="submit()" style="margin-right:20px;">
+            <md-button class="md-raised md-primary" ng-disabled="loader.posting" ng-click="submit()"
+                       style="margin-right:20px;">
                 Submit
             </md-button>
         </md-dialog-actions>

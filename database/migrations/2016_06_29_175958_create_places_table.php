@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddProfileLinkToMentorsTable extends Migration
+class CreatePlacesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,10 @@ class AddProfileLinkToMentorsTable extends Migration
      */
     public function up()
     {
-        Schema::table('mentors', function (Blueprint $table) {
-            $table->string('profile_link');
+        Schema::create('places', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -24,8 +26,6 @@ class AddProfileLinkToMentorsTable extends Migration
      */
     public function down()
     {
-        Schema::table('mentors', function (Blueprint $table) {
-            $table->dropColumn('profile_link');
-        });
+        Schema::drop('places');
     }
 }

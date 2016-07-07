@@ -12,23 +12,23 @@ class Group extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'place_id', 'email'
+        'name', 'place_id', 'email', 'status'
     ];
 
     public function place(){
-        return $this->belongsTo('App\Place');
+        return $this->belongsTo(Place::class);
     }
 
     public function announcements(){
-        return $this->hasMany('App\Announcement');
+        return $this->hasMany(Announcement::class);
     }
 
     public function students(){
-        return $this->hasMany('App\Student');
+        return $this->hasMany(Student::class);
     }
 
-    public function events(){
-        return $this->hasMany('App\Event');
+    public function lessons(){
+        return $this->hasMany(Lesson::class);
     }
 
 }

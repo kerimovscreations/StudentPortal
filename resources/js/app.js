@@ -19,7 +19,7 @@ loginApp.config(function ($mdThemingProvider, $interpolateProvider) {
 var welcomeApp = angular.module('appWelcome', ['ngMaterial', 'ngRoute', 'ngResource']);
 
 
-var portalApp = angular.module('appTeacherDashboard', ['ngMaterial', 'ngRoute', 'ngResource', 'ngMessages', 'ngCookies', 'ngFileUpload', 'ngImgCrop']);
+var portalApp = angular.module('appTeacherDashboard', ['ngMaterial', 'ngRoute', 'ngResource', 'ngMessages', 'ngCookies', 'ngFileUpload', 'ngImgCrop', 'angularTrix', 'ngSanitize']);
 portalApp.config(function ($mdThemingProvider, $interpolateProvider) {
     $mdThemingProvider.definePalette('customTheme', customTheme);
     $mdThemingProvider.theme('default')

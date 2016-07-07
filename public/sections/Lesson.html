@@ -1,0 +1,17 @@
+<md-progress-linear ng-show="loader.loading || loader.posting" md-mode="indeterminate"></md-progress-linear>
+<md-content style="max-width: 1000px; margin: 0 auto; padding: 0 10px">
+
+    <style>
+        md-input-container .md-errors-spacer {
+            display: none;
+        }
+
+    </style>
+    <div style="width:100%; background: rgb(204, 250, 62); color: white; padding: 0 10px"
+         class="md-whiteframe-1dp">
+        <span style="font-size: 35px"><% lesson.title %> at <% parsedDate() %> from <% lesson.start_time %> - <% lesson.end_time %></span>
+    </div>
+    <md-card class="page" style="padding: 20px">
+        <div ng-bind-html="deliberatelyTrustDangerousSnippet()"></div>
+    </md-card>
+</md-content>

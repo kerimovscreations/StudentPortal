@@ -27,6 +27,31 @@ class UserController extends Controller
         $users = User::all();
         return $users;
     }
+    
+    public function getDataUser($table, $id)
+    {
+        $user=null;
+        if ($table == 'students') {
+            if(Auth::guard('student')->check()){
+                if(Auth::guard('student')->user()->id==$id){
+                    $user = Student::findOrFail($id);
+                    $user->group = Group::find($user->group_id)->name;
+                }else{
+                    return redirect('/');
+                }
+            }else if(Auth::guard('teacher')->check() || Auth::guard('mentor')->check()){
+                $user = Student::findOrFail($id);
+                $user->group = Group::find($user->group_id)->name;
+            }
+        } else if ($table == 'users') {
+            $user = User::findOrFail($id);
+        } else if($table == 'teachers'){
+            $user = Teacher::findOrFail($id);
+        }else if($table == 'mentors'){
+            $user = Mentor::findOrFail($id);
+        }
+        return json_encode($user);
+    }
 
     public function email()
     {
@@ -97,7 +122,7 @@ class UserController extends Controller
         $newUser = null;
         if ($request['type'] == 'student') {
             $newUser = new Student();
-            $newUser->group_id = Group::first()->id;
+            $newUser->group_id = $request['group_id'];
             $newUser->phone = $user->phone;
             $newUser->birthDate = $user->birthDate;
         } else if ($request['type'] == 'teacher') {

@@ -1,0 +1,150 @@
+<md-progress-linear ng-show="loader.loading || loader.posting" md-mode="indeterminate"></md-progress-linear>
+<md-content style="max-width: 1000px; margin: 0 auto;" layout="row" layout-align="center start">
+    <style>
+        .md-errors-spacer {
+            display: none;
+        }
+    </style>
+
+    <div flex>
+        <md-toolbar layout="row" class="md-hue-3">
+            <div class="md-toolbar-tools">
+                <span>Places</span>
+                <span flex></span>
+                <md-button class="md-raised md-accent" ng-disabled="loader.posting || button_disable.place"
+                           ng-click="togglePlaceItem()">Create
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-content>
+            <md-list>
+                <md-list-item ng-show="addItem.place" class="noright">
+                    <div flex layout="row" layout-align="space-between center">
+                        <div layout="row" layout-align="center center">
+                            <md-button class="md-icon-button" ng-click="togglePlaceItem()">
+                                <md-icon md-svg-src="svg/ic_close_black_24px.svg" aria-label="Close dialog"></md-icon>
+                            </md-button>
+                            <md-input-container>
+                                <label>Name</label>
+                                <input ng-model="new_place.name">
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-progress-circular class="small-progress" ng-show="loader.posting"
+                                                  md-mode="indeterminate"></md-progress-circular>
+                            <md-button class="md-raised md-primary" ng-click="createPlace()"
+                                       ng-disabled="loader.posting">Submit
+                            </md-button>
+                        </div>
+                    </div>
+                </md-list-item>
+                <md-list-item ng-repeat="place in places track by $index" class="noright md-whiteframe-1dp" style="background: white">
+                    <span style="font-size: 18px; margin-left: 10px"><% place.name %></span>
+                    <span flex></span>
+                    <md-menu md-position-mode="target-right target">
+                        <md-button aria-label="Place Edit" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                            <md-icon md-menu-origin md-svg-icon="svg/ic_more_vert_black_36px.svg"></md-icon>
+                        </md-button>
+                        <md-menu-content width="4">
+                            <md-menu-item layout="column">
+                                <md-button ng-click="editPlace(place.id)">
+                                    <div layout="row" flex>
+                                        <p flex>Edit</p>
+                                        <md-icon md-menu-align-target md-svg-icon="svg/ic_edit_black_36px.svg"
+                                                 style="margin: auto 3px auto 0;"></md-icon>
+                                    </div>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="deletePlace(place.id)">
+                                    <div layout="row" flex>
+                                        <p flex>Delete</p>
+                                        <md-icon md-menu-align-target md-svg-icon="svg/ic_delete_black_36px.svg"
+                                                 style="margin: auto 3px auto 0;"></md-icon>
+                                    </div>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </div>
+    <md-divider></md-divider>
+    <div flex>
+        <md-toolbar layout="row" class="md-hue-3">
+            <div class="md-toolbar-tools">
+                <span>Groups</span>
+                <span flex></span>
+                <md-button class="md-raised md-accent" ng-click="toggleGroupItem()"
+                           ng-disabled="loader.posting || button_disable.group">Create
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-content>
+            <md-list>
+                <md-list-item ng-show="addItem.group" class="noright">
+                    <div flex layout="row" layout-align="space-between center">
+                        <div layout="row" layout-align="center center">
+                            <md-button class="md-icon-button" ng-click="toggleGroupItem()">
+                                <md-icon md-svg-src="svg/ic_close_black_24px.svg" aria-label="Close dialog"></md-icon>
+                            </md-button>
+                            <md-input-container>
+                                <label>Name</label>
+                                <input ng-model="new_group.name">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Email</label>
+                                <input ng-model="new_group.email">
+                            </md-input-container>
+                            <md-input-container style="margin-left: 10px">
+                                <label>Place</label>
+                                <md-select ng-model="new_group.place_id">
+                                    <md-option ng-repeat="place in places" value="<% place.id %>">
+                                        <% place.name %>
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-progress-circular class="small-progress" ng-show="loader.posting"
+                                                  md-mode="indeterminate"></md-progress-circular>
+                            <md-button class="md-raised md-primary" ng-click="createGroup()"
+                                       ng-disabled="loader.posting">Submit
+                            </md-button>
+                        </div>
+                    </div>
+                </md-list-item>
+                <md-list-item ng-repeat="group in groups track by $index" class="noright md-whiteframe-1dp" style="background: white">
+                    <span style="font-size: 18px; margin-left: 10px"><% group.name %> at <% group.place.name %></span>
+                    <span flex></span>
+                    <md-menu md-position-mode="target-right target">
+                        <md-button aria-label="Group Edit" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                            <md-icon md-menu-origin md-svg-icon="svg/ic_more_vert_black_36px.svg"></md-icon>
+                        </md-button>
+                        <md-menu-content width="4">
+                            <md-menu-item layout="column">
+                                <md-button ng-click="editGroup(group.id)">
+                                    <div layout="row" flex>
+                                        <p flex>Edit</p>
+                                        <md-icon md-menu-align-target md-svg-icon="svg/ic_edit_black_36px.svg"
+                                                 style="margin: auto 3px auto 0;"></md-icon>
+                                    </div>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="deleteGroup(group.id)">
+                                    <div layout="row" flex>
+                                        <p flex>Delete</p>
+                                        <md-icon md-menu-align-target md-svg-icon="svg/ic_delete_black_36px.svg"
+                                                 style="margin: auto 3px auto 0;"></md-icon>
+                                    </div>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </div>
+</md-content>

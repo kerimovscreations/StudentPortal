@@ -1,0 +1,108 @@
+<md-content>
+    <style>
+        md-radio-group.layout-gt-lg-row md-radio-button,
+        md-radio-group.layout-gt-md-row md-radio-button,
+        md-radio-group.layout-gt-sm-row md-radio-button,
+        md-radio-group.layout-gt-xs-row md-radio-button,
+        md-radio-group.layout-lg-row md-radio-button,
+        md-radio-group.layout-md-row md-radio-button,
+        md-radio-group.layout-row md-radio-button,
+        md-radio-group.layout-sm-row md-radio-button,
+        md-radio-group.layout-xl-row md-radio-button,
+        md-radio-group.layout-xs-row md-radio-button {
+            margin: 0;
+        }
+
+        .md-errors-spacer {
+            display: none;
+        }
+
+        .my-radio md-radio-button, md-radio-button.md-checked ._md-off {
+            border-color: #337ab7;
+        }
+
+        .my-radio md-radio-button, md-radio-button.md-checked ._md-on {
+            background-color: #337ab7;
+        }
+
+        .fa {
+            margin: 0 10px
+        }
+
+        .md-datepicker-input-container {
+            display: none;
+        }
+
+        md-datepicker {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <md-progress-linear ng-show="loader.loading" md-mode="indeterminate"></md-progress-linear>
+    <div style="max-width: 1000px; margin: 0 auto;">
+        <div style="margin: 0 5px 5px 5px; padding: 10px; background: white; text-align: center; color: #337ab7;"
+             class="md-whiteframe-1dp">
+
+            <div class="md-headline" layout="row" layout-align="center center">
+                <i class="fa fa-chevron-left" aria-hidden="true" ng-click="subtractDayFromDate()"></i>
+                <span style="width: 300px"><% showFormattedDate() %></span>
+                <i class="fa fa-chevron-right" aria-hidden="true" ng-click="addDayToDate()"></i>
+            </div>
+        </div>
+
+        <section style="margin: 0 5px;" ng-repeat="group in groups track by $index">
+            <md-subheader ng-click="toggleList($index)" class="no-outline"
+                          style="background-color:#ececec; color: #337ab7; margin-bottom: 1px">
+                <div layout="row" layout-align="space-between center">
+                    <span><% group.name %></span>
+                    <div layout="row">
+                        <md-input-container class="no-outline" ng-click="searchEvent($event)"
+                                            ng-hide="show_list[$index]"
+                                            style="margin: 0">
+                            <md-icon md-svg-icon="svg/ic_search_white_24px.svg" class="search"></md-icon>
+                            <input ng-model="searchName" type="text" aria-label="searchName">
+                        </md-input-container>
+                    </div>
+                </div>
+            </md-subheader>
+            <md-list ng-hide="show_list[$index]" layout="column" style="padding: 0;">
+                <md-list-item class="noright" style="background: rgba(255,17,94,0.05)">
+                    <span class="md-title">Name Surname</span>
+                    <span flex></span>
+                    <div layout="row" style="color: #337ab7; margin-right: 6px" class="md-title">
+                        <span style="width: 30px;text-align: center">G</span>
+                        <span style="width: 30px;text-align: center">X</span>
+                        <span style="width: 30px;text-align: center">I</span>
+                        <span style="width: 30px;text-align: center">B</span>
+                    </div>
+                    <div style="width: 196px"></div>
+                    <md-divider></md-divider>
+                </md-list-item>
+                <md-list-item style="max-width: 100%;" ng-repeat="contact in students | filter:searchName"
+                              ng-if="contact.group_id == group.id" class="noright">
+                    <img class="md-avatar" ng-src="<% contact.profile_link || 'images/profile_icon.png' %> "
+                         style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
+                    <span class="md-title"><% contact.name %></span>
+                    <span flex></span>
+                    <md-radio-group ng-model="contact.attendance.status" layout="row">
+                        <md-radio-button value="1" aria-label="1"></md-radio-button>
+                        <md-radio-button value="2" aria-label="2"></md-radio-button>
+                        <md-radio-button value="3" aria-label="3"></md-radio-button>
+                        <md-radio-button value="4" aria-label="4"></md-radio-button>
+                    </md-radio-group>
+                    <md-input-container class="no-outline" style="margin: 0 0 10px 0">
+                        <md-icon md-svg-icon="svg/ic_edit_black_24px.svg"></md-icon>
+                        <input ng-model="contact.attendance.note" type="text" aria-label="note">
+                    </md-input-container>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </md-list>
+        </section>
+        <input type="button" class="md-button md-raised md-primary pull-right" value="Submit"
+               ng-click="postAttendance()" ng-disabled="loader.posting">
+        <md-progress-circular class="small-progress pull-right" ng-show="loader.posting"
+                              md-mode="indeterminate"></md-progress-circular>
+
+
+    </div>
+</md-content>

@@ -11,9 +11,6 @@
 |
 */
 
-
-use App\User;
-
 Route::group(['middleware' => ['web'], ['api']], function () {
 
     Route::group(['middleware' => 'verify'], function () {
@@ -52,7 +49,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         /**
          * Get the data of user
          */
-        Route::get('/getDataUser/{table}/{id}', 'UserDataController@getDataUser');
+        Route::get('/getDataUser/{table}/{id}', 'UserController@getDataUser');
 
         /**
          * Update the data of user
@@ -90,34 +87,46 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         Route::post('/changeStatusNotification', 'NotificationController@changeStatus');
 
         /**
+         * Delete the selected list of notifications
+         */
+        Route::post('/deleteNotifications','NotificationController@delete');
+        
+        /**
          * Get weekly list of events
          */
-        Route::get('/getWeekEvents/{data1}', 'EventController@getWeekly');
+        Route::get('/getWeekEvents/{data1}-{data2}', 'EventController@getWeekly');
 
         /**
          * Image upload
          */
-        Route::post('/uploadImage','ImageUploadController@store');
-        
-        /**
-         * Get the selected event data
-         */
-        Route::get('/getEvent/{id}', 'EventController@getById');
+        Route::post('/uploadImage', 'ImageUploadController@store');
 
         /**
-         * Post methods about events
+         * File upload
          */
-        Route::post('/postEvent', 'EventController@store');
-        Route::post('/updateEvent', 'EventController@update');
-        Route::post('/deleteEvent', 'EventController@delete');
-        Route::post('/changeStatusEvent', 'EventController@changeStatus');
-        Route::post('/changeTimeEvent', 'EventController@changeTime');
+        Route::post('/uploadFile', 'FileController@store');
+
+        /**
+         * Download the file
+         */
+        Route::get('/getFile/{id}', 'FileController@get');
+
+        /**
+         * Operations with reservations
+         */
+        Route::post('/addReservation', 'ReservationController@store');
+        Route::get('/getReservation/{reservation}', 'ReservationController@get');
+        Route::post('/changeStatusReservation', 'ReservationController@changeStatus');
+        Route::post('/changeTimeReservation', 'ReservationController@changeTime');
+        Route::post('/updateReservation', 'ReservationController@update');
+        Route::post('/deleteReservation', 'ReservationController@delete');
+
 
         /**
          * Set the restrict for students
          */
         Route::group(['middleware' => 'notStudent'], function () {
-            
+
             /**
              * Get the list of students
              */
@@ -129,17 +138,32 @@ Route::group(['middleware' => ['web'], ['api']], function () {
          * Set the access only for teachers
          */
         Route::group(['middleware' => 'teacher'], function () {
+            /**
+             * Operations with announcement
+             */
             Route::post('/postAnnouncement', 'AnnouncementController@store');
             Route::post('/updateAnnouncement', 'AnnouncementController@update');
             Route::post('/deleteAnnouncement', 'AnnouncementController@delete');
 
             /**
+             * Operations with lessons
+             */
+            Route::post('/postLesson', 'LessonController@create');
+            Route::get('/getLesson/{lesson}', 'LessonController@get');
+            Route::post('/updateLesson', 'LessonController@update');
+            Route::post('/deleteLesson', 'LessonController@delete');
+
+            /**
+             * Operations with attendance
+             */
+            Route::post('/postAttendance', 'AttendanceController@store');
+            Route::get('/getAttendances', 'AttendanceController@getAll');
+            Route::get('/getStudentsWithAttendances/{date}', 'StudentController@getAllWithAttendances');
+
+            /**
              * Get the registered but pending users list
              */
-            Route::get('/getPending', function (){
-                $users = User::all();
-                return $users;
-            });
+            Route::get('/getPending', 'UserController@pending');
 
             /**
              * Change the type of user or confirm the pending users
@@ -150,6 +174,16 @@ Route::group(['middleware' => ['web'], ['api']], function () {
              * Delete the user
              */
             Route::post('/deleteUser', 'UserController@delete');
+
+            /**
+             * Create new group and place
+             */
+            Route::post('/createGroup','GroupController@create');
+            Route::post('/updateGroup','GroupController@update');
+            Route::post('/deleteGroup','GroupController@delete');
+            Route::post('/createPlace','PlaceController@create');
+            Route::post('/updatePlace','PlaceController@update');
+            Route::post('/deletePlace','PlaceController@delete');
         });
     });
 
@@ -165,21 +199,12 @@ Route::group(['middleware' => ['web'], ['api']], function () {
             return view('welcome');
     });
 
-    Route::get('sendRegistered','UserController@email');
-
-    Route::get('/check1', ['middleware' => 'user', function () {
-        return 'user';
-    }]);
-
-    Route::get('/check2', ['middleware' => 'verify', function () {
-        //return view('/home');
-        return 'verified';
-    }]);
+    Route::get('sendRegistered', 'UserController@email');
 
     /**
      * Login/Register routes generation
      */
-    Route::group(['middleware' => ['guest:teacher','guest:student','guest:mentor']], function () {
+    Route::group(['middleware' => ['guest:teacher', 'guest:student', 'guest:mentor']], function () {
         Route::get('login', 'Auth\AuthController@showLoginForm');
         Route::get('register', 'Auth\AuthController@showRegistrationForm');
         Route::post('login', 'Auth\AuthController@login');
@@ -192,9 +217,8 @@ Route::group(['middleware' => ['web'], ['api']], function () {
     });
     Route::get('logout', 'Auth\AuthController@logout');
 
-    if (Auth::guest() && Auth::guard('teacher')->guest() && Auth::guard('student')->guest() && Auth::guard('mentor')->guest()){
+    if (Auth::guest() && Auth::guard('teacher')->guest() && Auth::guard('student')->guest() && Auth::guard('mentor')->guest()) {
 
     }
-
 
 });
