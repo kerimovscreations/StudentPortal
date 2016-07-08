@@ -73,7 +73,7 @@
                             <!--list of sections-->
 
                             <md-list-item class="secondary-button-padding" ng-repeat="section in sections"
-                                          ng-click="selectSection(section.name)" ng-if="section.access_level.indexOf(user_access_level) != -1">
+                                          ng-click="selectSection(section.name)" ng-if="section.access_level.indexOf(user_access_level()) != -1">
                                 <md-icon md-svg-src="<% section.url %>"
                                          style="margin-right: 15px; margin-left: 0"></md-icon>
                                 <span> <% section.name %> </span>

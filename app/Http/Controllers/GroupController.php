@@ -10,7 +10,7 @@ use App\Http\Requests;
 class GroupController extends Controller
 {
     public function getAll() {
-        $groups = Group::with('place')->get();
+        $groups = Group::with('place')->orderBy('created_at', 'desc')->get();
         return json_encode($groups);
     }
     

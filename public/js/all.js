@@ -3920,6 +3920,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
         $cookies.put('userName', result['name']);
         $cookies.put('userEmail', result['email']);
         $cookies.put('userType', result['type']);
+        $scope.$emit('setUserType', result['type']);
         $cookies.put('userProfileImage', result['profile_image_path']);
         if (result['type'] == 'student') {
             $cookies.put('userGroupId', result['group_id']);
@@ -3997,7 +3998,6 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
     /**
      * Open the edit profile dialog
      */
-
     $scope.editProfile = function () {
         Data.PersonTable = $scope.user_type + 's';
         Data.PersonId = $scope.user_id;
@@ -4056,25 +4056,18 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
          */
         $scope.sections = SectionService.sections;
 
-        var user_type = $cookies.get('userType');
+        $scope.$on('setUserType', function(event, args) {
+            $scope.user_type = args;
+        });
 
-        switch (user_type) {
-            case 'student':
-            {
-                $scope.user_access_level = 1;
-                break;
-            }
-            case 'mentor':
-            {
-                $scope.user_access_level = 2;
-                break;
-            }
-            case 'teacher':
-            {
-                $scope.user_access_level = 3;
-                break;
-            }
-        }
+        $scope.user_access_level = function () {
+            if ($scope.user_type === 'student')
+                return 1;
+            else if ($scope.user_type === 'mentor')
+                return 2;
+            else if ($scope.user_type === 'teacher')
+                return 3;
+        };
 
         $scope.selectSection = function (text) {
             $rootScope.current_section = text;
@@ -4757,7 +4750,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             })
         };
 
-        $scope.deleteGroup=function (id) {
+        $scope.deleteGroup = function (id) {
             $http({
                 method: 'POST',
                 url: '/deleteGroup',
@@ -4774,7 +4767,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             })
         };
 
-        $scope.deletePlace=function (id) {
+        $scope.deletePlace = function (id) {
             $http({
                 method: 'POST',
                 url: '/deletePlace',
@@ -4791,11 +4784,11 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             })
         };
 
-        $scope.editPlace=function () {
+        $scope.editPlace = function () {
             $mdToast.show($mdToast.simple().textContent('In the next update'));
         };
 
-        $scope.editGroup=function () {
+        $scope.editGroup = function () {
             $mdToast.show($mdToast.simple().textContent('In the next update'));
         }
 
@@ -5581,7 +5574,7 @@ function personSelectDialogController($scope, $http, $cookies, $mdDialog, $mdMed
 
     //check the user has access to edit personal data
     $scope.checkOwner = function () {
-        return (user_type == 'teacher' || (user_id == $scope.person_id && (user_type + 's') == $scope.person_table)) && $scope.person_table!='users';
+        return (user_type == 'teacher' || (user_id == $scope.person_id && (user_type + 's') == $scope.person_table)) && $scope.person_table != 'users';
     };
 
     //convert the birth date to readable format
