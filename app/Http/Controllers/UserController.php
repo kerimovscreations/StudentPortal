@@ -7,11 +7,12 @@ use App\Mentor;
 use App\Student;
 use App\Teacher;
 use App\User;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -71,13 +72,13 @@ class UserController extends Controller
             $teachers = DB::table('teachers')->lists('id');
 
             foreach($teachers as $id) {
-                $temp_mail = [
+                $temp_mail1 = [
                     'receiver_id' => $id,
                     'registered_user' => $user->name,
                     'subject' => 'New registered user on Student Portal: ' . $user->name,
                     'type' => 'teacher_registered'
                 ];
-                array_push($result_mail, $temp_mail);
+                array_push($result_mail, $temp_mail1);
             }
 
             EmailController::send($result_mail);

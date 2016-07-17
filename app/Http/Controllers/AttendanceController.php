@@ -27,11 +27,17 @@ class AttendanceController extends Controller
             abort(401);
     }
 
+    public function update(Request $request){
+        Attendance::where('date', $request['date'])->where('student_id', $request['student_id'])->delete();
+        Attendance::create($request->all());
+    }
+
     public function getAll()
     {
         if (Auth::guard('teacher')->check())
             return json_encode(Attendance::all());
         else
             abort(401);
+        return back();
     }
 }

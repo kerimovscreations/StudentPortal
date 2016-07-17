@@ -157,6 +157,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
              * Operations with attendance
              */
             Route::post('/postAttendance', 'AttendanceController@store');
+            Route::post('/updateAttendance','AttendanceController@update');
             Route::get('/getAttendances', 'AttendanceController@getAll');
             Route::get('/getStudentsWithAttendances/{date}', 'StudentController@getAllWithAttendances');
 

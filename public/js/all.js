@@ -4226,6 +4226,22 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             $event.stopPropagation();
         };
 
+        $scope.updateAttendance=function (id, status, note) {
+            $http({
+                method: 'POST',
+                url: '/updateAttendance',
+                data: {
+                    date: $scope.momentDate.format('YYYYMMDD'),
+                    student_id: id,
+                    status: status,
+                    note: note
+                }
+            }).error(function (data) {
+                $mdToast.show($mdToast.simple().textContent('Error occurred'));
+                console.log(data);
+            })
+        };
+
         $scope.postAttendance = function () {
             $scope.loader.posting = true;
 
@@ -4245,7 +4261,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
                 }
             }).success(function () {
                 $scope.loader.posting = false;
-                $mdToast.show($mdToast.simple().textContent('User type changed'));
+                $mdToast.show($mdToast.simple().textContent('Attendance updated'));
             }).error(function (data) {
                 $scope.loader.posting = false;
                 $mdToast.show($mdToast.simple().textContent('Error occurred'));

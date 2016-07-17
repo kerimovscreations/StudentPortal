@@ -5,12 +5,10 @@ use App\Announcement;
 use App\Event;
 use App\Group;
 use App\Reservation;
-use App\Student;
+
 use App\Teacher;
 use App\User;
-use Illuminate\Http\Request;
 
-use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 

@@ -84,7 +84,7 @@
                          style="width:40px; height: 40px; margin-right: 10px ;border-radius: 100%"/>
                     <span class="md-title"><% contact.name %></span>
                     <span flex></span>
-                    <md-radio-group ng-model="contact.attendance.status" layout="row">
+                    <md-radio-group ng-model="contact.attendance.status" layout="row" ng-change='updateAttendance(contact.id, contact.attendance.status, contact.attendance.note)'>
                         <md-radio-button value="1" aria-label="1"></md-radio-button>
                         <md-radio-button value="2" aria-label="2"></md-radio-button>
                         <md-radio-button value="3" aria-label="3"></md-radio-button>
