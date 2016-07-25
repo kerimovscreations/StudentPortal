@@ -52,6 +52,18 @@ class EmailController extends Controller
                         $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
                     });
                 }
+            else if ($elem['type'] == 'user_type_change') {
+                    $receiver = DB::table($elem['receiver_type'] . 's')->where('id', $elem['receiver_id'])->first();
+
+                    $data = [
+                        'receiver' => $receiver->name,
+                        'receiver_type' => $elem['receiver_type']
+                    ];
+
+                    Mail::send('emails.user_type_change_email', $data, function ($message) use ($receiver, $elem) {
+                        $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
+                    });
+                }
 
             if(isset($elem['source_table'])){
                 if ($elem['source_table'] == 'reservations') {

@@ -177,6 +177,10 @@ Route::group(['middleware' => ['web'], ['api']], function () {
             Route::post('/deleteUser', 'UserController@delete');
 
             /**
+             * Change user type of student
+             */
+            Route::post('/changeTypeStudent', 'StudentController@changeType');
+            /**
              * Create new group and place
              */
             Route::post('/createGroup','GroupController@create');
@@ -210,7 +214,7 @@ Route::group(['middleware' => ['web'], ['api']], function () {
         Route::get('register', 'Auth\AuthController@showRegistrationForm');
         Route::post('login', 'Auth\AuthController@login');
         Route::post('register', 'Auth\AuthController@register');
-//
+
 //    Route::post('password/email','Auth\PasswordController@sendResetLinkEmail');
 //    Route::post('password/reset','Auth\PasswordController@reset');
 //    Route::post('password/reset/{token?}','Auth\PasswordController@showResetForm');
@@ -221,5 +225,4 @@ Route::group(['middleware' => ['web'], ['api']], function () {
     if (Auth::guest() && Auth::guard('teacher')->guest() && Auth::guard('student')->guest() && Auth::guard('mentor')->guest()) {
 
     }
-
 });

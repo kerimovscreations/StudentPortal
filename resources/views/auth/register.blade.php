@@ -6,13 +6,13 @@
     <div ng-controller="RegisterController" layout="column" layout-align="center center" layout-fill ng-cloak
          style="height: auto">
         <md-card style="max-width: 400px">
-            <form name='userForm' role="form" method="POST" action="/register">
+            <form id="registerFormId" name='userForm' role="form" method="POST" action="/register">
                 <md-card-title>
                     <md-card-title-text layout="column" layout-align="center center">
                             <span class="md-headline" style="color: #2E4454">Registration</span>
                     </md-card-title-text>
                 </md-card-title>
-                <md-card-content layout="column" layout-align="center">
+                <md-card-content layout="column" layout-align="center" style="padding-bottom: 0;">
                     {!! csrf_field() !!}
                     <div layout-gt-sm="row">
                         <md-input-container class="md-block" flex-gt-sm style="margin: 10px 0">
@@ -79,8 +79,9 @@
                         </md-input-container>
                     </div>
                 </md-card-content>
-                <md-card-actions layout="row" layout-align="center none" style="padding: 5px;">
-                    <md-button class="md-raised md-primary" type="submit" style="width: 100%">Submit</md-button>
+                <md-card-actions layout="column" layout-align="center none">
+                    <md-button ng-disabled="posting" class="md-raised md-primary" style="width: 100%" ng-click="submit()">Submit</md-button>
+                    <md-progress-linear ng-show="posting" md-mode="indeterminate"></md-progress-linear>
                 </md-card-actions>
             </form>
         </md-card>

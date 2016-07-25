@@ -10,8 +10,6 @@
         <md-tab ng-if="user_type=='teacher'" id="pending">
             <md-tab-label class="custom-tab">Pending users</md-tab-label>
             <md-tab-body>
-                <md-progress-circular class="center-with-margin" ng-show="loader.posting"
-                                      md-mode="indeterminate"></md-progress-circular>
                 <md-list layout="column" style="max-width: 1000px; margin: 0 auto;">
                     <md-list-item ng-repeat="contact in pending track by $index"
                                   ng-click="showContact(contact.id,'users')" class="noright">

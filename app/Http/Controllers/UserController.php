@@ -142,7 +142,7 @@ class UserController extends Controller
         $result_mail[0] = [
             'receiver_id' => $newUser->id,
             'receiver_type' => $request['type'],
-            'subject' => 'You are confirmed on Student Portal',
+            'subject' => 'Your registration has confirmed on Student Portal',
             'type' => 'confirm'
         ];
 

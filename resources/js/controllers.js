@@ -3,9 +3,17 @@ registerApp.controller('RegisterController', function ($scope) {
     var today = new Date();
     var today1 = moment(today);
     $scope.maxDate = today1.format('YYYY-MM-DD');
+    $scope.posting=false;
 
     $scope.birthDateFormatted = function () {
         return moment($scope.user.birthDate).format('MM-DD-YYYY')
+    };
+
+    var form = document.getElementById("registerFormId");
+
+    $scope.submit=function () {
+        $scope.posting=true;
+        form.submit();
     };
 });
 
@@ -90,7 +98,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
 
         $mdDialog.show({
             controller: changeProfilePictureController,
-            templateUrl: 'dialogs/changeProfilePictureDialog.html',
+            templateUrl: 'dialogs/profilePictureChangeDialog.html',
             parent: angular.element(document.body),
             clickOutsideToClose: true,
             fullscreen: useFullScreen
@@ -163,7 +171,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
          */
         $scope.sections = SectionService.sections;
 
-        $scope.$on('setUserType', function(event, args) {
+        $scope.$on('setUserType', function (event, args) {
             $scope.user_type = args;
         });
 
@@ -256,7 +264,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
             $mdDialog.show({
                 controller: postEditDialogController,
-                templateUrl: 'dialogs/editPostDialog.html',
+                templateUrl: 'dialogs/announcementEditDialog.html',
                 parent: angular.element(document.body),
                 clickOutsideToClose: true,
                 fullscreen: useFullScreen
@@ -333,7 +341,7 @@ portalApp.controller('MainMenuController', function ($scope, $rootScope, $cookie
             $event.stopPropagation();
         };
 
-        $scope.updateAttendance=function (id, status, note) {
+        $scope.updateAttendance = function (id, status, note) {
             $http({
                 method: 'POST',
                 url: '/updateAttendance',
@@ -1116,7 +1124,7 @@ function postEditDialogController($scope, $mdDialog, $http, $mdToast, Data, $rou
     };
 }
 
-// Schedule dialog controllers
+// Reservation dialog controllers
 
 function reservationSelectDialogController($scope, $http, $route, $cookies, $mdDialog, $mdMedia, $mdToast, Data) {
     //initialize loading
@@ -1740,6 +1748,7 @@ function personEditDialogController($scope, $http, $cookies, $mdMedia, $mdDialog
         loading: true,
         posting: false
     };
+
     //get the type of user to access some actions
     $scope.user_type = $cookies.get('userType');
     $scope.user_id = $cookies.get('userId');
@@ -1809,7 +1818,7 @@ function personEditDialogController($scope, $http, $cookies, $mdMedia, $mdDialog
         if ($scope.checkOwner()) {
             $mdDialog.show({
                 controller: changeProfilePictureController,
-                templateUrl: 'dialogs/changeProfilePictureDialog.html',
+                templateUrl: 'dialogs/profilePictureChangeDialog.html',
                 parent: angular.element(document.body),
                 clickOutsideToClose: true,
                 fullscreen: useFullScreen
@@ -1892,6 +1901,28 @@ function personEditDialogController($scope, $http, $cookies, $mdMedia, $mdDialog
                 console.log(data);
             })
         }
+    };
+
+    //change type of student
+    $scope.changeType = function (type) {
+        $scope.loader.posting = true;
+        $http({
+            method: 'POST',
+            url: '/changeTypeStudent',
+            data: {
+                id: $scope.edited_person_id,
+                type: type
+            }
+        }).success(function () {
+            $scope.loader.posting = false;
+            $mdToast.show($mdToast.simple().textContent('User type of student has changed'));
+            $route.reload();
+            $mdDialog.hide();
+        }).error(function (data) {
+            $scope.loader.posting = false;
+            $mdToast.show($mdToast.simple().textContent('Error occurred'));
+            console.log(data);
+        })
     };
 
     //help functions

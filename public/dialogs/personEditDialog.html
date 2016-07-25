@@ -1,8 +1,22 @@
+<style>
+    #studentTypeChange md-select-value{
+        color: white !important;
+    }
+</style>
 <md-dialog aria-label="Person Edit" ng-cloak>
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h3>Edit Personal Info</h3>
             <span flex></span>
+            <md-input-container id="studentTypeChange">
+                <label style="color: white">Change type</label>
+                <md-select ng-model="test_type" ng-hide="edited_person_table=='teachers' && user_type!='teacher'">
+                    <md-option value="teacher" ng-click="changeType('teacher')">Teacher</md-option>
+                    <md-option value="mentor" ng-click="changeType('mentor')" ng-hide="edited_person_table=='mentors'">
+                        Mentor
+                    </md-option>
+                </md-select>
+            </md-input-container>
             <md-button class="md-icon-button" ng-click="hide()">
                 <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
             </md-button>
@@ -25,22 +39,21 @@
                                 <span>Change profile picture</span>
                             </div>
                         </div>
-
                     </div>
                     <div style="width: 30px"></div>
                     <div layout="column">
                         <md-input-container class="reduce-margin-bottom">
                             <label>Name</label>
-                        <textarea ng-disabled="loader.posting" required class="md-title"
-                                  ng-model="edited_person_data.name"
-                                  minlength="10" maxlength="100" name="edited_person_name"></textarea>
+                            <textarea ng-disabled="loader.posting" required class="md-title"
+                                      ng-model="edited_person_data.name"
+                                      minlength="10" maxlength="100" name="edited_person_name"></textarea>
                             <div ng-messages="edit_personal_info_form.edited_person_name.$error" role="alert">
                                 <div ng-message-exp="['required', 'minlength', 'maxlength']">
                                     Please fill out your full name
                                 </div>
                             </div>
                         </md-input-container>
-                        <md-input-container class="reduce-margin-bottom">
+                        <md-input-container class="reduce-margin-bottom" style="margin-top: 25px;">
                             <label>Email</label>
                             <input ng-disabled="loader.posting" required type="email"
                                    ng-model="edited_person_data.email"
@@ -52,7 +65,7 @@
                                 </div>
                             </div>
                         </md-input-container>
-                        <div layout="row">
+                        <div layout="row" style="margin-bottom: 20px; margin-top: 20px;">
                             <md-input-container style="margin-top: 5px" class="reduce-margin-bottom">
                                 <label>Old password</label>
                                 <input ng-disabled="loader.posting" ng-model="old_password" type="password"
