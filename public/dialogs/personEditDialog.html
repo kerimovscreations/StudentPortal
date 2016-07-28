@@ -9,7 +9,7 @@
             <h3>Edit Personal Info</h3>
             <span flex></span>
             <md-input-container id="studentTypeChange"
-                                ng-show="edited_person_table != 'teachers' || user_type == 'teacher'">
+                                ng-show="edited_person_table != 'teachers' && user_type == 'teacher'">
                 <label style="color: white">Change type</label>
                 <md-select ng-model="test_type">
                     <md-option value="student" ng-click="student_group_prompt()" ng-show="edited_person_table=='mentors'">
