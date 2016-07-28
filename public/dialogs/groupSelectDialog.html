@@ -1,0 +1,42 @@
+<md-dialog aria-label="Notification Select" style="min-width: 240px " ng-cloak>
+    <md-content>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h3>Select group</h3>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="hide()">
+                    <md-icon md-svg-src="svg/ic_close_white_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content" layout="column" layout-align="center none" style="min-height: 60px">
+                <md-progress-circular class="center-with-margin" ng-show="loader.loading"
+                                      md-mode="indeterminate"></md-progress-circular>
+                <div ng-hide="loader.loading" layout="row" layout-align="center none">
+                    <md-input-container ng-disabled="loader.posting">
+                        <label>Group</label>
+                        <md-select ng-model="selected_group_id">
+                            <md-option ng-repeat="group in groups" value="<% group.id %>">
+                                <% group.name %>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions ng-hide="loader.loading" layout="row">
+            <md-progress-circular class="small-progress" ng-show="loader.posting"
+                                  md-mode="indeterminate"></md-progress-circular>
+            <!--buttons for edit mode -->
+            <md-button ng-disabled="loader.posting" class="md-primary" ng-click="cancel()"
+                       style="margin-right:20px;">
+                Cancel
+            </md-button>
+            <md-button ng-disabled="loader.posting" class="md-raised md-primary" ng-click="selectGroup()"
+                       style="margin-right:20px;">
+                Select
+            </md-button>
+        </md-dialog-actions>
+    </md-content>
+</md-dialog>

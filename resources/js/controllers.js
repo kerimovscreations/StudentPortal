@@ -3,7 +3,7 @@ registerApp.controller('RegisterController', function ($scope) {
     var today = new Date();
     var today1 = moment(today);
     $scope.maxDate = today1.format('YYYY-MM-DD');
-    $scope.posting=false;
+    $scope.posting = false;
 
     $scope.birthDateFormatted = function () {
         return moment($scope.user.birthDate).format('MM-DD-YYYY')
@@ -11,8 +11,8 @@ registerApp.controller('RegisterController', function ($scope) {
 
     var form = document.getElementById("registerFormId");
 
-    $scope.submit=function () {
-        $scope.posting=true;
+    $scope.submit = function () {
+        $scope.posting = true;
         form.submit();
     };
 });
@@ -1903,19 +1903,45 @@ function personEditDialogController($scope, $http, $cookies, $mdMedia, $mdDialog
         }
     };
 
+    $scope.student_group_prompt=function () {
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+
+        Data.tempUserId=$scope.edited_person_id;
+
+        $mdDialog.show({
+            controller: groupSelectDialogController,
+            templateUrl: 'dialogs/groupSelectDialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen
+        });
+        $scope.$watch(function () {
+            return $mdMedia('xs') || $mdMedia('sm');
+        }, function (wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+        });
+    };
     //change type of student
     $scope.changeType = function (type) {
         $scope.loader.posting = true;
+        var url_route = null;
+        if ($scope.edited_person_table == 'students')
+            url_route = '/changeTypeStudent';
+        else if($scope.edited_person_table == 'mentors')
+            url_route = '/changeTypeMentor';
+
         $http({
             method: 'POST',
-            url: '/changeTypeStudent',
+            url: url_route,
             data: {
                 id: $scope.edited_person_id,
                 type: type
             }
         }).success(function () {
             $scope.loader.posting = false;
-            $mdToast.show($mdToast.simple().textContent('User type of student has changed'));
+            $mdToast.show($mdToast.simple().textContent('User type has changed'));
             $route.reload();
             $mdDialog.hide();
         }).error(function (data) {
@@ -1935,6 +1961,50 @@ function personEditDialogController($scope, $http, $cookies, $mdMedia, $mdDialog
 
 }
 
+function groupSelectDialogController($scope, $http, $cookies, $mdMedia, $mdDialog, $mdToast, $route, Data) {
+
+    $scope.loader={
+        loading:true,
+        posting: false
+    };
+
+    //get the list of groups
+    $scope.groups = [];
+    $http.get('/getGroups').success(function (data) {
+        $scope.groups = data;
+        $scope.loader.loading=false;
+    });
+
+    $scope.selectGroup=function () {
+        $scope.loader.posting=true;
+        $http({
+            method: 'POST',
+            url: '/changeTypeMentor',
+            data: {
+                id: Data.tempUserId,
+                type: 'student',
+                group_id: $scope.selected_group_id
+            }
+        }).success(function () {
+            $scope.loader.posting = false;
+            $mdToast.show($mdToast.simple().textContent('User type of mentor has changed'));
+            $route.reload();
+            $mdDialog.hide();
+        }).error(function (data) {
+            $scope.loader.posting = false;
+            $mdToast.show($mdToast.simple().textContent('Error occurred'));
+            console.log(data);
+        })
+    };
+
+    //help functions
+    $scope.hide = function () {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function () {
+        $mdDialog.cancel();
+    };
+}
 //Profile picture edit controller
 
 function changeProfilePictureController($scope, $cookies, $mdDialog, $mdToast, $timeout, Upload) {

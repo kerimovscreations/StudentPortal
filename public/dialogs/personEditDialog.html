@@ -1,5 +1,5 @@
 <style>
-    #studentTypeChange md-select-value{
+    #studentTypeChange md-select-value {
         color: white !important;
     }
 </style>
@@ -8,9 +8,13 @@
         <div class="md-toolbar-tools">
             <h3>Edit Personal Info</h3>
             <span flex></span>
-            <md-input-container id="studentTypeChange">
+            <md-input-container id="studentTypeChange"
+                                ng-show="edited_person_table != 'teachers' || user_type == 'teacher'">
                 <label style="color: white">Change type</label>
-                <md-select ng-model="test_type" ng-hide="edited_person_table=='teachers' && user_type!='teacher'">
+                <md-select ng-model="test_type">
+                    <md-option value="student" ng-click="student_group_prompt()" ng-show="edited_person_table=='mentors'">
+                        Student
+                    </md-option>
                     <md-option value="teacher" ng-click="changeType('teacher')">Teacher</md-option>
                     <md-option value="mentor" ng-click="changeType('mentor')" ng-hide="edited_person_table=='mentors'">
                         Mentor

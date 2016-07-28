@@ -48,7 +48,7 @@ class EmailController extends Controller
                         'receiver_type' => $elem['receiver_type']
                     ];
 
-                    Mail::send('emails.confirmation_email', $data, function ($message) use ($receiver, $elem) {
+                    Mail::send('emails.confirmation', $data, function ($message) use ($receiver, $elem) {
                         $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
                     });
                 }
@@ -60,7 +60,7 @@ class EmailController extends Controller
                         'receiver_type' => $elem['receiver_type']
                     ];
 
-                    Mail::send('emails.user_type_change_email', $data, function ($message) use ($receiver, $elem) {
+                    Mail::send('emails.user_type_change', $data, function ($message) use ($receiver, $elem) {
                         $message->to($receiver->email, $receiver->name)->subject($elem['subject']);
                     });
                 }

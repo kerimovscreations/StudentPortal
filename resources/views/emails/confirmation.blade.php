@@ -11,9 +11,9 @@
 
 <div>
     <span style="color:#696969;">
-        <span style="font-family:lucida sans unicode,lucida grande,sans-serif;">Your user type has changed. You can now use Student Portal as {!! $receiver_type !!}.<br>
+        <span style="font-family:lucida sans unicode,lucida grande,sans-serif;">Your registration is confirmed. You can use Student Portal as a {!! $receiver_type !!}.<br>
             Login from <a href="http://portal.code.edu.az/"
-                          style="text-decoration: none;color:#5db775;font-family:lucida sans unicode,lucida grande,sans-serif;">here</a>.
+       style="text-decoration: none;color:#5db775;font-family:lucida sans unicode,lucida grande,sans-serif;">here</a>.
         </span>
     </span>
 </div>

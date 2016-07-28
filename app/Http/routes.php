@@ -180,6 +180,12 @@ Route::group(['middleware' => ['web'], ['api']], function () {
              * Change user type of student
              */
             Route::post('/changeTypeStudent', 'StudentController@changeType');
+
+            /**
+             * Change user type of mentor
+             */
+            Route::post('/changeTypeMentor', 'MentorController@changeType');
+
             /**
              * Create new group and place
              */
